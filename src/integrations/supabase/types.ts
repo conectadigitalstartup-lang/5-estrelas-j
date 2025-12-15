@@ -97,8 +97,12 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email_notifications: boolean | null
+          full_name: string | null
           google_business_url: string | null
           id: string
+          marketing_emails: boolean | null
+          negative_alerts: boolean | null
           onboarding_completed: boolean | null
           phone: string | null
           restaurant_name: string | null
@@ -106,11 +110,16 @@ export type Database = {
           trial_ends_at: string | null
           updated_at: string
           user_id: string
+          weekly_summary: boolean | null
         }
         Insert: {
           created_at?: string
+          email_notifications?: boolean | null
+          full_name?: string | null
           google_business_url?: string | null
           id?: string
+          marketing_emails?: boolean | null
+          negative_alerts?: boolean | null
           onboarding_completed?: boolean | null
           phone?: string | null
           restaurant_name?: string | null
@@ -118,11 +127,16 @@ export type Database = {
           trial_ends_at?: string | null
           updated_at?: string
           user_id: string
+          weekly_summary?: boolean | null
         }
         Update: {
           created_at?: string
+          email_notifications?: boolean | null
+          full_name?: string | null
           google_business_url?: string | null
           id?: string
+          marketing_emails?: boolean | null
+          negative_alerts?: boolean | null
           onboarding_completed?: boolean | null
           phone?: string | null
           restaurant_name?: string | null
@@ -130,6 +144,7 @@ export type Database = {
           trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
+          weekly_summary?: boolean | null
         }
         Relationships: []
       }
