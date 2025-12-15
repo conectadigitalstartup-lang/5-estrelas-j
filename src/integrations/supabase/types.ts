@@ -58,6 +58,8 @@ export type Database = {
           comment: string | null
           company_id: string
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
           id: string
           is_read: boolean | null
           rating: number
@@ -66,6 +68,8 @@ export type Database = {
           comment?: string | null
           company_id: string
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
           id?: string
           is_read?: boolean | null
           rating: number
@@ -74,6 +78,8 @@ export type Database = {
           comment?: string | null
           company_id?: string
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
           id?: string
           is_read?: boolean | null
           rating?: number
