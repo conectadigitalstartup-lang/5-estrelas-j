@@ -9,6 +9,10 @@ import Index from "./pages/Index";
 import Precos from "./pages/Precos";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import DashboardQRCode from "./pages/DashboardQRCode";
+import DashboardFeedbacks from "./pages/DashboardFeedbacks";
+import DashboardSettings from "./pages/DashboardSettings";
+import DashboardUpgrade from "./pages/DashboardUpgrade";
 import Avaliar from "./pages/Avaliar";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +33,10 @@ const App = () => (
               <Route path="/login" element={<Auth />} />
               <Route path="/cadastro" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/qr-code" element={<DashboardQRCode />} />
+              <Route path="/dashboard/feedbacks" element={<DashboardFeedbacks />} />
+              <Route path="/dashboard/settings" element={<DashboardSettings />} />
+              <Route path="/dashboard/upgrade" element={<DashboardUpgrade />} />
               <Route path="/avaliar/:slug" element={<Avaliar />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

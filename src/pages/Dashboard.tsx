@@ -1,155 +1,140 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MetricCard from "@/components/dashboard/MetricCard";
+import RecentFeedbacks from "@/components/dashboard/RecentFeedbacks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, QrCode, MessageSquare, TrendingUp, LogOut, Settings, Loader2 } from "lucide-react";
+import { Smartphone, CheckCircle, MessageSquare, QrCode } from "lucide-react";
+
+interface Feedback {
+  id: string;
+  created_at: string;
+  rating: number;
+  comment: string | null;
+}
 
 const Dashboard = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [metrics, setMetrics] = useState({
+    totalScans: 0,
+    positiveReviews: 0,
+    negativeFeedbacks: 0,
+  });
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
+    const fetchData = async () => {
+      if (!user) return;
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
+      // Fetch company
+      const { data: company } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("owner_id", user.id)
+        .maybeSingle();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+      if (!company) return;
 
-  if (!user) {
-    return null;
-  }
+      // Fetch all feedbacks
+      const { data: feedbacksData } = await supabase
+        .from("feedbacks")
+        .select("*")
+        .eq("company_id", company.id)
+        .order("created_at", { ascending: false });
+
+      if (feedbacksData) {
+        setFeedbacks(feedbacksData);
+        
+        const positive = feedbacksData.filter((f) => f.rating >= 4).length;
+        const negative = feedbacksData.filter((f) => f.rating < 4).length;
+
+        setMetrics({
+          totalScans: feedbacksData.length,
+          positiveReviews: positive,
+          negativeFeedbacks: negative,
+        });
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const userName = user?.user_metadata?.restaurant_name || "Restaurante";
 
   return (
     <>
       <Helmet>
-        <title>Dashboard - Máquina de Reviews</title>
+        <title>Dashboard - Avalia Aí</title>
         <meta name="description" content="Gerencie a reputação do seu restaurante e acompanhe suas avaliações." />
       </Helmet>
 
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                  <Star className="w-6 h-6 text-secondary" fill="currentColor" />
-                </div>
-                <span className="font-display text-xl font-bold text-foreground">
-                  Dashboard
-                </span>
-              </div>
+      <DashboardLayout>
+        {/* Welcome */}
+        <div className="mb-8">
+          <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+            Bem-vindo de volta, {userName}! 👋
+          </h1>
+          <p className="text-muted-foreground">
+            Acompanhe suas métricas e gerencie sua reputação online.
+          </p>
+        </div>
 
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon">
-                  <Settings className="w-5 h-5" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={handleSignOut}>
-                  <LogOut className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </header>
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <MetricCard
+            icon={Smartphone}
+            value={metrics.totalScans}
+            label="Total de Scans"
+            sublabel="Clientes avaliados"
+            iconColor="text-primary"
+          />
+          <MetricCard
+            icon={CheckCircle}
+            value={metrics.positiveReviews}
+            label="Experiências Positivas"
+            sublabel="Avaliações 4-5 estrelas"
+            iconColor="text-success"
+          />
+          <MetricCard
+            icon={MessageSquare}
+            value={metrics.negativeFeedbacks}
+            label="Feedbacks Privados"
+            sublabel="Comentários para melhorar"
+            iconColor="text-coral"
+          />
+        </div>
 
-        {/* Main Content */}
-        <main className="container mx-auto px-4 py-8">
-          {/* Welcome */}
-          <div className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
-              Olá! Bem-vindo ao seu painel 👋
-            </h1>
-            <p className="text-muted-foreground">
-              Acompanhe suas métricas e gerencie sua reputação online.
-            </p>
-          </div>
+        {/* Recent Feedbacks */}
+        <div className="mb-8">
+          <RecentFeedbacks feedbacks={feedbacks} />
+        </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Scans do QR Code
-                </CardTitle>
-                <QrCode className="w-4 h-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">0</div>
-                <p className="text-xs text-muted-foreground">Este mês</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Reviews no Google
-                </CardTitle>
-                <Star className="w-4 h-4 text-secondary" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">0</div>
-                <p className="text-xs text-muted-foreground">Encaminhados</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Feedbacks Privados
-                </CardTitle>
-                <MessageSquare className="w-4 h-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">0</div>
-                <p className="text-xs text-muted-foreground">Recebidos</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Taxa de Satisfação
-                </CardTitle>
-                <TrendingUp className="w-4 h-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">--%</div>
-                <p className="text-xs text-muted-foreground">Sem dados ainda</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Empty State / Quick Actions */}
-          <Card className="border-dashed">
-            <CardHeader className="text-center">
-              <CardTitle>Comece agora!</CardTitle>
-              <CardDescription>
-                Crie seu primeiro QR Code e comece a coletar avaliações.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <Button className="bg-secondary text-secondary-foreground hover:bg-gold-dark">
+        {/* CTA Section */}
+        <Card className="border-dashed border-2 border-coral/30 bg-coral/5">
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Pronto para receber mais avaliações?</CardTitle>
+            <CardDescription>
+              Gere seu QR Code e coloque nas mesas do seu restaurante.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button 
+              asChild
+              className="bg-coral hover:bg-coral-dark text-white"
+            >
+              <Link to="/dashboard/qr-code">
                 <QrCode className="w-4 h-4 mr-2" />
-                Criar QR Code
-              </Button>
-            </CardContent>
-          </Card>
-        </main>
-      </div>
+                Gerar QR Code
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </DashboardLayout>
     </>
   );
 };
