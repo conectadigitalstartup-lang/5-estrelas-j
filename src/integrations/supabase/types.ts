@@ -59,6 +59,7 @@ export type Database = {
           company_id: string
           created_at: string
           id: string
+          is_read: boolean | null
           rating: number
         }
         Insert: {
@@ -66,6 +67,7 @@ export type Database = {
           company_id: string
           created_at?: string
           id?: string
+          is_read?: boolean | null
           rating: number
         }
         Update: {
@@ -73,6 +75,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           id?: string
+          is_read?: boolean | null
           rating?: number
         }
         Relationships: [
