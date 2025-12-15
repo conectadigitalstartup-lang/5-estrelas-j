@@ -1,18 +1,18 @@
+// QR Code generation and download page
 import { Helmet } from "react-helmet-async";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Copy, QrCode, Printer, ExternalLink } from "lucide-react";
+import { Download, Copy, Printer, ExternalLink, Lightbulb, Check, Image } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 interface Company {
   id: string;
@@ -26,6 +26,8 @@ const DashboardQRCode = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [company, setCompany] = useState<Company | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -40,6 +42,7 @@ const DashboardQRCode = () => {
       if (data) {
         setCompany(data);
       }
+      setLoading(false);
     };
 
     fetchCompany();
@@ -57,19 +60,97 @@ const DashboardQRCode = () => {
     }
   };
 
-  const downloadQRCode = () => {
-    // Using a QR code API to generate the image
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(evaluationUrl)}`;
-    const link = document.createElement("a");
-    link.href = qrUrl;
-    link.download = `qrcode-${company?.slug || "avaliar"}.png`;
-    link.click();
-    
-    toast({
-      title: "Download iniciado!",
-      description: "Seu QR Code está sendo baixado.",
-    });
+  const downloadQRCodePNG = () => {
+    setDownloading("png");
+    const canvas = document.getElementById("qr-code-canvas") as HTMLCanvasElement;
+    if (canvas) {
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `qrcode-${company?.slug || "avaliar"}.png`;
+      link.href = url;
+      link.click();
+      toast({
+        title: "Download concluído!",
+        description: "Seu QR Code foi baixado em alta resolução.",
+      });
+    }
+    setDownloading(null);
   };
+
+  const downloadMaterialPDF = async () => {
+    setDownloading("pdf");
+    const element = document.getElementById("material-preview");
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, { scale: 3, backgroundColor: null });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: [100, 140],
+      });
+
+      pdf.addImage(imgData, "PNG", 0, 0, 100, 140);
+      pdf.save(`material-mesa-${company?.slug}.pdf`);
+      
+      toast({
+        title: "PDF gerado!",
+        description: "O material de mesa foi baixado.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao gerar PDF",
+        description: "Tente novamente.",
+        variant: "destructive",
+      });
+    }
+    setDownloading(null);
+  };
+
+  const downloadA4PDF = async () => {
+    setDownloading("a4");
+    const element = document.getElementById("material-preview");
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, { scale: 3, backgroundColor: null });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const width = 90;
+      const height = 126;
+      const margin = 10;
+
+      // 4 materiais em grid 2x2
+      pdf.addImage(imgData, "PNG", margin, margin, width, height);
+      pdf.addImage(imgData, "PNG", margin + width + 5, margin, width, height);
+      pdf.addImage(imgData, "PNG", margin, margin + height + 5, width, height);
+      pdf.addImage(imgData, "PNG", margin + width + 5, margin + height + 5, width, height);
+
+      pdf.save(`material-impressao-${company?.slug}.pdf`);
+      
+      toast({
+        title: "PDF A4 gerado!",
+        description: "4 materiais prontos para impressão.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao gerar PDF",
+        description: "Tente novamente.",
+        variant: "destructive",
+      });
+    }
+    setDownloading(null);
+  };
+
+  const getInitial = (name: string) => name.charAt(0).toUpperCase();
 
   return (
     <>
@@ -98,124 +179,168 @@ const DashboardQRCode = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-              <div className="bg-gradient-to-br from-primary to-navy-light p-8 rounded-2xl text-center max-w-sm">
-                {company?.logo_url && (
-                  <img
-                    src={company.logo_url}
-                    alt={company.name}
-                    className="w-20 h-20 mx-auto mb-4 rounded-xl object-cover bg-white"
-                  />
-                )}
-                <h3 className="text-white font-display text-xl font-bold mb-2">
-                  {company?.name || "Seu Restaurante"}
-                </h3>
-                <p className="text-white/80 text-sm mb-6">
-                  Como foi sua experiência?
-                </p>
-                <div className="bg-white p-4 rounded-xl inline-block mb-4">
-                  {evaluationUrl ? (
+              {loading ? (
+                <Skeleton className="w-72 h-96 rounded-3xl" />
+              ) : (
+                <div
+                  id="material-preview"
+                  className="bg-gradient-to-br from-primary to-navy-light p-8 rounded-3xl text-center w-72 shadow-2xl"
+                >
+                  {company?.logo_url ? (
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(evaluationUrl)}`}
-                      alt="QR Code"
-                      className="w-40 h-40"
+                      src={company.logo_url}
+                      alt={company.name}
+                      className="w-20 h-20 mx-auto mb-4 rounded-xl object-cover bg-white"
                     />
                   ) : (
-                    <div className="w-40 h-40 bg-muted flex items-center justify-center">
-                      <QrCode className="w-12 h-12 text-muted-foreground" />
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-coral flex items-center justify-center">
+                      <span className="text-3xl font-bold text-white">
+                        {getInitial(company?.name || "R")}
+                      </span>
                     </div>
                   )}
+                  <h3 className="text-white font-display text-xl font-bold mb-2">
+                    {company?.name || "Seu Restaurante"}
+                  </h3>
+                  <p className="text-white/80 text-sm mb-4">
+                    Como foi sua experiência?
+                  </p>
+                  <div className="bg-white p-4 rounded-xl inline-block mb-4">
+                    <QRCodeSVG
+                      value={evaluationUrl}
+                      size={140}
+                      level="H"
+                      includeMargin={false}
+                      fgColor="#1A1A2E"
+                      bgColor="#FFFFFF"
+                    />
+                  </div>
+                  <p className="text-white/90 text-sm font-medium mb-2">
+                    Escaneie e avalie agora
+                  </p>
+                  <div className="flex justify-center gap-1 mb-4">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span key={star} className="text-amber-400 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="text-white/50 text-xs">
+                    Powered by Avalia Aí
+                  </p>
                 </div>
-                <p className="text-white/60 text-xs break-all">
-                  {evaluationUrl || "Carregando..."}
-                </p>
+              )}
+
+              {/* Hidden high-res canvas for PNG download */}
+              <div className="hidden">
+                <QRCodeCanvas
+                  id="qr-code-canvas"
+                  value={evaluationUrl}
+                  size={1024}
+                  level="H"
+                  includeMargin={true}
+                  fgColor="#1A1A2E"
+                  bgColor="#FFFFFF"
+                />
               </div>
             </CardContent>
           </Card>
 
           {/* Actions */}
           <div className="space-y-6">
+            {/* Link Section */}
             <Card>
               <CardHeader>
-                <CardTitle>Baixar QR Code</CardTitle>
+                <CardTitle>Link do seu formulário</CardTitle>
                 <CardDescription>
-                  Escolha o formato ideal para você
+                  Compartilhe esse link diretamente com seus clientes
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  onClick={downloadQRCode}
-                  className="w-full justify-start bg-coral hover:bg-coral-dark"
-                  disabled={!company}
-                >
-                  <Download className="w-4 h-4 mr-3" />
-                  Baixar QR Code (PNG)
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  disabled={!company}
-                >
-                  <Printer className="w-4 h-4 mr-3" />
-                  Baixar PDF para Impressão
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={copyLink}
-                  className="w-full justify-start"
-                  disabled={!company}
-                >
-                  <Copy className="w-4 h-4 mr-3" />
-                  Copiar Link Direto
-                </Button>
+              <CardContent>
+                <div className="flex gap-2">
+                  <Input
+                    value={evaluationUrl}
+                    readOnly
+                    className="bg-muted font-mono text-sm"
+                  />
+                  <Button onClick={copyLink} variant="outline" disabled={!company}>
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
                 {evaluationUrl && (
                   <Button
-                    variant="ghost"
+                    variant="link"
                     asChild
-                    className="w-full justify-start text-muted-foreground"
+                    className="mt-2 p-0 h-auto text-coral"
                   >
                     <a href={evaluationUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4 mr-3" />
-                      Testar Página de Avaliação
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      Testar página de avaliação
                     </a>
                   </Button>
                 )}
               </CardContent>
             </Card>
 
+            {/* Download Section */}
             <Card>
               <CardHeader>
-                <CardTitle>Dicas de Implementação</CardTitle>
+                <CardTitle>Baixar Material</CardTitle>
+                <CardDescription>
+                  Escolha o formato ideal para você
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button
+                  onClick={downloadQRCodePNG}
+                  variant="outline"
+                  className="w-full justify-start"
+                  disabled={!company || !!downloading}
+                >
+                  <Image className="w-4 h-4 mr-3" />
+                  {downloading === "png" ? "Baixando..." : "Baixar QR Code (PNG)"}
+                </Button>
+                <Button
+                  onClick={downloadMaterialPDF}
+                  className="w-full justify-start bg-coral hover:bg-coral-dark"
+                  disabled={!company || !!downloading}
+                >
+                  <Download className="w-4 h-4 mr-3" />
+                  {downloading === "pdf" ? "Gerando PDF..." : "Baixar Material Completo (PDF)"}
+                </Button>
+                <Button
+                  onClick={downloadA4PDF}
+                  variant="outline"
+                  className="w-full justify-start"
+                  disabled={!company || !!downloading}
+                >
+                  <Printer className="w-4 h-4 mr-3" />
+                  {downloading === "a4" ? "Gerando..." : "Baixar para Impressão A4 (4x)"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Tips Section */}
+            <Card className="border-amber-200 bg-amber-50/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Lightbulb className="w-5 h-5 text-amber-500" />
+                  Dicas para Melhores Resultados
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="where">
-                    <AccordionTrigger>Onde devo colocar o QR Code?</AccordionTrigger>
-                    <AccordionContent>
-                      <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                        <li>Nas mesas do restaurante</li>
-                        <li>No balcão de atendimento</li>
-                        <li>No cardápio digital ou físico</li>
-                        <li>Nos recibos ou comandas</li>
-                        <li>Na entrada ou saída do estabelecimento</li>
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="print">
-                    <AccordionTrigger>Como imprimir?</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground">
-                      Baixe o PDF e imprima em folha A4. Você pode recortar e plastificar 
-                      para maior durabilidade. Recomendamos usar uma gráfica para impressão 
-                      em material mais resistente.
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="share">
-                    <AccordionTrigger>Como compartilhar?</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground">
-                      Você pode enviar o link direto por WhatsApp, Instagram, Email ou 
-                      qualquer outra rede social. Basta copiar o link e compartilhar!
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+                <ul className="space-y-2">
+                  {[
+                    "Coloque o QR Code em todas as mesas",
+                    "Posicione próximo ao caixa para pagamento",
+                    "Inclua no cardápio ou porta-guardanapos",
+                    "Treine a equipe para mencionar a avaliação",
+                    "O melhor momento é logo após o cliente pagar",
+                  ].map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           </div>
