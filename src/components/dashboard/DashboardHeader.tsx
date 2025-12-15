@@ -1,4 +1,5 @@
 import { Bell, HelpCircle, Menu } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -10,6 +11,14 @@ interface DashboardHeaderProps {
   isMobile?: boolean;
 }
 
+const pageTitles: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/dashboard/qr-code": "Meu QR Code",
+  "/dashboard/feedbacks": "Feedbacks",
+  "/dashboard/settings": "Configurações",
+  "/dashboard/upgrade": "Upgrade",
+};
+
 const DashboardHeader = ({
   companyName = "Meu Restaurante",
   trialDaysLeft,
@@ -17,8 +26,11 @@ const DashboardHeader = ({
   onMenuClick,
   isMobile = false,
 }: DashboardHeaderProps) => {
+  const location = useLocation();
+  const pageTitle = pageTitles[location.pathname] || "Dashboard";
+
   return (
-    <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-30 bg-background border-b border-border shadow-sm">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -28,17 +40,19 @@ const DashboardHeader = ({
             </Button>
           )}
           <div>
-            <h1 className="text-lg font-semibold text-foreground">{companyName}</h1>
-            {trialDaysLeft !== undefined && trialDaysLeft > 0 && (
-              <p className="text-xs text-muted-foreground">
-                Trial termina em <span className="text-coral font-medium">{trialDaysLeft} dias</span>
-              </p>
-            )}
+            <h1 className="text-xl font-semibold text-foreground">{pageTitle}</h1>
+            <p className="text-xs text-muted-foreground">{companyName}</p>
           </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {trialDaysLeft !== undefined && trialDaysLeft > 0 && (
+            <div className="hidden sm:flex items-center px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+              Trial: {trialDaysLeft} dias restantes
+            </div>
+          )}
+
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (

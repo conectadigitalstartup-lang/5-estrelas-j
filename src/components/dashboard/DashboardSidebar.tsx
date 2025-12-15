@@ -94,10 +94,10 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                "flex items-center gap-3 px-3 py-2.5 rounded-r-lg transition-all duration-200 relative",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                  ? "bg-sidebar-accent text-sidebar-foreground border-l-[3px] border-coral"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               )}
             >
               <item.icon className={cn("w-5 h-5 flex-shrink-0", collapsed && "mx-auto")} />
