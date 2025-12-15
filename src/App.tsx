@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Precos from "./pages/Precos";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Avaliar from "./pages/Avaliar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/login" element={<Auth />} />
               <Route path="/cadastro" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/avaliar/:slug" element={<Avaliar />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
