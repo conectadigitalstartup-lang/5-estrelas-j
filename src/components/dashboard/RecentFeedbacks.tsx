@@ -18,10 +18,12 @@ interface Feedback {
   created_at: string;
   rating: number;
   comment: string | null;
+  is_read: boolean;
 }
 
 interface RecentFeedbacksProps {
   feedbacks: Feedback[];
+  onMarkAsRead?: (id: string) => void;
 }
 
 const StarRating = ({ rating }: { rating: number }) => {
@@ -42,11 +44,19 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-const RecentFeedbacks = ({ feedbacks }: RecentFeedbacksProps) => {
+const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
 
   // Filter only negative feedbacks (rating < 4)
   const negativeFeedbacks = feedbacks.filter((f) => f.rating < 4);
+  const unreadCount = negativeFeedbacks.filter((f) => !f.is_read).length;
+
+  const handleOpenFeedback = (feedback: Feedback) => {
+    setSelectedFeedback(feedback);
+    if (!feedback.is_read && onMarkAsRead) {
+      onMarkAsRead(feedback.id);
+    }
+  };
 
   return (
     <>
@@ -56,9 +66,9 @@ const RecentFeedbacks = ({ feedbacks }: RecentFeedbacksProps) => {
             <MessageSquare className="w-5 h-5 text-coral" />
             Feedbacks que precisam de atenção
           </CardTitle>
-          {negativeFeedbacks.length > 0 && (
+          {unreadCount > 0 && (
             <Badge variant="secondary" className="bg-coral/10 text-coral">
-              {negativeFeedbacks.length} novo{negativeFeedbacks.length > 1 ? "s" : ""}
+              {unreadCount} novo{unreadCount > 1 ? "s" : ""}
             </Badge>
           )}
         </CardHeader>
@@ -80,8 +90,11 @@ const RecentFeedbacks = ({ feedbacks }: RecentFeedbacksProps) => {
               {negativeFeedbacks.slice(0, 5).map((feedback) => (
                 <div
                   key={feedback.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
-                  onClick={() => setSelectedFeedback(feedback)}
+                  className={cn(
+                    "flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer",
+                    feedback.is_read ? "bg-muted/30" : "bg-muted/50 border-l-4 border-coral"
+                  )}
+                  onClick={() => handleOpenFeedback(feedback)}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1">
@@ -89,6 +102,11 @@ const RecentFeedbacks = ({ feedbacks }: RecentFeedbacksProps) => {
                       <span className="text-xs text-muted-foreground">
                         {format(new Date(feedback.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </span>
+                      {!feedback.is_read && (
+                        <Badge variant="destructive" className="text-xs py-0 px-1.5">
+                          Novo
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-foreground truncate">
                       {feedback.comment || "Sem comentário"}
