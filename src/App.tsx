@@ -10,6 +10,7 @@ import PublicRoute from "@/components/auth/PublicRoute";
 import Index from "./pages/Index";
 import Precos from "./pages/Precos";
 import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import DashboardQRCode from "./pages/DashboardQRCode";
 import DashboardFeedbacks from "./pages/DashboardFeedbacks";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
               <Route path="/login" element={<PublicRoute><Auth /></PublicRoute>} />
               <Route path="/cadastro" element={<PublicRoute><Auth /></PublicRoute>} />
+              <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/dashboard/qr-code" element={<ProtectedRoute><DashboardQRCode /></ProtectedRoute>} />
               <Route path="/dashboard/feedbacks" element={<ProtectedRoute><DashboardFeedbacks /></ProtectedRoute>} />
