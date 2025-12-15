@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import PublicRoute from "@/components/auth/PublicRoute";
 import Index from "./pages/Index";
 import Precos from "./pages/Precos";
 import Auth from "./pages/Auth";
@@ -29,14 +31,14 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/precos" element={<Precos />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/login" element={<Auth />} />
-              <Route path="/cadastro" element={<Auth />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/qr-code" element={<DashboardQRCode />} />
-              <Route path="/dashboard/feedbacks" element={<DashboardFeedbacks />} />
-              <Route path="/dashboard/settings" element={<DashboardSettings />} />
-              <Route path="/dashboard/upgrade" element={<DashboardUpgrade />} />
+              <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
+              <Route path="/login" element={<PublicRoute><Auth /></PublicRoute>} />
+              <Route path="/cadastro" element={<PublicRoute><Auth /></PublicRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard/qr-code" element={<ProtectedRoute><DashboardQRCode /></ProtectedRoute>} />
+              <Route path="/dashboard/feedbacks" element={<ProtectedRoute><DashboardFeedbacks /></ProtectedRoute>} />
+              <Route path="/dashboard/settings" element={<ProtectedRoute><DashboardSettings /></ProtectedRoute>} />
+              <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
               <Route path="/avaliar/:slug" element={<Avaliar />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
