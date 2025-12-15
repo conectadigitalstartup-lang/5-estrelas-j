@@ -17,31 +17,37 @@ export type Database = {
       companies: {
         Row: {
           created_at: string
+          description: string | null
           google_review_link: string | null
           id: string
           logo_url: string | null
           name: string
           owner_id: string
+          restaurant_type: string | null
           slug: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          description?: string | null
           google_review_link?: string | null
           id?: string
           logo_url?: string | null
           name: string
           owner_id: string
+          restaurant_type?: string | null
           slug: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          description?: string | null
           google_review_link?: string | null
           id?: string
           logo_url?: string | null
           name?: string
           owner_id?: string
+          restaurant_type?: string | null
           slug?: string
           updated_at?: string
         }
@@ -84,8 +90,11 @@ export type Database = {
           created_at: string
           google_business_url: string | null
           id: string
+          onboarding_completed: boolean | null
           phone: string | null
           restaurant_name: string | null
+          subscription_status: string | null
+          trial_ends_at: string | null
           updated_at: string
           user_id: string
         }
@@ -93,8 +102,11 @@ export type Database = {
           created_at?: string
           google_business_url?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           phone?: string | null
           restaurant_name?: string | null
+          subscription_status?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -102,8 +114,11 @@ export type Database = {
           created_at?: string
           google_business_url?: string | null
           id?: string
+          onboarding_completed?: boolean | null
           phone?: string | null
           restaurant_name?: string | null
+          subscription_status?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
         }
