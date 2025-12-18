@@ -7,6 +7,8 @@ interface SubscriptionState {
   status: "trial" | "active" | "inactive" | null;
   plan: "basico" | "pro" | null;
   subscriptionEnd: string | null;
+  trialEndsAt: string | null;
+  daysLeft: number;
   isLoading: boolean;
 }
 
@@ -26,6 +28,15 @@ export const PLANS = {
   },
 } as const;
 
+const calculateDaysLeft = (trialEndsAt: string | null): number => {
+  if (!trialEndsAt) return 0;
+  const now = new Date();
+  const endDate = new Date(trialEndsAt);
+  const diffTime = endDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays);
+};
+
 export const useSubscription = () => {
   const { user, session } = useAuth();
   const [state, setState] = useState<SubscriptionState>({
@@ -33,40 +44,85 @@ export const useSubscription = () => {
     status: null,
     plan: null,
     subscriptionEnd: null,
+    trialEndsAt: null,
+    daysLeft: 14,
     isLoading: true,
   });
 
   const checkSubscription = useCallback(async () => {
-    if (!session?.access_token) {
+    if (!user) {
       setState(prev => ({ ...prev, isLoading: false }));
       return;
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("check-subscription", {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      // First check local subscriptions table
+      const { data: subData, error: subError } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
 
-      if (error) {
-        console.error("Error checking subscription:", error);
-        setState(prev => ({ ...prev, isLoading: false, status: "trial" }));
+      if (subError && subError.code !== "PGRST116") {
+        console.error("Error fetching subscription:", subError);
+      }
+
+      if (subData) {
+        const daysLeft = calculateDaysLeft(subData.trial_ends_at);
+        const isTrialExpired = subData.status === "trialing" && daysLeft <= 0;
+        
+        let effectiveStatus: "trial" | "active" | "inactive" = "trial";
+        if (subData.status === "active") {
+          effectiveStatus = "active";
+        } else if (isTrialExpired || subData.status === "canceled" || subData.status === "past_due") {
+          effectiveStatus = "inactive";
+        } else if (subData.status === "trialing") {
+          effectiveStatus = "trial";
+        }
+
+        setState({
+          subscribed: subData.status === "active",
+          status: effectiveStatus,
+          plan: (subData.plan as "basico" | "pro") || null,
+          subscriptionEnd: subData.current_period_end,
+          trialEndsAt: subData.trial_ends_at,
+          daysLeft,
+          isLoading: false,
+        });
         return;
       }
 
-      setState({
-        subscribed: data.subscribed,
-        status: data.status,
-        plan: data.plan,
-        subscriptionEnd: data.subscription_end,
-        isLoading: false,
-      });
+      // Fallback to edge function if no local data
+      if (session?.access_token) {
+        const { data, error } = await supabase.functions.invoke("check-subscription", {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (error) {
+          console.error("Error checking subscription:", error);
+          setState(prev => ({ ...prev, isLoading: false, status: "trial" }));
+          return;
+        }
+
+        setState({
+          subscribed: data.subscribed,
+          status: data.status,
+          plan: data.plan,
+          subscriptionEnd: data.subscription_end,
+          trialEndsAt: null,
+          daysLeft: 14,
+          isLoading: false,
+        });
+      } else {
+        setState(prev => ({ ...prev, isLoading: false }));
+      }
     } catch (error) {
       console.error("Error checking subscription:", error);
       setState(prev => ({ ...prev, isLoading: false, status: "trial" }));
     }
-  }, [session?.access_token]);
+  }, [user, session?.access_token]);
 
   const createCheckout = async (priceId: string) => {
     if (!session?.access_token) {
