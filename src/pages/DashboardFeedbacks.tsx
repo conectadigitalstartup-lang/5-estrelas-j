@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useDebouncedCallback } from "use-debounce";
 import {
   MessageSquare,
   Star,
@@ -60,6 +61,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { sanitizeInput, escapeCSV } from "@/lib/sanitize";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -112,10 +114,17 @@ const DashboardFeedbacks = () => {
 
   // Filters
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [periodFilter, setPeriodFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Debounce search
+  const handleSearchChange = useDebouncedCallback((value: string) => {
+    setDebouncedSearch(value);
+    setCurrentPage(1);
+  }, 300);
 
   // Stats
   const [stats, setStats] = useState<Stats>({
@@ -125,7 +134,7 @@ const DashboardFeedbacks = () => {
     thisMonth: 0,
   });
 
-  const hasActiveFilters = search || ratingFilter !== "all" || statusFilter !== "all" || periodFilter !== "all";
+  const hasActiveFilters = debouncedSearch || ratingFilter !== "all" || statusFilter !== "all" || periodFilter !== "all";
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -175,8 +184,8 @@ const DashboardFeedbacks = () => {
 
   // Apply filters
   const filteredFeedbacks = feedbacks.filter((feedback) => {
-    // Search
-    if (search && !feedback.comment?.toLowerCase().includes(search.toLowerCase())) {
+    // Search (using debounced value)
+    if (debouncedSearch && !feedback.comment?.toLowerCase().includes(debouncedSearch.toLowerCase())) {
       return false;
     }
 
@@ -208,29 +217,40 @@ const DashboardFeedbacks = () => {
 
   const clearFilters = () => {
     setSearch("");
+    setDebouncedSearch("");
     setRatingFilter("all");
     setStatusFilter("all");
     setPeriodFilter("all");
     setCurrentPage(1);
   };
 
+  // Optimistic update for read status
   const toggleReadStatus = async (feedbackId: string, currentStatus: boolean) => {
+    // Store previous state for rollback
+    const previousFeedbacks = [...feedbacks];
+    
+    // Optimistic update
+    const updatedFeedbacks = feedbacks.map((f) =>
+      f.id === feedbackId ? { ...f, is_read: !currentStatus } : f
+    );
+    setFeedbacks(updatedFeedbacks);
+    calculateStats(updatedFeedbacks);
+
     const { error } = await supabase
       .from("feedbacks")
       .update({ is_read: !currentStatus })
       .eq("id", feedbackId);
 
-    if (!error) {
-      setFeedbacks((prev) =>
-        prev.map((f) =>
-          f.id === feedbackId ? { ...f, is_read: !currentStatus } : f
-        )
-      );
-      calculateStats(
-        feedbacks.map((f) =>
-          f.id === feedbackId ? { ...f, is_read: !currentStatus } : f
-        )
-      );
+    if (error) {
+      // Rollback on error
+      setFeedbacks(previousFeedbacks);
+      calculateStats(previousFeedbacks);
+      toast({
+        title: "Erro ao atualizar",
+        description: "Tente novamente",
+        variant: "destructive",
+      });
+    } else {
       toast({
         title: currentStatus ? "Marcado como não lido" : "Marcado como lido",
       });
@@ -240,60 +260,121 @@ const DashboardFeedbacks = () => {
   const markAllAsRead = async () => {
     if (!companyId) return;
 
+    // Store previous state for rollback
+    const previousFeedbacks = [...feedbacks];
+    
+    // Optimistic update
+    const updatedFeedbacks = feedbacks.map((f) => ({ ...f, is_read: true }));
+    setFeedbacks(updatedFeedbacks);
+    calculateStats(updatedFeedbacks);
+
     const { error } = await supabase
       .from("feedbacks")
       .update({ is_read: true })
       .eq("company_id", companyId)
       .eq("is_read", false);
 
-    if (!error) {
-      setFeedbacks((prev) => prev.map((f) => ({ ...f, is_read: true })));
-      calculateStats(feedbacks.map((f) => ({ ...f, is_read: true })));
+    if (error) {
+      // Rollback on error
+      setFeedbacks(previousFeedbacks);
+      calculateStats(previousFeedbacks);
+      toast({
+        title: "Erro ao atualizar",
+        description: "Tente novamente",
+        variant: "destructive",
+      });
+    } else {
       toast({ title: "Todos os feedbacks marcados como lidos" });
     }
   };
 
+  // Optimistic delete
   const deleteFeedback = async () => {
     if (!deleteId) return;
+
+    // Store previous state for rollback
+    const previousFeedbacks = [...feedbacks];
+    
+    // Optimistic update
+    const updatedFeedbacks = feedbacks.filter((f) => f.id !== deleteId);
+    setFeedbacks(updatedFeedbacks);
+    calculateStats(updatedFeedbacks);
 
     const { error } = await supabase
       .from("feedbacks")
       .delete()
       .eq("id", deleteId);
 
-    if (!error) {
-      const updatedFeedbacks = feedbacks.filter((f) => f.id !== deleteId);
-      setFeedbacks(updatedFeedbacks);
-      calculateStats(updatedFeedbacks);
+    if (error) {
+      // Rollback on error
+      setFeedbacks(previousFeedbacks);
+      calculateStats(previousFeedbacks);
+      toast({
+        title: "Erro ao excluir",
+        description: "Tente novamente",
+        variant: "destructive",
+      });
+    } else {
       toast({ title: "Feedback excluído" });
     }
     setDeleteId(null);
   };
 
+  const MAX_EXPORT_ROWS = 10000;
+
   const exportToCSV = () => {
-    const headers = ["Data", "Rating", "Comentário", "Nome", "Email", "Status"];
-    const rows = filteredFeedbacks.map((f) => [
-      format(new Date(f.created_at), "dd/MM/yyyy HH:mm"),
-      f.rating,
-      f.comment || "",
-      f.customer_name || "",
-      f.customer_email || "",
-      f.is_read ? "Lido" : "Não lido",
-    ]);
+    if (filteredFeedbacks.length === 0) {
+      toast({
+        title: "Nada para exportar",
+        description: "Não há feedbacks para exportar",
+      });
+      return;
+    }
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-    ].join("\n");
+    if (filteredFeedbacks.length > MAX_EXPORT_ROWS) {
+      toast({
+        title: "Muitos registros",
+        description: `Filtre por período para exportar. Máximo: ${MAX_EXPORT_ROWS.toLocaleString()} registros`,
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `feedbacks-${format(new Date(), "yyyy-MM-dd")}.csv`;
-    link.click();
+    try {
+      const headers = ["Data", "Rating", "Comentário", "Nome", "Email", "Status"];
+      const rows = filteredFeedbacks.map((f) => [
+        format(new Date(f.created_at), "dd/MM/yyyy HH:mm"),
+        f.rating.toString(),
+        escapeCSV(f.comment),
+        escapeCSV(f.customer_name),
+        f.customer_email || "",
+        f.is_read ? "Lido" : "Não lido",
+      ]);
 
-    toast({ title: "CSV exportado com sucesso!" });
+      const BOM = '\uFEFF'; // For special character support
+      const csvContent = BOM + [
+        headers.join(","),
+        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `feedbacks-${format(new Date(), "yyyy-MM-dd-HHmm")}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({ title: "CSV exportado com sucesso!" });
+    } catch (error) {
+      toast({
+        title: "Erro na exportação",
+        description: "Tente novamente",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleOpenFeedback = (feedback: Feedback) => {
@@ -409,7 +490,7 @@ const DashboardFeedbacks = () => {
                     value={search}
                     onChange={(e) => {
                       setSearch(e.target.value);
-                      setCurrentPage(1);
+                      handleSearchChange(e.target.value);
                     }}
                     className="pl-10"
                   />
@@ -536,7 +617,9 @@ const DashboardFeedbacks = () => {
                       </div>
 
                       <p className="text-foreground mb-3">
-                        {feedback.comment || (
+                        {feedback.comment ? (
+                          sanitizeInput(feedback.comment)
+                        ) : (
                           <span className="text-muted-foreground italic">
                             Nenhum comentário adicionado
                           </span>
@@ -547,7 +630,7 @@ const DashboardFeedbacks = () => {
                         {feedback.customer_name && (
                           <div className="flex items-center gap-1">
                             <User className="w-4 h-4" />
-                            {feedback.customer_name}
+                            {sanitizeInput(feedback.customer_name)}
                           </div>
                         )}
                         {feedback.customer_email && (
@@ -656,7 +739,7 @@ const DashboardFeedbacks = () => {
 
                 <div className="bg-muted rounded-lg p-4">
                   <p className="text-foreground">
-                    {selectedFeedback.comment || "Nenhum comentário"}
+                    {sanitizeInput(selectedFeedback.comment) || "Nenhum comentário"}
                   </p>
                 </div>
 
@@ -664,7 +747,7 @@ const DashboardFeedbacks = () => {
                   {selectedFeedback.customer_name && (
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-muted-foreground" />
-                      <span>{selectedFeedback.customer_name}</span>
+                      <span>{sanitizeInput(selectedFeedback.customer_name)}</span>
                     </div>
                   )}
                   {selectedFeedback.customer_email && (
