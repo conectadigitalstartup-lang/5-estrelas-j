@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { sanitizeInput } from "@/lib/sanitize";
 
 interface Feedback {
   id: string;
@@ -109,7 +110,7 @@ const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
                       )}
                     </div>
                     <p className="text-sm text-foreground truncate">
-                      {feedback.comment || "Sem comentário"}
+                      {sanitizeInput(feedback.comment) || "Sem comentário"}
                     </p>
                   </div>
                   <Button variant="ghost" size="icon" className="flex-shrink-0 ml-2">
@@ -144,7 +145,7 @@ const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
               </div>
               <div className="p-4 rounded-lg bg-muted">
                 <p className="text-foreground">
-                  {selectedFeedback.comment || "O cliente não deixou comentário."}
+                  {sanitizeInput(selectedFeedback.comment) || "O cliente não deixou comentário."}
                 </p>
               </div>
             </div>

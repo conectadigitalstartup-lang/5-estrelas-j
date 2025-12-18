@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Smartphone, CheckCircle, MessageSquare, QrCode } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Feedback {
   id: string;
@@ -22,6 +23,7 @@ interface Feedback {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("30");
@@ -38,6 +40,16 @@ const Dashboard = () => {
     date.setDate(date.getDate() - parseInt(days));
     return date.toISOString();
   };
+
+  const calculateMetrics = useCallback((feedbackData: Feedback[]) => {
+    const positive = feedbackData.filter((f) => f.rating >= 4).length;
+    const negative = feedbackData.filter((f) => f.rating < 4).length;
+    setMetrics({
+      totalScans: feedbackData.length,
+      positiveReviews: positive,
+      negativeFeedbacks: negative,
+    });
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,21 +86,54 @@ const Dashboard = () => {
 
       if (feedbacksData) {
         setFeedbacks(feedbacksData);
-        
-        const positive = feedbacksData.filter((f) => f.rating >= 4).length;
-        const negative = feedbacksData.filter((f) => f.rating < 4).length;
-
-        setMetrics({
-          totalScans: feedbacksData.length,
-          positiveReviews: positive,
-          negativeFeedbacks: negative,
-        });
+        calculateMetrics(feedbacksData);
       }
       setLoading(false);
     };
 
     fetchData();
-  }, [user, period]);
+  }, [user, period, calculateMetrics]);
+
+  // Real-time subscription for new feedbacks
+  useEffect(() => {
+    if (!companyId) return;
+
+    const channel = supabase
+      .channel('dashboard-feedbacks')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'feedbacks',
+          filter: `company_id=eq.${companyId}`
+        },
+        (payload) => {
+          const newFeedback = payload.new as Feedback;
+          
+          // Add to feedbacks list
+          setFeedbacks(prev => [newFeedback, ...prev]);
+          
+          // Update metrics
+          setMetrics(prev => ({
+            totalScans: prev.totalScans + 1,
+            positiveReviews: newFeedback.rating >= 4 ? prev.positiveReviews + 1 : prev.positiveReviews,
+            negativeFeedbacks: newFeedback.rating < 4 ? prev.negativeFeedbacks + 1 : prev.negativeFeedbacks,
+          }));
+          
+          // Show toast notification
+          toast({
+            title: "Novo feedback recebido!",
+            description: `${newFeedback.rating} estrela${newFeedback.rating > 1 ? 's' : ''}`,
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [companyId, toast]);
 
   const handleMarkAsRead = async (feedbackId: string) => {
     await supabase
