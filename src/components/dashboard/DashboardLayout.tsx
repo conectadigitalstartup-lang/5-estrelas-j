@@ -134,7 +134,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       >
         <DashboardHeader
           companyName={profile?.restaurant_name || "Meu Restaurante"}
-          trialDaysLeft={profile?.subscription_status === "trial" ? trialDaysLeft : undefined}
+          trialDaysLeft={status === "trial" ? daysLeft : undefined}
           unreadCount={unreadCount}
           onMenuClick={() => setMobileMenuOpen(true)}
           isMobile={isMobile}
