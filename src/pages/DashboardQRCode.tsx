@@ -77,13 +77,34 @@ const DashboardQRCode = () => {
     setDownloading(null);
   };
 
+  const waitForImages = (element: HTMLElement): Promise<void> => {
+    const images = element.querySelectorAll('img');
+    const promises = Array.from(images).map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+      });
+    });
+    return Promise.all(promises).then(() => {});
+  };
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     const element = document.getElementById("material-preview");
     if (!element) return;
 
     try {
-      const canvas = await html2canvas(element, { scale: 3, backgroundColor: null });
+      // Wait for all images to load
+      await waitForImages(element);
+      
+      const canvas = await html2canvas(element, { 
+        scale: 3, 
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+      });
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
@@ -115,7 +136,16 @@ const DashboardQRCode = () => {
     if (!element) return;
 
     try {
-      const canvas = await html2canvas(element, { scale: 3, backgroundColor: null });
+      // Wait for all images to load
+      await waitForImages(element);
+      
+      const canvas = await html2canvas(element, { 
+        scale: 3, 
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+      });
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
