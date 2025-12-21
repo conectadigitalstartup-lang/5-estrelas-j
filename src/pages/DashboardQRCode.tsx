@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
@@ -78,7 +78,7 @@ const DashboardQRCode = () => {
   };
 
   const waitForImages = (element: HTMLElement): Promise<void> => {
-    const images = element.querySelectorAll('img');
+    const images = element.querySelectorAll("img");
     const promises = Array.from(images).map((img) => {
       if (img.complete) return Promise.resolve();
       return new Promise<void>((resolve) => {
@@ -89,6 +89,8 @@ const DashboardQRCode = () => {
     return Promise.all(promises).then(() => {});
   };
 
+  const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     const element = document.getElementById("material-preview");
@@ -97,6 +99,9 @@ const DashboardQRCode = () => {
     try {
       // Wait for all images to load
       await waitForImages(element);
+
+      // Extra delay to guarantee QR code render/paint before capture
+      await delay(500);
       
       const canvas = await html2canvas(element, { 
         scale: 3, 
@@ -138,6 +143,9 @@ const DashboardQRCode = () => {
     try {
       // Wait for all images to load
       await waitForImages(element);
+
+      // Extra delay to guarantee QR code render/paint before capture
+      await delay(500);
       
       const canvas = await html2canvas(element, { 
         scale: 3, 
@@ -220,6 +228,7 @@ const DashboardQRCode = () => {
                     <img
                       src={company.logo_url}
                       alt={company.name}
+                      crossOrigin="anonymous"
                       className="w-20 h-20 mx-auto mb-4 rounded-xl object-cover bg-white"
                     />
                   ) : (
@@ -236,7 +245,8 @@ const DashboardQRCode = () => {
                     Como foi sua experiência?
                   </p>
                   <div className="bg-white p-4 rounded-xl inline-block mb-4">
-                    <QRCodeSVG
+                    <QRCodeCanvas
+                      id="qr-code-material"
                       value={evaluationUrl}
                       size={140}
                       level="H"

@@ -1,18 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  QrCode, 
-  MessageSquare, 
-  Settings, 
+import {
+  LayoutDashboard,
+  QrCode,
+  MessageSquare,
+  Settings,
   Rocket,
   LogOut,
   Star,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { SUPER_ADMIN_EMAIL } from "@/config/admin";
 
 interface DashboardSidebarProps {
   collapsed: boolean;
@@ -30,6 +32,13 @@ const menuItems = [
 const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  const isSuperAdmin =
+    !!user?.email && user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase();
+
+  const items = isSuperAdmin
+    ? [...menuItems, { icon: Shield, label: "Admin", path: "/admin" }]
+    : menuItems;
 
   const handleSignOut = async () => {
     await signOut();
@@ -87,7 +96,7 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
 
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => {
+        {items.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Navigate } from "react-router-dom";
+import { Building2, CreditCard, MessageSquare } from "lucide-react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, CreditCard, MessageSquare } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// SUPER ADMIN EMAIL
-const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
+import { SUPER_ADMIN_EMAIL } from "@/config/admin";
 
 interface AdminStats {
   totalCompanies: number;
@@ -18,61 +18,52 @@ interface AdminStats {
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isSuperAdmin = user?.email === SUPER_ADMIN_EMAIL;
+  const isSuperAdmin =
+    !!user?.email && user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase();
 
   useEffect(() => {
     const fetchStats = async () => {
       if (!isSuperAdmin) return;
 
-      try {
-        // Fetch total companies
-        const { count: companiesCount } = await supabase
-          .from("companies")
-          .select("*", { count: "exact", head: true });
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke("admin-stats");
 
-        // Fetch active subscriptions (active or trialing)
-        const { count: subscriptionsCount } = await supabase
-          .from("subscriptions")
-          .select("*", { count: "exact", head: true })
-          .in("status", ["active", "trialing"]);
-
-        // Fetch total feedbacks
-        const { count: feedbacksCount } = await supabase
-          .from("feedbacks")
-          .select("*", { count: "exact", head: true });
-
-        setStats({
-          totalCompanies: companiesCount || 0,
-          activeSubscriptions: subscriptionsCount || 0,
-          totalFeedbacks: feedbacksCount || 0,
+      if (error) {
+        toast({
+          title: "Erro ao carregar admin",
+          description: "Não foi possível carregar as métricas.",
+          variant: "destructive",
         });
-      } catch (error) {
-        console.error("Error fetching admin stats:", error);
-      } finally {
+        setStats(null);
         setLoading(false);
+        return;
       }
+
+      setStats(data as AdminStats);
+      setLoading(false);
     };
 
-    if (!authLoading && isSuperAdmin) {
-      fetchStats();
-    } else if (!authLoading) {
-      setLoading(false);
+    if (!authLoading) {
+      if (isSuperAdmin) fetchStats();
+      else setLoading(false);
     }
-  }, [authLoading, isSuperAdmin]);
+  }, [authLoading, isSuperAdmin, toast]);
 
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
   if (!user || !isSuperAdmin) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
@@ -84,17 +75,14 @@ const Admin = () => {
 
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
+          <header className="mb-8">
             <h1 className="text-3xl font-display font-bold text-foreground">
               Painel Administrativo
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Visão geral do sistema
-            </p>
-          </div>
+            <p className="text-muted-foreground mt-1">Visão geral do sistema</p>
+          </header>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Total Companies */}
+          <main className="grid md:grid-cols-3 gap-6">
             <Card className="shadow-elevated">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -107,13 +95,12 @@ const Admin = () => {
                   <Skeleton className="h-10 w-24" />
                 ) : (
                   <p className="text-4xl font-bold text-foreground">
-                    {stats?.totalCompanies || 0}
+                    {stats?.totalCompanies ?? 0}
                   </p>
                 )}
               </CardContent>
             </Card>
 
-            {/* Active Subscriptions */}
             <Card className="shadow-elevated">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -126,17 +113,16 @@ const Admin = () => {
                   <Skeleton className="h-10 w-24" />
                 ) : (
                   <p className="text-4xl font-bold text-foreground">
-                    {stats?.activeSubscriptions || 0}
+                    {stats?.activeSubscriptions ?? 0}
                   </p>
                 )}
               </CardContent>
             </Card>
 
-            {/* Total Feedbacks */}
             <Card className="shadow-elevated">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Feedbacks Capturados
+                  Feedbacks Recebidos
                 </CardTitle>
                 <MessageSquare className="h-5 w-5 text-coral" />
               </CardHeader>
@@ -145,12 +131,12 @@ const Admin = () => {
                   <Skeleton className="h-10 w-24" />
                 ) : (
                   <p className="text-4xl font-bold text-foreground">
-                    {stats?.totalFeedbacks || 0}
+                    {stats?.totalFeedbacks ?? 0}
                   </p>
                 )}
               </CardContent>
             </Card>
-          </div>
+          </main>
         </div>
       </div>
     </>
