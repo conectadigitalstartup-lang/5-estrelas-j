@@ -7,8 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, CreditCard, MessageSquare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// SUPER ADMIN EMAIL - Hardcoded for now
-const SUPER_ADMIN_EMAIL = "admin@example.com"; // Substitua pelo seu email
+// SUPER ADMIN EMAIL
+const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
 
 interface AdminStats {
   totalCompanies: number;
