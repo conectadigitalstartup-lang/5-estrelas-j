@@ -53,11 +53,13 @@ const Auth = () => {
     defaultValues: { restaurantName: "", email: "", password: "", confirmPassword: "" }
   });
 
+  // Não redireciona automaticamente após signup - deixa o handleSignUp controlar
+  // Para login, continua redirecionando para dashboard
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !isSignUp) {
       navigate("/dashboard");
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isSignUp]);
 
   useEffect(() => {
     setIsSignUp(location.pathname === "/cadastro");
@@ -129,8 +131,10 @@ const Auth = () => {
     } else {
       toast({
         title: "Conta criada com sucesso!",
-        description: "Seu período de teste grátis de 14 dias começou."
+        description: "Complete o cadastro para iniciar seu teste grátis."
       });
+      // Redireciona para página de cadastro do cartão
+      navigate("/complete-registration");
     }
   };
 
