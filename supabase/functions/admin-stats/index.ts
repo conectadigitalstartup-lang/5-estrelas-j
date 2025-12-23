@@ -45,25 +45,81 @@ serve(async (req) => {
       });
     }
 
-    const [{ count: totalCompanies, error: companiesError }, { count: activeSubscriptions, error: subsError }, { count: totalFeedbacks, error: feedbacksError }] =
-      await Promise.all([
-        supabaseClient.from("companies").select("*", { count: "exact", head: true }),
-        supabaseClient
-          .from("subscriptions")
-          .select("*", { count: "exact", head: true })
-          .in("status", ["active", "trialing"]),
-        supabaseClient.from("feedbacks").select("*", { count: "exact", head: true }),
+    // Fetch all counts in parallel
+    const [
+      companiesResult,
+      activeSubsResult,
+      trialingResult,
+      canceledResult,
+      totalFeedbacksResult,
+      positiveFeedbacksResult,
+      negativeFeedbacksResult,
+      clientsResult
+    ] = await Promise.all([
+      supabaseClient.from("companies").select("*", { count: "exact", head: true }),
+      supabaseClient.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "active"),
+      supabaseClient.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "trialing"),
+      supabaseClient.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "canceled"),
+      supabaseClient.from("feedbacks").select("*", { count: "exact", head: true }),
+      supabaseClient.from("feedbacks").select("*", { count: "exact", head: true }).gte("rating", 4),
+      supabaseClient.from("feedbacks").select("*", { count: "exact", head: true }).lte("rating", 3),
+      supabaseClient.from("companies").select(`
+        id,
+        name,
+        created_at,
+        owner_id
+      `).order("created_at", { ascending: false }).limit(50)
+    ]);
+
+    // Fetch subscriptions for clients
+    const ownerIds = clientsResult.data?.map(c => c.owner_id) || [];
+    let subscriptionsMap: Record<string, { status: string; plan: string }> = {};
+    let profilesMap: Record<string, { email: string }> = {};
+
+    if (ownerIds.length > 0) {
+      const [subsResult, profilesResult] = await Promise.all([
+        supabaseClient.from("subscriptions").select("user_id, status, plan").in("user_id", ownerIds),
+        supabaseClient.from("profiles").select("user_id, full_name").in("user_id", ownerIds)
       ]);
 
-    if (companiesError) throw companiesError;
-    if (subsError) throw subsError;
-    if (feedbacksError) throw feedbacksError;
+      if (subsResult.data) {
+        subsResult.data.forEach(sub => {
+          subscriptionsMap[sub.user_id] = { status: sub.status, plan: sub.plan || "basico" };
+        });
+      }
+
+      if (profilesResult.data) {
+        profilesResult.data.forEach(profile => {
+          profilesMap[profile.user_id] = { email: profile.full_name || "" };
+        });
+      }
+    }
+
+    // Get user emails from auth
+    const clients = clientsResult.data?.map(company => ({
+      id: company.id,
+      name: company.name,
+      email: profilesMap[company.owner_id]?.email || "-",
+      status: subscriptionsMap[company.owner_id]?.status || "trialing",
+      plan: subscriptionsMap[company.owner_id]?.plan || "basico",
+      created_at: company.created_at,
+    })) || [];
+
+    const activeCount = activeSubsResult.count ?? 0;
+    const trialingCount = trialingResult.count ?? 0;
 
     return new Response(
       JSON.stringify({
-        totalCompanies: totalCompanies ?? 0,
-        activeSubscriptions: activeSubscriptions ?? 0,
-        totalFeedbacks: totalFeedbacks ?? 0,
+        totalCompanies: companiesResult.count ?? 0,
+        activeSubscriptions: activeCount,
+        trialingSubscriptions: trialingCount,
+        canceledSubscriptions: canceledResult.count ?? 0,
+        totalFeedbacks: totalFeedbacksResult.count ?? 0,
+        positiveFeedbacks: positiveFeedbacksResult.count ?? 0,
+        negativeFeedbacks: negativeFeedbacksResult.count ?? 0,
+        mrr: activeCount * 99,
+        potentialRevenue: trialingCount * 99,
+        clients,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

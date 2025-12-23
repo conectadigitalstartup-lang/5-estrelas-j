@@ -142,6 +142,24 @@ export const useSubscription = () => {
     }
   };
 
+  const createCheckoutWithTrial = async (priceId: string) => {
+    if (!session?.access_token) {
+      throw new Error("User not authenticated");
+    }
+
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: { priceId, withTrial: true },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) throw error;
+    if (data?.url) {
+      window.location.href = data.url;
+    }
+  };
+
   const openCustomerPortal = async () => {
     if (!session?.access_token) {
       throw new Error("User not authenticated");
@@ -182,6 +200,7 @@ export const useSubscription = () => {
     ...state,
     checkSubscription,
     createCheckout,
+    createCheckoutWithTrial,
     openCustomerPortal,
   };
 };
