@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, ExternalLink, Send, CheckCircle, Loader2, Copy } from "lucide-react";
+import { Star, ExternalLink, Send, CheckCircle, Loader2, Copy, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ const Avaliar = () => {
   const { slug } = useParams<{ slug: string }>();
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [step, setStep] = useState<Step>("rating");
@@ -28,9 +29,29 @@ const Avaliar = () => {
   const [promoterComment, setPromoterComment] = useState("");
 
   useEffect(() => {
-    const fetchCompany = async () => {
+    const fetchCompanyAndCheckAccess = async () => {
       if (!slug) return;
 
+      // First, check if the company owner has a valid subscription
+      const { data: accessData, error: accessError } = await supabase
+        .rpc('check_company_access', { company_slug: slug });
+
+      if (accessError) {
+        console.error("Error checking access:", accessError);
+        setHasAccess(false);
+        setLoading(false);
+        return;
+      }
+
+      setHasAccess(accessData);
+
+      // If no access, don't bother fetching company details
+      if (!accessData) {
+        setLoading(false);
+        return;
+      }
+
+      // Fetch company details
       const { data, error } = await supabase
         .from("companies")
         .select("id, name, logo_url, google_review_link")
@@ -46,7 +67,7 @@ const Avaliar = () => {
       setLoading(false);
     };
 
-    fetchCompany();
+    fetchCompanyAndCheckAccess();
   }, [slug]);
 
   const handleRatingClick = async (selectedRating: number) => {
@@ -121,6 +142,32 @@ const Avaliar = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Access blocked - subscription invalid
+  if (hasAccess === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/30 px-4 py-8">
+        <div className="w-full max-w-md">
+          <div className="bg-card rounded-2xl shadow-xl border border-border/50 p-8 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+                <AlertCircle className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </div>
+            <h1 className="text-xl font-semibold text-foreground mb-2">
+              Serviço Temporariamente Indisponível
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Este canal de avaliação está temporariamente indisponível.
+            </p>
+          </div>
+          <p className="text-center text-xs text-muted-foreground mt-6 opacity-50">
+            Avalia Pro
+          </p>
+        </div>
       </div>
     );
   }

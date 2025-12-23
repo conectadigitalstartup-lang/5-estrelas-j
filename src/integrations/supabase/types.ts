@@ -198,6 +198,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_company_access: { Args: { company_slug: string }; Returns: boolean }
       has_active_subscription: {
         Args: { check_user_id: string }
         Returns: boolean
