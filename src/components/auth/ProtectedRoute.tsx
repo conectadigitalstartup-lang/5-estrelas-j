@@ -11,40 +11,55 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+  const [checkingStatus, setCheckingStatus] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkOnboarding = async () => {
+    const checkUserStatus = async () => {
       if (!user) {
-        setCheckingOnboarding(false);
+        setCheckingStatus(false);
         return;
       }
 
       try {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("onboarding_completed")
-          .eq("user_id", user.id)
-          .maybeSingle();
+        // Check onboarding and subscription status in parallel
+        const [profileResult, subscriptionResult] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("user_id", user.id)
+            .maybeSingle(),
+          supabase
+            .from("subscriptions")
+            .select("status, trial_ends_at")
+            .eq("user_id", user.id)
+            .maybeSingle()
+        ]);
 
-        setOnboardingCompleted(profile?.onboarding_completed ?? false);
+        setOnboardingCompleted(profileResult.data?.onboarding_completed ?? false);
+        
+        // Check if user has active or trialing subscription
+        const subscription = subscriptionResult.data;
+        const isActive = subscription?.status === "active" || subscription?.status === "trialing";
+        setHasActiveSubscription(isActive);
       } catch (error) {
-        console.error("Error checking onboarding:", error);
+        console.error("Error checking user status:", error);
         setOnboardingCompleted(false);
+        setHasActiveSubscription(false);
       } finally {
-        setCheckingOnboarding(false);
+        setCheckingStatus(false);
       }
     };
 
     if (!loading && user) {
-      checkOnboarding();
+      checkUserStatus();
     } else if (!loading) {
-      setCheckingOnboarding(false);
+      setCheckingStatus(false);
     }
   }, [user, loading]);
 
-  if (loading || checkingOnboarding) {
+  if (loading || checkingStatus) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-coral" />
@@ -54,6 +69,16 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Allow access to complete-registration page
+  if (location.pathname === "/complete-registration") {
+    return <>{children}</>;
+  }
+
+  // If no active subscription, redirect to complete-registration
+  if (hasActiveSubscription === false) {
+    return <Navigate to="/complete-registration" replace />;
   }
 
   // If on onboarding page, allow access
