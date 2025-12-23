@@ -113,29 +113,25 @@ const Avaliar = () => {
   const handleGoToGoogle = async () => {
     if (!company) return;
 
-    // Save the positive feedback first
-    await supabase.from("feedbacks").insert({
+    // Save the positive feedback
+    supabase.from("feedbacks").insert({
       company_id: company.id,
       rating,
       comment: promoterComment.trim() || null,
+    }).then(() => {
+      // Fire and forget
     });
 
     // Copy comment to clipboard if exists
     if (promoterComment.trim()) {
       try {
         await navigator.clipboard.writeText(promoterComment);
-        toast.success("✓ Seu texto foi copiado! Basta colar no Google.");
+        toast.success("✓ Texto copiado! Cole no Google.");
       } catch (err) {
         console.error("Failed to copy:", err);
       }
     }
-
-    // Wait 1.5 seconds then open Google
-    setTimeout(() => {
-      if (company?.google_review_link) {
-        window.open(company.google_review_link, "_blank");
-      }
-    }, 1500);
+    // Navigation is handled by the <a> element
   };
 
   if (loading) {
@@ -298,14 +294,16 @@ const Avaliar = () => {
               />
 
               {company.google_review_link && (
-                <Button
+                <a
+                  href={company.google_review_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={handleGoToGoogle}
-                  size="lg"
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold gap-2"
+                  className="w-full inline-flex items-center justify-center gap-2 h-12 px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-md transition-colors"
                 >
                   <ExternalLink className="h-5 w-5" />
                   Publicar meu elogio
-                </Button>
+                </a>
               )}
 
               <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
