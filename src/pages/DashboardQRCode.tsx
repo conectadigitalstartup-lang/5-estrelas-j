@@ -264,7 +264,7 @@ const DashboardQRCode = () => {
                     ))}
                   </div>
                   <p className="text-white/50 text-xs">
-                    Powered by Avalia Aí
+                    Powered by Avalia Pro
                   </p>
                 </div>
               )}

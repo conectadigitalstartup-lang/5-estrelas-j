@@ -2,30 +2,27 @@ import { Star, Quote } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Roberto Silva",
-    role: "Dono do Restaurante Sabor & Arte",
-    location: "São Paulo, SP",
+    name: "Carlos M.",
+    role: "Pizzaria Bella Napoli",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     content:
-      "Em 3 meses, nossa nota no Google subiu de 3.8 para 4.6. Os clientes agora nos encontram com facilidade e a casa vive lotada. Investimento que se paga em uma semana.",
+      "Em 3 semanas, minha nota subiu de 4.1 para 4.6. Os clientes insatisfeitos agora falam comigo primeiro.",
     rating: 5,
   },
   {
-    name: "Marina Costa",
-    role: "Gerente do Café Aroma",
-    location: "Rio de Janeiro, RJ",
+    name: "Ana L.",
+    role: "Café & Bistrô",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
     content:
-      "Antes eu recebia reclamações públicas e não sabia como lidar. Agora os problemas chegam direto no meu email, resolvo na hora e o cliente sai feliz. Recomendo demais!",
+      "Simples de usar. Coloquei o QR Code nas mesas e os reviews positivos começaram a aparecer sozinhos.",
     rating: 5,
   },
   {
-    name: "Carlos Mendes",
-    role: "Proprietário do Bar do Carlão",
-    location: "Belo Horizonte, MG",
+    name: "Roberto S.",
+    role: "Hamburgueria Premium",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     content:
-      "O QR Code na mesa é sensacional. Os clientes adoram e eu recebo dezenas de reviews novos toda semana. Minha reputação nunca esteve tão boa.",
+      "Finalmente parei de perder clientes por causa de avaliações antigas. O filtro funciona de verdade.",
     rating: 5,
   },
 ];
@@ -42,8 +39,8 @@ const TestimonialsSection = () => {
             O Que Nossos Clientes Dizem
           </h2>
           <p className="text-muted-foreground text-lg">
-            Restaurantes de todo o Brasil já transformaram sua reputação online com a
-            Máquina de Reviews.
+            Restaurantes de todo o Brasil já transformaram sua reputação online com o
+            Avalia Pro.
           </p>
         </div>
 
@@ -86,7 +83,6 @@ const TestimonialsSection = () => {
                 <div>
                   <p className="font-semibold text-foreground">{testimonial.name}</p>
                   <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  <p className="text-xs text-muted-foreground">{testimonial.location}</p>
                 </div>
               </div>
             </div>

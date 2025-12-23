@@ -29,7 +29,7 @@ const CompleteRegistration = () => {
   return (
     <>
       <Helmet>
-        <title>Complete seu Cadastro - Avalia Aí</title>
+        <title>Complete seu Cadastro - Avalia Pro</title>
         <meta name="description" content="Complete seu cadastro para começar seu teste grátis de 14 dias." />
       </Helmet>
 

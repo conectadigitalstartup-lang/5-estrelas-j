@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, ExternalLink, Send, CheckCircle, Loader2 } from "lucide-react";
+import { Star, ExternalLink, Send, CheckCircle, Loader2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ const Avaliar = () => {
   const [step, setStep] = useState<Step>("rating");
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [promoterComment, setPromoterComment] = useState("");
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -88,10 +89,32 @@ const Avaliar = () => {
     setStep("thankyou");
   };
 
-  const handleGoogleReview = () => {
-    if (company?.google_review_link) {
-      window.open(company.google_review_link, "_blank");
+  const handleGoToGoogle = async () => {
+    if (!company) return;
+
+    // Save the positive feedback first
+    await supabase.from("feedbacks").insert({
+      company_id: company.id,
+      rating,
+      comment: promoterComment.trim() || null,
+    });
+
+    // Copy comment to clipboard if exists
+    if (promoterComment.trim()) {
+      try {
+        await navigator.clipboard.writeText(promoterComment);
+        toast.success("✓ Seu texto foi copiado! Basta colar no Google.");
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
     }
+
+    // Wait 1.5 seconds then open Google
+    setTimeout(() => {
+      if (company?.google_review_link) {
+        window.open(company.google_review_link, "_blank");
+      }
+    }, 1500);
   };
 
   if (loading) {
@@ -172,13 +195,36 @@ const Avaliar = () => {
           {/* Step: Promoter (4-5 stars) */}
           {step === "promoter" && (
             <div className="space-y-6 animate-fade-in">
+              {/* Progress Bar - Zeigarnik Effect */}
+              <div className="bg-muted rounded-lg p-4 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <CheckCircle className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    Passo 1 de 2: Nota registrada
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30 flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground">2</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Passo 2 de 2: Publicar no Google
+                  </span>
+                </div>
+                {/* Progress bar visual */}
+                <div className="mt-3 h-2 bg-muted-foreground/20 rounded-full overflow-hidden">
+                  <div className="h-full w-1/2 bg-emerald-500 rounded-full" />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-foreground">
-                  🎉 Ficamos muito felizes!
+                  🎉 Que bom que você gostou!
                 </h2>
                 <p className="text-muted-foreground">
-                  Poderia compartilhar sua experiência no Google? Ajuda muito
-                  nosso negócio!
+                  Sua opinião ajuda outros clientes a descobrirem este lugar incrível
                 </p>
               </div>
 
@@ -195,19 +241,29 @@ const Avaliar = () => {
                 ))}
               </div>
 
+              {/* Optional comment field for promoters */}
+              <Textarea
+                value={promoterComment}
+                onChange={(e) => setPromoterComment(e.target.value)}
+                placeholder="Escreva seu elogio aqui (opcional - será copiado automaticamente)"
+                className="min-h-[100px] resize-none"
+                maxLength={500}
+              />
+
               {company.google_review_link && (
                 <Button
-                  onClick={handleGoogleReview}
+                  onClick={handleGoToGoogle}
                   size="lg"
-                  className="w-full bg-gold hover:bg-gold/90 text-navy font-semibold gap-2"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold gap-2"
                 >
                   <ExternalLink className="h-5 w-5" />
-                  Avaliar no Google
+                  Publicar meu elogio
                 </Button>
               )}
 
-              <p className="text-xs text-muted-foreground">
-                Obrigado por nos ajudar a crescer!
+              <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                <Copy className="w-3 h-3" />
+                Seu texto será copiado automaticamente para facilitar
               </p>
             </div>
           )}
@@ -286,7 +342,7 @@ const Avaliar = () => {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Powered by Máquina de Reviews
+          Powered by Avalia Pro
         </p>
       </div>
     </div>
