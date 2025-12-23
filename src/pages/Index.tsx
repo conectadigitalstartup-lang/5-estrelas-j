@@ -8,15 +8,16 @@ import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
 
 const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
+const FAQSection = lazy(() => import("@/components/landing/FAQSection"));
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
 
 const schemaData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Máquina de Reviews",
+  "name": "Avalia Pro",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
-  "description": "Sistema inteligente de gestão de reputação online para restaurantes. Aumente suas avaliações no Google e proteja sua marca de críticas negativas.",
+  "description": "A sua máquina de reviews 5 estrelas. Sistema inteligente de gestão de reputação online para restaurantes.",
   "offers": {
     "@type": "AggregateOffer",
     "lowPrice": "97",
@@ -35,29 +36,29 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Máquina de Reviews - Transforme Clientes em 5 Estrelas no Google</title>
+        <title>Avalia Pro - A sua máquina de reviews 5 estrelas</title>
         <meta
           name="description"
-          content="Sistema inteligente de gestão de reputação online para restaurantes. Aumente suas avaliações no Google e proteja sua marca de críticas negativas. Teste grátis por 14 dias."
+          content="Proteja a reputação do seu restaurante e dobre suas avaliações 5 estrelas em 30 dias. O filtro inteligente que transforma clientes satisfeitos em reviews no Google."
         />
         <meta
           name="keywords"
-          content="avaliações google, reputação online, restaurante, reviews, gestão de reputação, qr code, feedback"
+          content="avaliações google, reputação online, restaurante, reviews, gestão de reputação, qr code, feedback, avalia pro"
         />
-        <link rel="canonical" href="https://maquinadereviews.com.br" />
+        <link rel="canonical" href="https://avaliapro.com.br" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Máquina de Reviews - Transforme Clientes em 5 Estrelas no Google" />
-        <meta property="og:description" content="Sistema inteligente de gestão de reputação online para restaurantes. Aumente suas avaliações no Google e proteja sua marca." />
-        <meta property="og:url" content="https://maquinadereviews.com.br" />
-        <meta property="og:site_name" content="Máquina de Reviews" />
+        <meta property="og:title" content="Avalia Pro - A sua máquina de reviews 5 estrelas" />
+        <meta property="og:description" content="Proteja a reputação do seu restaurante e dobre suas avaliações 5 estrelas em 30 dias." />
+        <meta property="og:url" content="https://avaliapro.com.br" />
+        <meta property="og:site_name" content="Avalia Pro" />
         <meta property="og:locale" content="pt_BR" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Máquina de Reviews - Transforme Clientes em 5 Estrelas no Google" />
-        <meta name="twitter:description" content="Sistema inteligente de gestão de reputação online para restaurantes. Aumente suas avaliações no Google." />
+        <meta name="twitter:title" content="Avalia Pro - A sua máquina de reviews 5 estrelas" />
+        <meta name="twitter:description" content="Proteja a reputação do seu restaurante e dobre suas avaliações 5 estrelas em 30 dias." />
         
         {/* Schema.org */}
         <script type="application/ld+json">
@@ -83,6 +84,9 @@ const Index = () => {
           <Suspense fallback={<div className="h-96 bg-background" aria-hidden="true" />}>
             <section id="depoimentos" aria-labelledby="testimonials-title">
               <TestimonialsSection />
+            </section>
+            <section id="faq" aria-labelledby="faq-title">
+              <FAQSection />
             </section>
             <section id="cta" aria-labelledby="cta-title">
               <CTASection />

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Shield, TrendingUp } from "lucide-react";
+import { ArrowRight, Star, Shield, TrendingUp, CheckCircle } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -23,29 +23,43 @@ const HeroSection = () => {
 
           {/* Headline */}
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Transforme Clientes Satisfeitos em{" "}
-            <span className="text-gradient-gold">5 Estrelas no Google</span>
+            Proteja a reputação do seu restaurante e dobre suas{" "}
+            <span className="text-gradient-gold">avaliações 5 estrelas em 30 dias</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-primary-foreground/70 max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Sistema inteligente que filtra experiências via QR Code. Clientes felizes vão
-            para o Google. Clientes insatisfeitos deixam feedback privado. Sua reputação,
-            protegida.
+            O filtro inteligente que transforma clientes satisfeitos em reviews no Google e bloqueia críticas antes que se tornem públicas.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <div className="flex flex-col items-center gap-4 mb-8 animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <Button
               size="lg"
-              className="bg-secondary text-secondary-foreground hover:bg-gold-dark text-lg px-8 py-6 shadow-gold"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg px-10 py-7 shadow-lg"
               asChild
             >
               <Link to="/cadastro">
-                Começar Teste Grátis
+                Começar Teste Grátis de 14 Dias
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
+            
+            {/* Trust badges below CTA */}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-primary-foreground/60 text-sm">
+              <div className="flex items-center gap-1">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span>Sem cartão de crédito</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span>Cancele quando quiser</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary CTA */}
+          <div className="animate-fade-in" style={{ animationDelay: "0.35s" }}>
             <Button
               size="lg"
               variant="outline"
@@ -57,7 +71,7 @@ const HeroSection = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-16 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <div className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-xl p-6">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Star className="w-5 h-5 text-secondary" fill="currentColor" />

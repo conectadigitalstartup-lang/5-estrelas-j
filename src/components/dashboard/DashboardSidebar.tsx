@@ -59,7 +59,7 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
           </div>
           {!collapsed && (
             <span className="font-display text-lg font-bold text-sidebar-foreground">
-              Avalia Aí
+              Avalia Pro
             </span>
           )}
         </Link>

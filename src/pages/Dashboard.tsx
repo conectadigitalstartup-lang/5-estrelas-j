@@ -151,7 +151,7 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        <title>Dashboard - Avalia Aí</title>
+        <title>Dashboard - Avalia Pro</title>
         <meta name="description" content="Gerencie a reputação do seu restaurante e acompanhe suas avaliações." />
       </Helmet>
 

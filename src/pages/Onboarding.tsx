@@ -171,10 +171,10 @@ const Onboarding = () => {
   return (
     <>
       <Helmet>
-        <title>Configuração Inicial | Avalia Aí</title>
+        <title>Configuração Inicial | Avalia Pro</title>
         <meta
           name="description"
-          content="Configure seu restaurante no Avalia Aí"
+          content="Configure seu restaurante no Avalia Pro"
         />
       </Helmet>
 
@@ -185,7 +185,7 @@ const Onboarding = () => {
           ) : (
             <>
               <div className="text-center mb-4">
-                <h1 className="text-2xl font-bold text-navy">Avalia Aí</h1>
+                <h1 className="text-2xl font-bold text-navy">Avalia Pro</h1>
               </div>
 
               <OnboardingProgress currentStep={currentStep} totalSteps={3} />

@@ -15,9 +15,14 @@ const Header = () => {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Star className="w-6 h-6 text-secondary" fill="currentColor" />
             </div>
-            <span className="font-display text-xl font-bold text-foreground">
-              Máquina de Reviews
-            </span>
+            <div className="flex flex-col">
+              <span className="font-display text-xl font-bold text-foreground leading-tight">
+                Avalia Pro
+              </span>
+              <span className="text-[10px] text-muted-foreground leading-tight hidden sm:block">
+                A sua máquina de reviews 5 estrelas
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -54,7 +59,7 @@ const Header = () => {
               <Link to="/auth">Entrar</Link>
             </Button>
             <Button className="bg-secondary text-secondary-foreground hover:bg-gold-dark" asChild>
-              <Link to="/auth">Teste Grátis</Link>
+              <Link to="/cadastro">Teste Grátis</Link>
             </Button>
           </div>
 
@@ -109,7 +114,7 @@ const Header = () => {
                   <Link to="/auth">Entrar</Link>
                 </Button>
                 <Button className="bg-secondary text-secondary-foreground hover:bg-gold-dark" asChild>
-                  <Link to="/auth">Teste Grátis</Link>
+                  <Link to="/cadastro">Teste Grátis</Link>
                 </Button>
               </div>
             </nav>

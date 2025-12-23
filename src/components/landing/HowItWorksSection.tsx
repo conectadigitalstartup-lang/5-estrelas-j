@@ -1,39 +1,4 @@
-import { QrCode, ThumbsUp, MessageSquare, Star, ArrowRight } from "lucide-react";
-
-const steps = [
-  {
-    icon: QrCode,
-    number: "01",
-    title: "Cliente Escaneia o QR Code",
-    description:
-      "Coloque nosso QR Code personalizado na mesa, cardápio ou na conta. O cliente escaneia em segundos com o celular.",
-    color: "bg-primary",
-  },
-  {
-    icon: ThumbsUp,
-    number: "02",
-    title: "Avalia a Experiência",
-    description:
-      "Uma tela elegante pergunta: 'Como foi sua experiência?' O cliente escolhe de 1 a 5 estrelas de forma rápida e intuitiva.",
-    color: "bg-secondary",
-  },
-  {
-    icon: Star,
-    number: "03",
-    title: "Feliz? Vai para o Google",
-    description:
-      "Se deu 4 ou 5 estrelas, é direcionado automaticamente para deixar uma avaliação pública no Google. Mais reviews positivos!",
-    color: "bg-primary",
-  },
-  {
-    icon: MessageSquare,
-    number: "04",
-    title: "Insatisfeito? Feedback Privado",
-    description:
-      "Se deu 1, 2 ou 3 estrelas, abre um formulário privado. O feedback vem direto para você, não vai para o Google.",
-    color: "bg-secondary",
-  },
-];
+import { QrCode, Filter, Star, Mail } from "lucide-react";
 
 const HowItWorksSection = () => {
   return (
@@ -44,48 +9,84 @@ const HowItWorksSection = () => {
             Como Funciona
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            Simples, Inteligente, Eficaz
+            Como o Avalia Pro protege sua reputação
           </h2>
           <p className="text-muted-foreground text-lg">
-            Em 4 passos simples, transformamos a forma como seu restaurante coleta e
-            gerencia avaliações online.
+            Um sistema inteligente que filtra as avaliações automaticamente
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {steps.map((step, index) => (
-              <div key={index} className="relative group">
-                <div className="bg-card border border-border rounded-2xl p-8 hover:shadow-elevated transition-all duration-300 h-full">
-                  {/* Step number */}
-                  <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-navy flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg">
-                    {step.number}
-                  </div>
-
-                  {/* Icon */}
-                  <div
-                    className={`w-14 h-14 rounded-xl ${step.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <step.icon className="w-7 h-7 text-primary-foreground" />
-                  </div>
-
-                  {/* Content */}
-                  <h3 className="font-semibold text-xl text-foreground mb-3">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-
-                {/* Arrow connector for desktop */}
-                {index < steps.length - 1 && index % 2 === 0 && (
-                  <div className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10">
-                    <ArrowRight className="w-8 h-8 text-border" />
-                  </div>
-                )}
+        <div className="max-w-6xl mx-auto">
+          {/* Flow Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Column 1 - Entrada */}
+            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-elevated transition-all duration-300">
+              <div className="w-20 h-20 rounded-2xl bg-primary mx-auto flex items-center justify-center mb-6">
+                <QrCode className="w-10 h-10 text-primary-foreground" />
               </div>
-            ))}
+              <h3 className="font-semibold text-xl text-foreground mb-3">
+                1. Cliente escaneia
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Seu cliente escaneia o QR Code na mesa e avalia a experiência em segundos.
+              </p>
+            </div>
+
+            {/* Column 2 - Filtro */}
+            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-elevated transition-all duration-300">
+              <div className="w-20 h-20 rounded-2xl bg-secondary mx-auto flex items-center justify-center mb-6">
+                <Filter className="w-10 h-10 text-secondary-foreground" />
+              </div>
+              <h3 className="font-semibold text-xl text-foreground mb-3">
+                2. Triagem automática
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Nosso sistema analisa a nota e direciona o cliente para o caminho certo.
+              </p>
+            </div>
+
+            {/* Column 3 - Two Outputs */}
+            <div className="space-y-4">
+              {/* Happy Customer */}
+              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6 text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Star className="w-6 h-6 text-emerald-600" fill="currentColor" />
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                    Cliente feliz?
+                  </span>
+                </div>
+                <p className="text-sm text-emerald-600 dark:text-emerald-300">
+                  Vai direto para o Google deixar uma avaliação pública 5 estrelas.
+                </p>
+                <div className="flex justify-center gap-1 mt-3">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} className="w-4 h-4 text-gold" fill="currentColor" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Unhappy Customer */}
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 text-center">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Mail className="w-6 h-6 text-amber-600" />
+                  <span className="font-semibold text-amber-700 dark:text-amber-400">
+                    Cliente insatisfeito?
+                  </span>
+                </div>
+                <p className="text-sm text-amber-600 dark:text-amber-300">
+                  Feedback vai privado para você resolver antes de virar crítica pública.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Result Message */}
+          <div className="mt-12 text-center">
+            <div className="inline-block bg-primary/5 border border-primary/20 rounded-2xl px-8 py-6">
+              <p className="text-lg font-medium text-foreground">
+                <span className="text-secondary font-bold">Resultado:</span> Sua nota no Google sobe organicamente enquanto você tem a chance de corrigir problemas internamente.
+              </p>
+            </div>
           </div>
         </div>
       </div>

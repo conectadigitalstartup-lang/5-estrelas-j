@@ -171,7 +171,7 @@ const Auth = () => {
                 <Star className="w-10 h-10 text-white" fill="currentColor" />
               </div>
               <h1 className="font-display text-2xl font-bold text-navy-dark">
-                Avalia Aí
+                Avalia Pro
               </h1>
             </div>
 

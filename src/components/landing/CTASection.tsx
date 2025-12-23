@@ -30,14 +30,13 @@ const CTASection = () => {
 
           {/* Headline */}
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-            Pronto para Dominar sua{" "}
-            <span className="text-gradient-gold">Reputação Online?</span>
+            Pronto para ter o restaurante mais bem avaliado{" "}
+            <span className="text-gradient-gold">da sua cidade?</span>
           </h2>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-primary-foreground/70 max-w-2xl mx-auto mb-8">
-            Comece agora com 14 dias grátis. Configure em 5 minutos. Veja os resultados
-            na primeira semana.
+            Junte-se a centenas de estabelecimentos que já protegem sua reputação com o Avalia Pro.
           </p>
 
           {/* Features */}
@@ -53,17 +52,17 @@ const CTASection = () => {
           {/* CTA Button */}
           <Button
             size="lg"
-            className="bg-secondary text-secondary-foreground hover:bg-gold-dark text-lg px-10 py-7 shadow-gold"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white text-lg px-10 py-7 shadow-lg"
             asChild
           >
             <Link to="/cadastro">
-              Começar Meu Teste Grátis
+              Começar Agora - É Grátis por 14 Dias
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>
 
           <p className="mt-4 text-primary-foreground/50 text-sm">
-            Junte-se a centenas de restaurantes que já transformaram sua reputação
+            Configure em 5 minutos. Veja os resultados na primeira semana.
           </p>
         </div>
       </div>
