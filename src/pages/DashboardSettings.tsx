@@ -228,6 +228,15 @@ const DashboardSettings = () => {
   };
 
   const handleChangePassword = async () => {
+    if (!passwords.current) {
+      toast({
+        title: "Erro",
+        description: "Digite sua senha atual.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (passwords.new !== passwords.confirm) {
       toast({
         title: "Erro",
@@ -248,6 +257,23 @@ const DashboardSettings = () => {
 
     setSavingPassword(true);
 
+    // Verify current password by re-authenticating
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: user?.email || "",
+      password: passwords.current,
+    });
+
+    if (authError) {
+      toast({
+        title: "Erro",
+        description: "Senha atual incorreta.",
+        variant: "destructive",
+      });
+      setSavingPassword(false);
+      return;
+    }
+
+    // Now change password
     const { error } = await supabase.auth.updateUser({
       password: passwords.new,
     });
