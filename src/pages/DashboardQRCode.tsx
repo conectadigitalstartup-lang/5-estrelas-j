@@ -77,63 +77,53 @@ const DashboardQRCode = () => {
     setDownloading(null);
   };
 
-  const waitForImages = (element: HTMLElement): Promise<void> => {
-    const images = element.querySelectorAll("img");
-    const promises = Array.from(images).map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
-      });
-    });
-    return Promise.all(promises).then(() => {});
-  };
-
   const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-
-  // Convert QR Code canvas to inline image for reliable PDF capture
-  const convertQRCodeToImage = async (element: HTMLElement): Promise<void> => {
-    const qrCanvas = element.querySelector("#qr-code-material") as HTMLCanvasElement;
-    if (qrCanvas) {
-      const dataUrl = qrCanvas.toDataURL("image/png");
-      const img = document.createElement("img");
-      img.src = dataUrl;
-      img.style.width = "140px";
-      img.style.height = "140px";
-      qrCanvas.parentNode?.replaceChild(img, qrCanvas);
-      // Wait for image to load
-      await new Promise<void>((resolve) => {
-        img.onload = () => resolve();
-        setTimeout(resolve, 100); // Fallback
-      });
-    }
-  };
 
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
-    const element = document.getElementById("material-preview");
-    if (!element) {
-      setDownloading(null);
-      return;
-    }
-
+    
     try {
-      // Clone the element to avoid modifying the original
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.position = "absolute";
-      clone.style.left = "-9999px";
-      document.body.appendChild(clone);
-
-      // Wait for all images to load
-      await waitForImages(clone);
-
-      // Convert QR Code canvas to image
-      await convertQRCodeToImage(clone);
-
-      // Extended delay to ensure complete render
-      await delay(1000);
+      // Get the QR Code canvas and convert to base64 image FIRST
+      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
+      const qrDataUrl = qrCanvas?.toDataURL("image/png") || "";
       
-      const canvas = await html2canvas(clone, { 
+      // Get logo if exists
+      const logoImg = document.querySelector("#material-preview img") as HTMLImageElement;
+      
+      // Create a temporary container with static images instead of canvas
+      const tempContainer = document.createElement("div");
+      tempContainer.style.cssText = "position: absolute; left: -9999px; top: 0;";
+      tempContainer.innerHTML = `
+        <div style="background: linear-gradient(135deg, #1a365d 0%, #2d4a6f 100%); padding: 32px; border-radius: 24px; text-align: center; width: 288px;">
+          ${company?.logo_url 
+            ? `<img src="${company.logo_url}" crossorigin="anonymous" style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; object-fit: cover; background: white; display: block;" />`
+            : `<div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; background: #D4AF37; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 30px; font-weight: bold; color: white;">${company?.name?.charAt(0).toUpperCase() || "R"}</span>
+              </div>`
+          }
+          <h3 style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 8px; font-family: system-ui, sans-serif;">${company?.name || "Seu Restaurante"}</h3>
+          <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 16px;">Como foi sua experiência?</p>
+          <div style="background: white; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
+            <img src="${qrDataUrl}" style="width: 140px; height: 140px; display: block;" />
+          </div>
+          <p style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; margin-bottom: 8px;">Escaneie e avalie agora</p>
+          <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 16px;">
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+          </div>
+          <p style="color: rgba(255,255,255,0.5); font-size: 12px;">Powered by Avalia Pro</p>
+        </div>
+      `;
+      
+      document.body.appendChild(tempContainer);
+      
+      // Wait for any images to load
+      await delay(1500);
+      
+      const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
         scale: 3, 
         backgroundColor: '#ffffff',
         useCORS: true,
@@ -141,8 +131,7 @@ const DashboardQRCode = () => {
         logging: false,
       });
 
-      // Remove clone
-      document.body.removeChild(clone);
+      document.body.removeChild(tempContainer);
 
       const imgData = canvas.toDataURL("image/png");
 
@@ -153,13 +142,14 @@ const DashboardQRCode = () => {
       });
 
       pdf.addImage(imgData, "PNG", 0, 0, 100, 140);
-      pdf.save(`material-mesa-${company?.slug}.pdf`);
+      pdf.save(`Avalia-Pro-Material-${company?.slug}.pdf`);
       
       toast({
         title: "PDF gerado!",
         description: "O material de mesa foi baixado.",
       });
     } catch (error) {
+      console.error("PDF generation error:", error);
       toast({
         title: "Erro ao gerar PDF",
         description: "Tente novamente.",
@@ -171,29 +161,46 @@ const DashboardQRCode = () => {
 
   const downloadA4PDF = async () => {
     setDownloading("a4");
-    const element = document.getElementById("material-preview");
-    if (!element) {
-      setDownloading(null);
-      return;
-    }
-
+    
     try {
-      // Clone the element to avoid modifying the original
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.position = "absolute";
-      clone.style.left = "-9999px";
-      document.body.appendChild(clone);
-
-      // Wait for all images to load
-      await waitForImages(clone);
-
-      // Convert QR Code canvas to image
-      await convertQRCodeToImage(clone);
-
-      // Extended delay to ensure complete render
-      await delay(1000);
+      // Get the QR Code canvas and convert to base64 image FIRST
+      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
+      const qrDataUrl = qrCanvas?.toDataURL("image/png") || "";
       
-      const canvas = await html2canvas(clone, { 
+      // Create a temporary container with static images instead of canvas
+      const tempContainer = document.createElement("div");
+      tempContainer.style.cssText = "position: absolute; left: -9999px; top: 0;";
+      tempContainer.innerHTML = `
+        <div style="background: linear-gradient(135deg, #1a365d 0%, #2d4a6f 100%); padding: 32px; border-radius: 24px; text-align: center; width: 288px;">
+          ${company?.logo_url 
+            ? `<img src="${company.logo_url}" crossorigin="anonymous" style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; object-fit: cover; background: white; display: block;" />`
+            : `<div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; background: #D4AF37; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 30px; font-weight: bold; color: white;">${company?.name?.charAt(0).toUpperCase() || "R"}</span>
+              </div>`
+          }
+          <h3 style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 8px; font-family: system-ui, sans-serif;">${company?.name || "Seu Restaurante"}</h3>
+          <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 16px;">Como foi sua experiência?</p>
+          <div style="background: white; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
+            <img src="${qrDataUrl}" style="width: 140px; height: 140px; display: block;" />
+          </div>
+          <p style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; margin-bottom: 8px;">Escaneie e avalie agora</p>
+          <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 16px;">
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+            <span style="color: #fbbf24; font-size: 18px;">★</span>
+          </div>
+          <p style="color: rgba(255,255,255,0.5); font-size: 12px;">Powered by Avalia Pro</p>
+        </div>
+      `;
+      
+      document.body.appendChild(tempContainer);
+      
+      // Wait for any images to load
+      await delay(1500);
+      
+      const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
         scale: 3, 
         backgroundColor: '#ffffff',
         useCORS: true,
@@ -201,8 +208,7 @@ const DashboardQRCode = () => {
         logging: false,
       });
 
-      // Remove clone
-      document.body.removeChild(clone);
+      document.body.removeChild(tempContainer);
 
       const imgData = canvas.toDataURL("image/png");
 
@@ -222,13 +228,14 @@ const DashboardQRCode = () => {
       pdf.addImage(imgData, "PNG", margin, margin + height + 5, width, height);
       pdf.addImage(imgData, "PNG", margin + width + 5, margin + height + 5, width, height);
 
-      pdf.save(`material-impressao-${company?.slug}.pdf`);
+      pdf.save(`Avalia-Pro-Impressao-${company?.slug}.pdf`);
       
       toast({
         title: "PDF A4 gerado!",
         description: "4 materiais prontos para impressão.",
       });
     } catch (error) {
+      console.error("PDF A4 generation error:", error);
       toast({
         title: "Erro ao gerar PDF",
         description: "Tente novamente.",
