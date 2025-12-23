@@ -18,6 +18,7 @@ import DashboardSettings from "./pages/DashboardSettings";
 import DashboardUpgrade from "./pages/DashboardUpgrade";
 import Avaliar from "./pages/Avaliar";
 import Admin from "./pages/Admin";
+import CompleteRegistration from "./pages/CompleteRegistration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
               <Route path="/avaliar/:slug" element={<Avaliar />} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+              <Route path="/complete-registration" element={<ProtectedRoute><CompleteRegistration /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

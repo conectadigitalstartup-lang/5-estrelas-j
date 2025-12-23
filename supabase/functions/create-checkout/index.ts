@@ -25,8 +25,8 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const { priceId } = await req.json();
-    logStep("Received request", { priceId });
+    const { priceId, withTrial } = await req.json();
+    logStep("Received request", { priceId, withTrial });
 
     if (!priceId) {
       throw new Error("Price ID is required");
@@ -56,7 +56,8 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://preview--avalia-ai-reviews.lovable.app";
 
-    const session = await stripe.checkout.sessions.create({
+    // Build session params
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
@@ -67,11 +68,25 @@ serve(async (req) => {
       ],
       mode: "subscription",
       success_url: `${origin}/dashboard?checkout=success`,
-      cancel_url: `${origin}/dashboard/upgrade?checkout=canceled`,
+      cancel_url: `${origin}/complete-registration`,
+      payment_method_collection: "always",
       metadata: {
         user_id: user.id,
       },
-    });
+    };
+
+    // Add trial period if requested
+    if (withTrial) {
+      sessionParams.subscription_data = {
+        trial_period_days: 14,
+        metadata: {
+          user_id: user.id,
+        },
+      };
+      logStep("Adding 14-day trial period");
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 

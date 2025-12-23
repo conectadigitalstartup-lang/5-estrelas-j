@@ -100,12 +100,12 @@ const DashboardQRCode = () => {
       // Wait for all images to load
       await waitForImages(element);
 
-      // Extra delay to guarantee QR code render/paint before capture
-      await delay(500);
+      // Increased delay to guarantee QR code render/paint before capture
+      await delay(800);
       
       const canvas = await html2canvas(element, { 
-        scale: 3, 
-        backgroundColor: null,
+        scale: 2, 
+        backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -144,12 +144,12 @@ const DashboardQRCode = () => {
       // Wait for all images to load
       await waitForImages(element);
 
-      // Extra delay to guarantee QR code render/paint before capture
-      await delay(500);
+      // Increased delay to guarantee QR code render/paint before capture
+      await delay(800);
       
       const canvas = await html2canvas(element, { 
-        scale: 3, 
-        backgroundColor: null,
+        scale: 2, 
+        backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
         logging: false,
