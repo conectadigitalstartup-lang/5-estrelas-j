@@ -91,25 +91,59 @@ const DashboardQRCode = () => {
 
   const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+  // Convert QR Code canvas to inline image for reliable PDF capture
+  const convertQRCodeToImage = async (element: HTMLElement): Promise<void> => {
+    const qrCanvas = element.querySelector("#qr-code-material") as HTMLCanvasElement;
+    if (qrCanvas) {
+      const dataUrl = qrCanvas.toDataURL("image/png");
+      const img = document.createElement("img");
+      img.src = dataUrl;
+      img.style.width = "140px";
+      img.style.height = "140px";
+      qrCanvas.parentNode?.replaceChild(img, qrCanvas);
+      // Wait for image to load
+      await new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        setTimeout(resolve, 100); // Fallback
+      });
+    }
+  };
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     const element = document.getElementById("material-preview");
-    if (!element) return;
+    if (!element) {
+      setDownloading(null);
+      return;
+    }
 
     try {
-      // Wait for all images to load
-      await waitForImages(element);
+      // Clone the element to avoid modifying the original
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      document.body.appendChild(clone);
 
-      // Increased delay to guarantee QR code render/paint before capture
-      await delay(800);
+      // Wait for all images to load
+      await waitForImages(clone);
+
+      // Convert QR Code canvas to image
+      await convertQRCodeToImage(clone);
+
+      // Extended delay to ensure complete render
+      await delay(1000);
       
-      const canvas = await html2canvas(element, { 
-        scale: 2, 
+      const canvas = await html2canvas(clone, { 
+        scale: 3, 
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
         logging: false,
       });
+
+      // Remove clone
+      document.body.removeChild(clone);
+
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
@@ -138,22 +172,38 @@ const DashboardQRCode = () => {
   const downloadA4PDF = async () => {
     setDownloading("a4");
     const element = document.getElementById("material-preview");
-    if (!element) return;
+    if (!element) {
+      setDownloading(null);
+      return;
+    }
 
     try {
-      // Wait for all images to load
-      await waitForImages(element);
+      // Clone the element to avoid modifying the original
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      document.body.appendChild(clone);
 
-      // Increased delay to guarantee QR code render/paint before capture
-      await delay(800);
+      // Wait for all images to load
+      await waitForImages(clone);
+
+      // Convert QR Code canvas to image
+      await convertQRCodeToImage(clone);
+
+      // Extended delay to ensure complete render
+      await delay(1000);
       
-      const canvas = await html2canvas(element, { 
-        scale: 2, 
+      const canvas = await html2canvas(clone, { 
+        scale: 3, 
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
         logging: false,
       });
+
+      // Remove clone
+      document.body.removeChild(clone);
+
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
