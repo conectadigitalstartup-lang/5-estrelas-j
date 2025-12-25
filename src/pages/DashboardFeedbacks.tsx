@@ -300,22 +300,35 @@ const DashboardFeedbacks = () => {
     setFeedbacks(updatedFeedbacks);
     calculateStats(updatedFeedbacks);
 
-    const { error } = await supabase
-      .from("feedbacks")
-      .delete()
-      .eq("id", deleteId);
+    try {
+      const { error } = await supabase
+        .from("feedbacks")
+        .delete()
+        .eq("id", deleteId);
 
-    if (error) {
-      // Rollback on error
+      if (error) {
+        // Rollback on error
+        setFeedbacks(previousFeedbacks);
+        calculateStats(previousFeedbacks);
+        console.error("Erro ao deletar feedback:", error);
+        toast({
+          title: "Erro ao excluir",
+          description: error.message || "Verifique suas permissões e tente novamente",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Feedback excluído com sucesso" });
+      }
+    } catch (err) {
+      // Rollback on unexpected error
       setFeedbacks(previousFeedbacks);
       calculateStats(previousFeedbacks);
+      console.error("Erro inesperado ao deletar:", err);
       toast({
-        title: "Erro ao excluir",
-        description: "Tente novamente",
+        title: "Erro inesperado",
+        description: "Não foi possível excluir o feedback. Tente novamente.",
         variant: "destructive",
       });
-    } else {
-      toast({ title: "Feedback excluído" });
     }
     setDeleteId(null);
   };
