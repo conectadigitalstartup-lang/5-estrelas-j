@@ -12,7 +12,7 @@ export const SubscriptionGuard = ({
   children, 
   requireActive = false 
 }: SubscriptionGuardProps) => {
-  const { status, isLoading } = useSubscription();
+  const { status, isLoading, isSuperAdmin } = useSubscription();
 
   if (isLoading) {
     return (
@@ -20,6 +20,11 @@ export const SubscriptionGuard = ({
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  // Super admin always has access
+  if (isSuperAdmin) {
+    return <>{children}</>;
   }
 
   // If subscription is inactive and we require active, redirect to upgrade

@@ -10,6 +10,7 @@ interface SubscriptionState {
   trialEndsAt: string | null;
   daysLeft: number;
   isLoading: boolean;
+  isSuperAdmin: boolean;
 }
 
 // Plan configuration
@@ -47,6 +48,7 @@ export const useSubscription = () => {
     trialEndsAt: null,
     daysLeft: 14,
     isLoading: true,
+    isSuperAdmin: false,
   });
 
   const checkSubscription = useCallback(async () => {
@@ -68,11 +70,13 @@ export const useSubscription = () => {
       }
 
       if (subData) {
+        const isSuperAdmin = (subData as any).is_super_admin === true;
         const daysLeft = calculateDaysLeft(subData.trial_ends_at);
         const isTrialExpired = subData.status === "trialing" && daysLeft <= 0;
         
         let effectiveStatus: "trial" | "active" | "inactive" = "trial";
-        if (subData.status === "active") {
+        // Super admin always has active status
+        if (isSuperAdmin || subData.status === "active") {
           effectiveStatus = "active";
         } else if (isTrialExpired || subData.status === "canceled" || subData.status === "past_due") {
           effectiveStatus = "inactive";
@@ -81,13 +85,14 @@ export const useSubscription = () => {
         }
 
         setState({
-          subscribed: subData.status === "active",
+          subscribed: isSuperAdmin || subData.status === "active",
           status: effectiveStatus,
           plan: (subData.plan as "basico" | "pro") || null,
           subscriptionEnd: subData.current_period_end,
           trialEndsAt: subData.trial_ends_at,
           daysLeft,
           isLoading: false,
+          isSuperAdmin,
         });
         return;
       }
@@ -114,6 +119,7 @@ export const useSubscription = () => {
           trialEndsAt: null,
           daysLeft: 14,
           isLoading: false,
+          isSuperAdmin: data.is_super_admin || false,
         });
       } else {
         setState(prev => ({ ...prev, isLoading: false }));
