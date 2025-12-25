@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 interface TrialBannerProps {
   daysLeft: number;
   status: "trial" | "active" | "inactive" | null;
+  isSuperAdmin?: boolean;
 }
 
-export const TrialBanner = ({ daysLeft, status }: TrialBannerProps) => {
+export const TrialBanner = ({ daysLeft, status, isSuperAdmin }: TrialBannerProps) => {
   const navigate = useNavigate();
 
-  if (status === "active") return null;
+  // Super admin never sees trial banners
+  if (isSuperAdmin || status === "active") return null;
 
   const isExpired = status === "inactive" || daysLeft <= 0;
   const isUrgent = daysLeft <= 3 && daysLeft > 0;

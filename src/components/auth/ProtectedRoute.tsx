@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
             .maybeSingle(),
           supabase
             .from("subscriptions")
-            .select("status, trial_ends_at")
+            .select("status, trial_ends_at, is_super_admin")
             .eq("user_id", user.id)
             .maybeSingle()
         ]);
@@ -40,8 +40,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         setOnboardingCompleted(profileResult.data?.onboarding_completed ?? false);
         
         // Check if user has active or trialing subscription
+        // Super admin always has access
         const subscription = subscriptionResult.data;
-        const isActive = subscription?.status === "active" || subscription?.status === "trialing";
+        const isSuperAdmin = (subscription as any)?.is_super_admin === true;
+        const isActive = isSuperAdmin || subscription?.status === "active" || subscription?.status === "trialing";
         setHasActiveSubscription(isActive);
       } catch (error) {
         console.error("Error checking user status:", error);

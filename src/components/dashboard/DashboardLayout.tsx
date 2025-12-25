@@ -22,7 +22,7 @@ interface Profile {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, loading } = useAuth();
-  const { status, daysLeft, isLoading: subscriptionLoading } = useSubscription();
+  const { status, daysLeft, isLoading: subscriptionLoading, isSuperAdmin } = useSubscription();
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -134,7 +134,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       >
         <DashboardHeader
           companyName={profile?.restaurant_name || "Meu Restaurante"}
-          trialDaysLeft={status === "trial" ? daysLeft : undefined}
+          trialDaysLeft={!isSuperAdmin && status === "trial" ? daysLeft : undefined}
           unreadCount={unreadCount}
           onMenuClick={() => setMobileMenuOpen(true)}
           isMobile={isMobile}
