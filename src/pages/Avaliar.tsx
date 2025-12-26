@@ -110,10 +110,10 @@ const Avaliar = () => {
     setStep("thankyou");
   };
 
-  const handleGoToGoogle = async () => {
+  const handleGoToGoogle = () => {
     if (!company) return;
 
-    // Save the positive feedback
+    // Save the positive feedback (fire and forget)
     supabase.from("feedbacks").insert({
       company_id: company.id,
       rating,
@@ -122,16 +122,15 @@ const Avaliar = () => {
       // Fire and forget
     });
 
-    // Copy comment to clipboard if exists
+    // Copy comment to clipboard if exists (don't await, don't block)
     if (promoterComment.trim()) {
-      try {
-        await navigator.clipboard.writeText(promoterComment);
+      navigator.clipboard.writeText(promoterComment).then(() => {
         toast.success("✓ Texto copiado! Cole no Google.");
-      } catch (err) {
+      }).catch((err) => {
         console.error("Failed to copy:", err);
-      }
+      });
     }
-    // Navigation is handled by the <a> element
+    // Navigation is handled by the native <a> element - no blocking
   };
 
   if (loading) {
