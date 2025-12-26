@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Copy, Printer, ExternalLink, Lightbulb, Check, Image } from "lucide-react";
+import { Download, Copy, Printer, ExternalLink, Lightbulb, Check, Image, FileText, CreditCard, Bookmark, SquareStack, StickyNote } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -377,7 +377,416 @@ const DashboardQRCode = () => {
     setDownloading(null);
   };
 
+  // === FORMATOS DE IMPRESSÃO ===
+  
+  // Tent Card / Display de Mesa - 10x15cm
+  const downloadTentCardPDF = async () => {
+    setDownloading("tent");
+    try {
+      const qrDataUrl = generateQRCodeDataUrl();
+      let logoDataUrl: string | null = null;
+      if (company?.logo_url) {
+        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+      }
+      if (!logoDataUrl) {
+        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      }
+
+      // 10x15cm tent card (folded)
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: [100, 150],
+      });
+
+      const pageWidth = 100;
+      const pageHeight = 150;
+      const companyName = company?.name || "Seu Restaurante";
+
+      // Background
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      pdf.setFillColor(30, 41, 59);
+      pdf.rect(0, 0, pageWidth, 50, "F");
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(0, 0, pageWidth, 3, "F");
+
+      // Logo
+      if (logoDataUrl) {
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(pageWidth / 2, 24, 14, "F");
+        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 12, 12, 24, 24);
+      }
+
+      // Text
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(companyName, pageWidth / 2, 48, { align: "center" });
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Sua opinião é importante para nós", pageWidth / 2, 58, { align: "center" });
+
+      // QR
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(22, 66, 56, 56, 4, 4, "F");
+      pdf.addImage(qrDataUrl, "PNG", 25, 69, 50, 50);
+
+      // CTA
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(10);
+      pdf.text("Aponte a câmera para avaliar", pageWidth / 2, 132, { align: "center" });
+      pdf.setTextColor(180, 180, 190);
+      pdf.setFontSize(8);
+      pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
+
+      // Footer
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(35, 144, 30, 0.5, "F");
+      pdf.setTextColor(120, 120, 130);
+      pdf.setFontSize(7);
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 149, { align: "center" });
+
+      pdf.save(`Display-Mesa-10x15cm-${company?.slug}.pdf`);
+      toast({ title: "Display de mesa gerado!", description: "Formato 10x15cm para display de mesa." });
+    } catch (error) {
+      toast({ title: "Erro ao gerar PDF", variant: "destructive" });
+    }
+    setDownloading(null);
+  };
+
+  // Adesivo / Sticker - 5x5cm
+  const downloadStickerPDF = async () => {
+    setDownloading("sticker");
+    try {
+      const qrDataUrl = generateQRCodeDataUrl();
+      
+      // A4 page with multiple 5x5cm stickers
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const stickerSize = 50; // 5x5cm
+      const margin = 10;
+      const gap = 5;
+      const cols = 3;
+      const rows = 5;
+
+      const drawSticker = (x: number, y: number) => {
+        // Background
+        pdf.setFillColor(15, 23, 42);
+        pdf.roundedRect(x, y, stickerSize, stickerSize, 3, 3, "F");
+        
+        // QR Code
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(x + 5, y + 5, 40, 40, 2, 2, "F");
+        pdf.addImage(qrDataUrl, "PNG", x + 7, y + 7, 36, 36);
+        
+        // Text
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(5);
+        pdf.text("Avalie-nos", x + stickerSize / 2, y + 48, { align: "center" });
+      };
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = margin + col * (stickerSize + gap);
+          const y = margin + row * (stickerSize + gap);
+          drawSticker(x, y);
+        }
+      }
+
+      pdf.save(`Adesivos-5x5cm-${company?.slug}.pdf`);
+      toast({ title: "Adesivos gerados!", description: "15 adesivos 5x5cm em uma folha A4." });
+    } catch (error) {
+      toast({ title: "Erro ao gerar PDF", variant: "destructive" });
+    }
+    setDownloading(null);
+  };
+
+  // Flyer A5 - 14.8x21cm
+  const downloadFlyerPDF = async () => {
+    setDownloading("flyer");
+    try {
+      const qrDataUrl = generateQRCodeDataUrl();
+      let logoDataUrl: string | null = null;
+      if (company?.logo_url) {
+        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+      }
+      if (!logoDataUrl) {
+        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      }
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a5",
+      });
+
+      const pageWidth = 148;
+      const pageHeight = 210;
+      const companyName = company?.name || "Seu Restaurante";
+
+      // Background gradient effect
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      pdf.setFillColor(30, 41, 59);
+      pdf.rect(0, 0, pageWidth, 80, "F");
+      
+      // Gold accent
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(0, 0, pageWidth, 4, "F");
+
+      // Logo
+      if (logoDataUrl) {
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(pageWidth / 2, 35, 18, "F");
+        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 15, 20, 30, 30);
+      }
+
+      // Company name
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(companyName, pageWidth / 2, 68, { align: "center" });
+
+      // Message
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Sua opinião é muito importante!", pageWidth / 2, 82, { align: "center" });
+
+      // QR Code
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(pageWidth / 2 - 40, 95, 80, 80, 5, 5, "F");
+      pdf.addImage(qrDataUrl, "PNG", pageWidth / 2 - 35, 100, 70, 70);
+
+      // CTA
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Escaneie o QR Code e avalie", pageWidth / 2, 188, { align: "center" });
+      pdf.setTextColor(180, 180, 190);
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Leva apenas 15 segundos", pageWidth / 2, 196, { align: "center" });
+
+      // Footer
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(pageWidth / 2 - 20, 203, 40, 0.5, "F");
+      pdf.setTextColor(120, 120, 130);
+      pdf.setFontSize(8);
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 208, { align: "center" });
+
+      pdf.save(`Flyer-A5-${company?.slug}.pdf`);
+      toast({ title: "Flyer A5 gerado!", description: "Perfeito para distribuição aos clientes." });
+    } catch (error) {
+      toast({ title: "Erro ao gerar PDF", variant: "destructive" });
+    }
+    setDownloading(null);
+  };
+
+  // Poster A3 - 29.7x42cm
+  const downloadPosterPDF = async () => {
+    setDownloading("poster");
+    try {
+      const qrDataUrl = generateQRCodeDataUrl();
+      let logoDataUrl: string | null = null;
+      if (company?.logo_url) {
+        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+      }
+      if (!logoDataUrl) {
+        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      }
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a3",
+      });
+
+      const pageWidth = 297;
+      const pageHeight = 420;
+      const companyName = company?.name || "Seu Restaurante";
+
+      // Background
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      pdf.setFillColor(30, 41, 59);
+      pdf.rect(0, 0, pageWidth, 140, "F");
+      
+      // Gold accent
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(0, 0, pageWidth, 8, "F");
+
+      // Logo
+      if (logoDataUrl) {
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(pageWidth / 2, 70, 35, "F");
+        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 30, 40, 60, 60);
+      }
+
+      // Company name
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(42);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(companyName, pageWidth / 2, 130, { align: "center" });
+
+      // Message
+      pdf.setFontSize(22);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Sua opinião é muito importante para nós!", pageWidth / 2, 155, { align: "center" });
+
+      // QR Code
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(pageWidth / 2 - 75, 175, 150, 150, 8, 8, "F");
+      pdf.addImage(qrDataUrl, "PNG", pageWidth / 2 - 65, 185, 130, 130);
+
+      // CTA
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(20);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Aponte a câmera do celular e avalie", pageWidth / 2, 350, { align: "center" });
+      pdf.setTextColor(180, 180, 190);
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("É rápido e fácil - leva apenas 15 segundos", pageWidth / 2, 365, { align: "center" });
+
+      // Footer
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(pageWidth / 2 - 40, 395, 80, 1, "F");
+      pdf.setTextColor(120, 120, 130);
+      pdf.setFontSize(12);
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 408, { align: "center" });
+
+      pdf.save(`Poster-A3-${company?.slug}.pdf`);
+      toast({ title: "Poster A3 gerado!", description: "Ideal para parede ou vitrine." });
+    } catch (error) {
+      toast({ title: "Erro ao gerar PDF", variant: "destructive" });
+    }
+    setDownloading(null);
+  };
+
+  // Insert para Cardápio - 8x5cm
+  const downloadMenuInsertPDF = async () => {
+    setDownloading("menu");
+    try {
+      const qrDataUrl = generateQRCodeDataUrl();
+      
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const insertWidth = 80;
+      const insertHeight = 50;
+      const margin = 10;
+      const gapX = 5;
+      const gapY = 5;
+      const cols = 3;
+      const rows = 3;
+      const companyName = company?.name || "Seu Restaurante";
+
+      const drawInsert = (x: number, y: number) => {
+        // Background
+        pdf.setFillColor(15, 23, 42);
+        pdf.roundedRect(x, y, insertWidth, insertHeight, 3, 3, "F");
+        
+        // Gold accent
+        pdf.setFillColor(212, 175, 55);
+        pdf.rect(x, y, insertWidth, 2, "F");
+        
+        // QR Code
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(x + 5, y + 8, 35, 35, 2, 2, "F");
+        pdf.addImage(qrDataUrl, "PNG", x + 7, y + 10, 31, 31);
+        
+        // Text
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(companyName.substring(0, 15), x + 45, y + 18, { align: "left" });
+        
+        pdf.setFontSize(7);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Avalie sua experiência", x + 45, y + 26, { align: "left" });
+        
+        pdf.setTextColor(212, 175, 55);
+        pdf.setFontSize(8);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Escaneie o QR Code", x + 45, y + 38, { align: "left" });
+      };
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = margin + col * (insertWidth + gapX);
+          const y = margin + row * (insertHeight + gapY);
+          drawInsert(x, y);
+        }
+      }
+
+      pdf.save(`Insert-Cardapio-8x5cm-${company?.slug}.pdf`);
+      toast({ title: "Inserts gerados!", description: "9 inserts 8x5cm para colocar no cardápio." });
+    } catch (error) {
+      toast({ title: "Erro ao gerar PDF", variant: "destructive" });
+    }
+    setDownloading(null);
+  };
+
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
+
+  const printFormats = [
+    {
+      id: "tent",
+      name: "Display de Mesa",
+      size: "10 x 15 cm",
+      icon: SquareStack,
+      description: "Perfeito para ficar em pé nas mesas",
+      onClick: downloadTentCardPDF,
+    },
+    {
+      id: "sticker",
+      name: "Adesivos",
+      size: "5 x 5 cm (15 unidades)",
+      icon: StickyNote,
+      description: "Cole em cardápios, porta-guardanapos ou caixa",
+      onClick: downloadStickerPDF,
+    },
+    {
+      id: "flyer",
+      name: "Flyer A5",
+      size: "14.8 x 21 cm",
+      icon: FileText,
+      description: "Ideal para distribuir ou deixar no balcão",
+      onClick: downloadFlyerPDF,
+    },
+    {
+      id: "a4",
+      name: "Folha A4",
+      size: "21 x 29.7 cm (4 cards)",
+      icon: Printer,
+      description: "4 materiais por folha, recorte e use",
+      onClick: downloadA4PDF,
+    },
+    {
+      id: "poster",
+      name: "Poster A3",
+      size: "29.7 x 42 cm",
+      icon: Image,
+      description: "Para colar na parede ou vitrine",
+      onClick: downloadPosterPDF,
+    },
+    {
+      id: "menu",
+      name: "Insert de Cardápio",
+      size: "8 x 5 cm (9 unidades)",
+      icon: Bookmark,
+      description: "Encaixa dentro de cardápios ou porta-contas",
+      onClick: downloadMenuInsertPDF,
+    },
+  ];
 
   return (
     <>
@@ -520,12 +929,12 @@ const DashboardQRCode = () => {
               </CardContent>
             </Card>
 
-            {/* Download Section */}
+            {/* Download QR Code Only */}
             <Card>
               <CardHeader>
-                <CardTitle>Baixar Material</CardTitle>
+                <CardTitle>Baixar QR Code</CardTitle>
                 <CardDescription>
-                  Escolha o formato ideal para você
+                  Apenas a imagem do QR Code em alta resolução
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -535,7 +944,7 @@ const DashboardQRCode = () => {
                   className="w-full justify-start"
                   disabled={!company || !!downloading}
                 >
-                  <Image className="w-4 h-4 mr-3" />
+                  <Download className="w-4 h-4 mr-3" />
                   {downloading === "png" ? "Baixando..." : "Baixar QR Code (PNG)"}
                 </Button>
                 <Button
@@ -544,17 +953,42 @@ const DashboardQRCode = () => {
                   disabled={!company || !!downloading}
                 >
                   <Download className="w-4 h-4 mr-3" />
-                  {downloading === "pdf" ? "Gerando PDF..." : "Baixar Material Completo (PDF)"}
+                  {downloading === "pdf" ? "Gerando PDF..." : "Baixar Material Premium (PDF)"}
                 </Button>
-                <Button
-                  onClick={downloadA4PDF}
-                  variant="outline"
-                  className="w-full justify-start"
-                  disabled={!company || !!downloading}
-                >
-                  <Printer className="w-4 h-4 mr-3" />
-                  {downloading === "a4" ? "Gerando..." : "Baixar para Impressão A4 (4x)"}
-                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Print Formats Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Printer className="w-5 h-5" />
+                  Formatos para Impressão
+                </CardTitle>
+                <CardDescription>
+                  Escolha o tamanho ideal para cada ocasião
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {printFormats.map((format) => (
+                  <Button
+                    key={format.id}
+                    onClick={format.onClick}
+                    variant="outline"
+                    className="w-full justify-start h-auto py-3 px-4"
+                    disabled={!company || !!downloading}
+                  >
+                    <format.icon className="w-5 h-5 mr-3 flex-shrink-0 text-coral" />
+                    <div className="flex flex-col items-start text-left">
+                      <span className="font-medium">
+                        {downloading === format.id ? "Gerando..." : format.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {format.size} • {format.description}
+                      </span>
+                    </div>
+                  </Button>
+                ))}
               </CardContent>
             </Card>
 
