@@ -5,7 +5,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Zap, Crown, Building2, Loader2, ExternalLink } from "lucide-react";
+import { Check, X, Zap, Crown, Building2, Loader2, ExternalLink, Construction } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSubscription, PLANS } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ const plans = [
     description: "Perfeito para começar",
     icon: Zap,
     priceId: PLANS.basico.priceId,
+    available: true,
     features: [
       { text: "Coleta de reviews ilimitada", included: true },
       { text: "Feedback privado", included: true },
@@ -37,6 +38,7 @@ const plans = [
     icon: Crown,
     popular: true,
     priceId: PLANS.pro.priceId,
+    available: false, // Em construção
     features: [
       { text: "Tudo do plano básico", included: true },
       { text: "Notificações por email", included: true },
@@ -53,6 +55,7 @@ const plans = [
     period: "",
     description: "Para escala",
     icon: Building2,
+    available: false, // Em construção
     features: [
       { text: "Tudo do plano pro", included: true },
       { text: "White-label completo", included: true },
@@ -182,17 +185,31 @@ const DashboardUpgrade = () => {
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {plans.map((plan) => {
               const isCurrent = isPlanCurrent(plan.id);
+              const isUnavailable = !plan.available;
               
               return (
                 <Card
                   key={plan.name}
                   className={cn(
-                    "relative transition-all duration-300 hover:shadow-elevated",
-                    plan.popular && "border-coral shadow-coral/20 scale-105",
+                    "relative transition-all duration-300",
+                    isUnavailable && "opacity-75",
+                    !isUnavailable && "hover:shadow-elevated",
+                    plan.popular && !isUnavailable && "border-coral shadow-coral/20 scale-105",
                     isCurrent && "ring-2 ring-success"
                   )}
                 >
-                  {plan.popular && (
+                  {isUnavailable && (
+                    <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] z-10 rounded-lg flex flex-col items-center justify-center">
+                      <Construction className="h-12 w-12 text-amber-500 mb-2" />
+                      <Badge className="bg-amber-500 text-white">
+                        Em breve
+                      </Badge>
+                      <p className="text-sm text-muted-foreground mt-2 text-center px-4">
+                        Este plano está em construção e será liberado em breve!
+                      </p>
+                    </div>
+                  )}
+                  {plan.popular && !isUnavailable && (
                     <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-coral text-white">
                       Popular
                     </Badge>
@@ -243,8 +260,12 @@ const DashboardUpgrade = () => {
                       <Button variant="outline" disabled className="w-full">
                         Plano atual
                       </Button>
+                    ) : isUnavailable ? (
+                      <Button variant="outline" disabled className="w-full">
+                        Em construção
+                      </Button>
                     ) : plan.id === "enterprise" ? (
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full" disabled>
                         Falar com vendedor
                       </Button>
                     ) : (
