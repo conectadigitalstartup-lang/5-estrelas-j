@@ -129,12 +129,22 @@ const Auth = () => {
         description: message
       });
     } else {
-      toast({
-        title: "Conta criada com sucesso!",
-        description: "Complete o cadastro para iniciar seu teste grátis."
-      });
-      // Redireciona para página de cadastro do cartão
-      navigate("/complete-registration");
+      // Super Admin vai direto para o dashboard (bypass checkout)
+      const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
+      if (data.email.toLowerCase() === SUPER_ADMIN_EMAIL) {
+        toast({
+          title: "Bem-vindo, Administrador!",
+          description: "Acesso total liberado."
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Conta criada com sucesso!",
+          description: "Complete o cadastro para iniciar seu teste grátis."
+        });
+        // Redireciona para página de cadastro do cartão
+        navigate("/complete-registration");
+      }
     }
   };
 
