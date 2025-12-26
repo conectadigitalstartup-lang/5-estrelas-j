@@ -83,12 +83,15 @@ const DashboardQRCode = () => {
     setDownloading("pdf");
     
     try {
-      // Get the QR Code canvas and convert to base64 image FIRST
-      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
-      const qrDataUrl = qrCanvas?.toDataURL("image/png") || "";
+      // Wait for QR Code to fully render before capturing
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Get logo if exists
-      const logoImg = document.querySelector("#material-preview img") as HTMLImageElement;
+      // Get the QR Code canvas and convert to base64 image
+      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
+      if (!qrCanvas) {
+        throw new Error("QR Code não encontrado");
+      }
+      const qrDataUrl = qrCanvas.toDataURL("image/png");
       
       // Create a temporary container with static images instead of canvas
       const tempContainer = document.createElement("div");
@@ -120,11 +123,11 @@ const DashboardQRCode = () => {
       
       document.body.appendChild(tempContainer);
       
-      // Wait for any images to load
-      await delay(1500);
+      // Wait for images inside the container to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
-        scale: 3, 
+        scale: 2, 
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
@@ -163,9 +166,15 @@ const DashboardQRCode = () => {
     setDownloading("a4");
     
     try {
-      // Get the QR Code canvas and convert to base64 image FIRST
+      // Wait for QR Code to fully render before capturing
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Get the QR Code canvas and convert to base64 image
       const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
-      const qrDataUrl = qrCanvas?.toDataURL("image/png") || "";
+      if (!qrCanvas) {
+        throw new Error("QR Code não encontrado");
+      }
+      const qrDataUrl = qrCanvas.toDataURL("image/png");
       
       // Create a temporary container with static images instead of canvas
       const tempContainer = document.createElement("div");
@@ -197,11 +206,11 @@ const DashboardQRCode = () => {
       
       document.body.appendChild(tempContainer);
       
-      // Wait for any images to load
-      await delay(1500);
+      // Wait for images inside the container to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
-        scale: 3, 
+        scale: 2, 
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
