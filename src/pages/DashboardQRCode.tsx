@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import avaliaProLogo from "@/assets/avalia-pro-logo.jpg";
 
 interface Company {
   id: string;
@@ -107,12 +108,38 @@ const DashboardQRCode = () => {
     return tempCanvas.toDataURL("image/png");
   };
 
+  const loadImageAsDataUrl = async (url: string): Promise<string | null> => {
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
+  };
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     
     try {
       // Generate QR Code data URL from the high-res hidden canvas
       const qrDataUrl = generateQRCodeDataUrl();
+      
+      // Load company logo or fallback to Avalia Pro logo
+      let logoDataUrl: string | null = null;
+      if (company?.logo_url) {
+        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+      }
+      
+      // If no company logo, use Avalia Pro logo
+      if (!logoDataUrl) {
+        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      }
       
       // Create premium PDF with professional design
       const pdf = new jsPDF({
@@ -138,61 +165,67 @@ const DashboardQRCode = () => {
       pdf.setFillColor(212, 175, 55); // Premium gold
       pdf.rect(0, 0, pageWidth, 3, "F");
 
-      // === LOGO/BRAND AREA ===
-      // Gold circle emblem
-      pdf.setFillColor(212, 175, 55);
-      pdf.circle(pageWidth / 2, 22, 8, "F");
-      
-      // Inner dark circle for contrast
-      pdf.setFillColor(15, 23, 42);
-      pdf.circle(pageWidth / 2, 22, 6, "F");
-      
-      // "A" letter in gold
-      pdf.setTextColor(212, 175, 55);
-      pdf.setFontSize(14);
-      pdf.setFont("helvetica", "bold");
-      pdf.text("A", pageWidth / 2, 25, { align: "center" });
+      // === LOGO AREA ===
+      if (logoDataUrl) {
+        // Draw circular logo with gold border effect
+        // Gold circle background
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(pageWidth / 2, 24, 14, "F");
+        
+        // Add the logo image (centered, circular appearance)
+        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 12, 12, 24, 24);
+      } else {
+        // Fallback to "A" emblem if image loading fails
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(pageWidth / 2, 22, 8, "F");
+        pdf.setFillColor(15, 23, 42);
+        pdf.circle(pageWidth / 2, 22, 6, "F");
+        pdf.setTextColor(212, 175, 55);
+        pdf.setFontSize(14);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("A", pageWidth / 2, 25, { align: "center" });
+      }
 
       // === COMPANY NAME ===
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(18);
       pdf.setFont("helvetica", "bold");
-      pdf.text(companyName, pageWidth / 2, 42, { align: "center" });
+      pdf.text(companyName, pageWidth / 2, 48, { align: "center" });
 
       // === MAIN MESSAGE ===
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(11);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Sua opinião é importante para nós", pageWidth / 2, 54, { align: "center" });
+      pdf.text("Sua opinião é importante para nós", pageWidth / 2, 58, { align: "center" });
 
       // === QR CODE CONTAINER ===
       // Outer white rounded rectangle with shadow effect
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(22, 62, 56, 56, 4, 4, "F");
+      pdf.roundedRect(22, 66, 56, 56, 4, 4, "F");
 
       // QR Code
-      pdf.addImage(qrDataUrl, "PNG", 25, 65, 50, 50);
+      pdf.addImage(qrDataUrl, "PNG", 25, 69, 50, 50);
 
       // === CALL TO ACTION ===
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Aponte a câmera para avaliar", pageWidth / 2, 128, { align: "center" });
+      pdf.text("Aponte a câmera para avaliar", pageWidth / 2, 132, { align: "center" });
       
       // Time indication - reduces friction
       pdf.setTextColor(180, 180, 190);
       pdf.setFontSize(8);
-      pdf.text("Leva apenas 15 segundos", pageWidth / 2, 134, { align: "center" });
+      pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
       // === FOOTER WITH BRANDING ===
       // Gold accent line at bottom
       pdf.setFillColor(212, 175, 55);
-      pdf.rect(35, 142, 30, 0.5, "F");
+      pdf.rect(35, 144, 30, 0.5, "F");
       
       // Powered by text
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(7);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 148, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 149, { align: "center" });
 
       pdf.save(`Avalia-Pro-Material-${company?.slug}.pdf`);
       
@@ -217,6 +250,17 @@ const DashboardQRCode = () => {
     try {
       // Generate QR Code data URL from the high-res hidden canvas
       const qrDataUrl = generateQRCodeDataUrl();
+
+      // Load company logo or fallback to Avalia Pro logo
+      let logoDataUrl: string | null = null;
+      if (company?.logo_url) {
+        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+      }
+      
+      // If no company logo, use Avalia Pro logo
+      if (!logoDataUrl) {
+        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      }
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -249,60 +293,65 @@ const DashboardQRCode = () => {
         pdf.setFillColor(15, 23, 42);
         pdf.rect(x, y + 2, cardWidth, 2, "F");
 
-        // === LOGO/BRAND AREA ===
-        // Gold circle emblem
-        pdf.setFillColor(212, 175, 55);
-        pdf.circle(x + cardWidth / 2, y + 18, 7, "F");
-        
-        // Inner dark circle for contrast
-        pdf.setFillColor(15, 23, 42);
-        pdf.circle(x + cardWidth / 2, y + 18, 5, "F");
-        
-        // "A" letter in gold
-        pdf.setTextColor(212, 175, 55);
-        pdf.setFontSize(11);
-        pdf.setFont("helvetica", "bold");
-        pdf.text("A", x + cardWidth / 2, y + 20.5, { align: "center" });
+        // === LOGO AREA ===
+        if (logoDataUrl) {
+          // Gold circle background for logo
+          pdf.setFillColor(212, 175, 55);
+          pdf.circle(x + cardWidth / 2, y + 20, 12, "F");
+          
+          // Add the logo image
+          pdf.addImage(logoDataUrl, "JPEG", x + cardWidth / 2 - 10, y + 10, 20, 20);
+        } else {
+          // Fallback to "A" emblem
+          pdf.setFillColor(212, 175, 55);
+          pdf.circle(x + cardWidth / 2, y + 18, 7, "F");
+          pdf.setFillColor(15, 23, 42);
+          pdf.circle(x + cardWidth / 2, y + 18, 5, "F");
+          pdf.setTextColor(212, 175, 55);
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.text("A", x + cardWidth / 2, y + 20.5, { align: "center" });
+        }
 
         // === COMPANY NAME ===
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(14);
         pdf.setFont("helvetica", "bold");
-        pdf.text(companyName, x + cardWidth / 2, y + 34, { align: "center" });
+        pdf.text(companyName, x + cardWidth / 2, y + 38, { align: "center" });
 
         // === MAIN MESSAGE ===
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(9);
         pdf.setFont("helvetica", "normal");
-        pdf.text("Sua opinião é importante para nós", x + cardWidth / 2, y + 44, { align: "center" });
+        pdf.text("Sua opinião é importante para nós", x + cardWidth / 2, y + 48, { align: "center" });
 
         // === QR CODE CONTAINER ===
         pdf.setFillColor(255, 255, 255);
-        pdf.roundedRect(x + 20, y + 50, 50, 50, 3, 3, "F");
+        pdf.roundedRect(x + 20, y + 54, 50, 50, 3, 3, "F");
 
         // QR Code
-        pdf.addImage(qrDataUrl, "PNG", x + 22.5, y + 52.5, 45, 45);
+        pdf.addImage(qrDataUrl, "PNG", x + 22.5, y + 56.5, 45, 45);
 
         // === CALL TO ACTION ===
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(9);
         pdf.setFont("helvetica", "normal");
-        pdf.text("Aponte a câmera para avaliar", x + cardWidth / 2, y + 110, { align: "center" });
+        pdf.text("Aponte a câmera para avaliar", x + cardWidth / 2, y + 114, { align: "center" });
         
         // Time indication
         pdf.setTextColor(180, 180, 190);
         pdf.setFontSize(7);
-        pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 116, { align: "center" });
+        pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 120, { align: "center" });
 
         // === FOOTER WITH BRANDING ===
         // Gold accent line
         pdf.setFillColor(212, 175, 55);
-        pdf.rect(x + 30, y + 122, 30, 0.4, "F");
+        pdf.rect(x + 30, y + 126, 30, 0.4, "F");
         
         // Powered by text
         pdf.setTextColor(100, 100, 110);
         pdf.setFontSize(6);
-        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 130, { align: "center" });
+        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 132, { align: "center" });
       };
 
       // Draw 4 premium cards in 2x2 grid
