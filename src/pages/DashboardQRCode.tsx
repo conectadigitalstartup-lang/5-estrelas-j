@@ -114,56 +114,91 @@ const DashboardQRCode = () => {
       // Generate QR Code data URL from the high-res hidden canvas
       const qrDataUrl = generateQRCodeDataUrl();
       
-      // Create PDF directly with jsPDF
+      // Create premium PDF with professional design
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: [100, 140],
+        format: [100, 150], // Slightly taller for elegant proportions
       });
 
-      // Draw background gradient (approximated as solid color)
-      pdf.setFillColor(26, 54, 93); // #1a365d
-      pdf.roundedRect(0, 0, 100, 140, 5, 5, "F");
-
-      // Add company name
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(16);
-      pdf.setFont("helvetica", "bold");
+      const pageWidth = 100;
+      const pageHeight = 150;
       const companyName = company?.name || "Seu Restaurante";
-      pdf.text(companyName, 50, 30, { align: "center" });
 
-      // Add subtitle
+      // === PREMIUM BACKGROUND ===
+      // Main dark navy background
+      pdf.setFillColor(15, 23, 42); // Slate-900 - rich dark navy
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+      // Subtle gradient overlay effect (lighter area at top)
+      pdf.setFillColor(30, 41, 59); // Slate-800
+      pdf.rect(0, 0, pageWidth, 50, "F");
+
+      // Elegant gold accent line at top
+      pdf.setFillColor(212, 175, 55); // Premium gold
+      pdf.rect(0, 0, pageWidth, 3, "F");
+
+      // === LOGO/BRAND AREA ===
+      // Gold circle emblem
+      pdf.setFillColor(212, 175, 55);
+      pdf.circle(pageWidth / 2, 22, 8, "F");
+      
+      // Inner dark circle for contrast
+      pdf.setFillColor(15, 23, 42);
+      pdf.circle(pageWidth / 2, 22, 6, "F");
+      
+      // "A" letter in gold
+      pdf.setTextColor(212, 175, 55);
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("A", pageWidth / 2, 25, { align: "center" });
+
+      // === COMPANY NAME ===
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(companyName, pageWidth / 2, 42, { align: "center" });
+
+      // === MAIN MESSAGE ===
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Sua opinião é importante para nós", pageWidth / 2, 54, { align: "center" });
+
+      // === QR CODE CONTAINER ===
+      // Outer white rounded rectangle with shadow effect
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(22, 62, 56, 56, 4, 4, "F");
+
+      // QR Code
+      pdf.addImage(qrDataUrl, "PNG", 25, 65, 50, 50);
+
+      // === CALL TO ACTION ===
+      pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Como foi sua experiência?", 50, 40, { align: "center" });
-
-      // Add white background for QR Code
-      pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(25, 48, 50, 50, 3, 3, "F");
-
-      // Add QR Code image
-      pdf.addImage(qrDataUrl, "PNG", 27, 50, 46, 46);
-
-      // Add call to action
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFontSize(10);
-      pdf.text("Escaneie e avalie agora", 50, 108, { align: "center" });
-
-      // Add stars
-      pdf.setTextColor(251, 191, 36); // amber
-      pdf.setFontSize(14);
-      pdf.text("★ ★ ★ ★ ★", 50, 118, { align: "center" });
-
-      // Add footer
-      pdf.setTextColor(255, 255, 255, 0.5);
+      pdf.text("Aponte a câmera para avaliar", pageWidth / 2, 128, { align: "center" });
+      
+      // Time indication - reduces friction
+      pdf.setTextColor(180, 180, 190);
       pdf.setFontSize(8);
-      pdf.text("Powered by Avalia Pro", 50, 132, { align: "center" });
+      pdf.text("Leva apenas 15 segundos", pageWidth / 2, 134, { align: "center" });
+
+      // === FOOTER WITH BRANDING ===
+      // Gold accent line at bottom
+      pdf.setFillColor(212, 175, 55);
+      pdf.rect(35, 142, 30, 0.5, "F");
+      
+      // Powered by text
+      pdf.setTextColor(120, 120, 130);
+      pdf.setFontSize(7);
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 148, { align: "center" });
 
       pdf.save(`Avalia-Pro-Material-${company?.slug}.pdf`);
       
       toast({
-        title: "PDF gerado!",
-        description: "O material de mesa foi baixado.",
+        title: "Material premium gerado!",
+        description: "Seu material de mesa profissional foi baixado.",
       });
     } catch (error) {
       console.error("PDF generation error:", error);
@@ -189,63 +224,98 @@ const DashboardQRCode = () => {
         format: "a4",
       });
 
-      const width = 90;
-      const height = 126;
+      const cardWidth = 90;
+      const cardHeight = 135;
       const margin = 10;
       const gap = 5;
       const companyName = company?.name || "Seu Restaurante";
 
-      // Helper function to draw a single material card
-      const drawCard = (x: number, y: number) => {
-        // Background
-        pdf.setFillColor(26, 54, 93);
-        pdf.roundedRect(x, y, width, height, 4, 4, "F");
+      // Helper function to draw a premium material card
+      const drawPremiumCard = (x: number, y: number) => {
+        // === PREMIUM BACKGROUND ===
+        // Main dark navy background
+        pdf.setFillColor(15, 23, 42);
+        pdf.roundedRect(x, y, cardWidth, cardHeight, 4, 4, "F");
 
-        // Company name
+        // Subtle gradient overlay effect (lighter area at top)
+        pdf.setFillColor(30, 41, 59);
+        pdf.roundedRect(x, y, cardWidth, 45, 4, 4, "F");
+        pdf.setFillColor(15, 23, 42);
+        pdf.rect(x, y + 40, cardWidth, 5, "F"); // blend
+
+        // Elegant gold accent line at top
+        pdf.setFillColor(212, 175, 55);
+        pdf.roundedRect(x, y, cardWidth, 2.5, 4, 4, "F");
+        pdf.setFillColor(15, 23, 42);
+        pdf.rect(x, y + 2, cardWidth, 2, "F");
+
+        // === LOGO/BRAND AREA ===
+        // Gold circle emblem
+        pdf.setFillColor(212, 175, 55);
+        pdf.circle(x + cardWidth / 2, y + 18, 7, "F");
+        
+        // Inner dark circle for contrast
+        pdf.setFillColor(15, 23, 42);
+        pdf.circle(x + cardWidth / 2, y + 18, 5, "F");
+        
+        // "A" letter in gold
+        pdf.setTextColor(212, 175, 55);
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("A", x + cardWidth / 2, y + 20.5, { align: "center" });
+
+        // === COMPANY NAME ===
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(14);
         pdf.setFont("helvetica", "bold");
-        pdf.text(companyName, x + width / 2, y + 20, { align: "center" });
+        pdf.text(companyName, x + cardWidth / 2, y + 34, { align: "center" });
 
-        // Subtitle
-        pdf.setFontSize(9);
-        pdf.setFont("helvetica", "normal");
-        pdf.text("Como foi sua experiência?", x + width / 2, y + 28, { align: "center" });
-
-        // White background for QR
-        pdf.setFillColor(255, 255, 255);
-        pdf.roundedRect(x + 20, y + 34, 50, 50, 2, 2, "F");
-
-        // QR Code
-        pdf.addImage(qrDataUrl, "PNG", x + 22, y + 36, 46, 46);
-
-        // Call to action
+        // === MAIN MESSAGE ===
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(9);
-        pdf.text("Escaneie e avalie agora", x + width / 2, y + 94, { align: "center" });
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Sua opinião é importante para nós", x + cardWidth / 2, y + 44, { align: "center" });
 
-        // Stars
-        pdf.setTextColor(251, 191, 36);
-        pdf.setFontSize(12);
-        pdf.text("★ ★ ★ ★ ★", x + width / 2, y + 104, { align: "center" });
+        // === QR CODE CONTAINER ===
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(x + 20, y + 50, 50, 50, 3, 3, "F");
 
-        // Footer
-        pdf.setTextColor(180, 180, 200);
+        // QR Code
+        pdf.addImage(qrDataUrl, "PNG", x + 22.5, y + 52.5, 45, 45);
+
+        // === CALL TO ACTION ===
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(9);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Aponte a câmera para avaliar", x + cardWidth / 2, y + 110, { align: "center" });
+        
+        // Time indication
+        pdf.setTextColor(180, 180, 190);
         pdf.setFontSize(7);
-        pdf.text("Powered by Avalia Pro", x + width / 2, y + 118, { align: "center" });
+        pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 116, { align: "center" });
+
+        // === FOOTER WITH BRANDING ===
+        // Gold accent line
+        pdf.setFillColor(212, 175, 55);
+        pdf.rect(x + 30, y + 122, 30, 0.4, "F");
+        
+        // Powered by text
+        pdf.setTextColor(100, 100, 110);
+        pdf.setFontSize(6);
+        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 130, { align: "center" });
       };
 
-      // Draw 4 cards in 2x2 grid
-      drawCard(margin, margin);
-      drawCard(margin + width + gap, margin);
-      drawCard(margin, margin + height + gap);
-      drawCard(margin + width + gap, margin + height + gap);
+      // Draw 4 premium cards in 2x2 grid
+      drawPremiumCard(margin, margin);
+      drawPremiumCard(margin + cardWidth + gap, margin);
+      drawPremiumCard(margin, margin + cardHeight + gap);
+      drawPremiumCard(margin + cardWidth + gap, margin + cardHeight + gap);
 
-      pdf.save(`Avalia-Pro-Impressao-${company?.slug}.pdf`);
+      pdf.save(`Avalia-Pro-Impressao-Premium-${company?.slug}.pdf`);
       
       toast({
-        title: "PDF A4 gerado!",
-        description: "4 materiais prontos para impressão.",
+        title: "PDF A4 Premium gerado!",
+        description: "4 materiais profissionais prontos para impressão.",
       });
     } catch (error) {
       console.error("PDF A4 generation error:", error);
@@ -288,54 +358,65 @@ const DashboardQRCode = () => {
             </CardHeader>
             <CardContent className="flex flex-col items-center">
               {loading ? (
-                <Skeleton className="w-72 h-96 rounded-3xl" />
+                <Skeleton className="w-72 h-[400px] rounded-3xl" />
               ) : (
                 <div
                   id="material-preview"
-                  className="bg-gradient-to-br from-primary to-navy-light p-8 rounded-3xl text-center w-72 shadow-2xl"
+                  className="relative overflow-hidden rounded-3xl text-center w-72 shadow-2xl"
+                  style={{ background: 'linear-gradient(to bottom, #1e293b 0%, #0f172a 35%, #0f172a 100%)' }}
                 >
-                  {company?.logo_url ? (
-                    <img
-                      src={company.logo_url}
-                      alt={company.name}
-                      crossOrigin="anonymous"
-                      className="w-20 h-20 mx-auto mb-4 rounded-xl object-cover bg-white"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-xl bg-coral flex items-center justify-center">
-                      <span className="text-3xl font-bold text-white">
-                        {getInitial(company?.name || "R")}
-                      </span>
+                  {/* Gold accent line at top */}
+                  <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400" />
+                  
+                  <div className="p-8">
+                    {/* Premium gold emblem */}
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg">
+                      <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center">
+                        <span className="text-2xl font-bold bg-gradient-to-br from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                          A
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  <h3 className="text-white font-display text-xl font-bold mb-2">
-                    {company?.name || "Seu Restaurante"}
-                  </h3>
-                  <p className="text-white/80 text-sm mb-4">
-                    Como foi sua experiência?
-                  </p>
-                  <div className="bg-white p-4 rounded-xl inline-block mb-4">
-                    <QRCodeCanvas
-                      id="qr-code-material"
-                      value={evaluationUrl}
-                      size={140}
-                      level="H"
-                      includeMargin={false}
-                      fgColor="#1A1A2E"
-                      bgColor="#FFFFFF"
-                    />
+
+                    {/* Company name */}
+                    <h3 className="text-white font-display text-xl font-bold mb-2">
+                      {company?.name || "Seu Restaurante"}
+                    </h3>
+                    
+                    {/* Main message */}
+                    <p className="text-white/80 text-sm mb-6">
+                      Sua opinião é importante para nós
+                    </p>
+                    
+                    {/* QR Code container */}
+                    <div className="bg-white p-4 rounded-xl inline-block mb-6 shadow-lg">
+                      <QRCodeCanvas
+                        id="qr-code-material"
+                        value={evaluationUrl}
+                        size={140}
+                        level="H"
+                        includeMargin={false}
+                        fgColor="#0f172a"
+                        bgColor="#FFFFFF"
+                      />
+                    </div>
+                    
+                    {/* Call to action */}
+                    <p className="text-white text-sm font-medium mb-1">
+                      Aponte a câmera para avaliar
+                    </p>
+                    <p className="text-white/50 text-xs mb-6">
+                      Leva apenas 15 segundos
+                    </p>
+                    
+                    {/* Gold divider */}
+                    <div className="w-16 h-0.5 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-4" />
+                    
+                    {/* Footer */}
+                    <p className="text-white/40 text-xs">
+                      Powered by Avalia Pro
+                    </p>
                   </div>
-                  <p className="text-white/90 text-sm font-medium mb-2">
-                    Escaneie e avalie agora
-                  </p>
-                  <div className="flex justify-center gap-1 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span key={star} className="text-amber-400 text-lg">★</span>
-                    ))}
-                  </div>
-                  <p className="text-white/50 text-xs">
-                    Powered by Avalia Pro
-                  </p>
                 </div>
               )}
 
