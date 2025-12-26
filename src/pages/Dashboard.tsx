@@ -28,6 +28,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("30");
   const [companyId, setCompanyId] = useState<string | null>(null);
+  const [companyName, setCompanyName] = useState<string>("Restaurante");
   const [metrics, setMetrics] = useState({
     totalScans: 0,
     positiveReviews: 0,
@@ -59,7 +60,7 @@ const Dashboard = () => {
       // Fetch company
       const { data: company } = await supabase
         .from("companies")
-        .select("id")
+        .select("id, name")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -69,6 +70,7 @@ const Dashboard = () => {
       }
 
       setCompanyId(company.id);
+      setCompanyName(company.name);
 
       // Build query with date filter
       const dateFilter = getDateFilter(period);
@@ -146,8 +148,6 @@ const Dashboard = () => {
     );
   };
 
-  const userName = user?.user_metadata?.restaurant_name || "Restaurante";
-
   return (
     <>
       <Helmet>
@@ -159,7 +159,7 @@ const Dashboard = () => {
         {/* Welcome */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
-            Bem-vindo de volta, {userName}! 👋
+            Bem-vindo de volta, {companyName}! 👋
           </h1>
           <p className="text-muted-foreground">
             Acompanhe suas métricas e gerencie sua reputação online.
