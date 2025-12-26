@@ -123,6 +123,46 @@ const DashboardQRCode = () => {
     }
   };
 
+  // Helper to create circular clipped logo for PDF
+  const createCircularLogoDataUrl = async (logoUrl: string): Promise<string | null> => {
+    try {
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+      
+      return new Promise((resolve) => {
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const size = 200; // High res
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          
+          if (ctx) {
+            // Create circular clipping path
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+            
+            // Draw image centered and scaled to fit
+            const scale = Math.max(size / img.width, size / img.height);
+            const x = (size - img.width * scale) / 2;
+            const y = (size - img.height * scale) / 2;
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            
+            resolve(canvas.toDataURL("image/png"));
+          } else {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = logoUrl;
+      });
+    } catch {
+      return null;
+    }
+  };
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     
@@ -130,15 +170,13 @@ const DashboardQRCode = () => {
       // Generate QR Code data URL from the high-res hidden canvas
       const qrDataUrl = generateQRCodeDataUrl();
       
-      // Load company logo or fallback to Avalia Pro logo
-      let logoDataUrl: string | null = null;
+      // Load circular company logo or fallback to Avalia Pro logo
+      let circularLogoDataUrl: string | null = null;
       if (company?.logo_url) {
-        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+        circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
-      
-      // If no company logo, use Avalia Pro logo
-      if (!logoDataUrl) {
-        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      if (!circularLogoDataUrl) {
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
       }
       
       // Create premium PDF with professional design
@@ -161,19 +199,10 @@ const DashboardQRCode = () => {
       pdf.setFillColor(30, 41, 59); // Slate-800
       pdf.rect(0, 0, pageWidth, 50, "F");
 
-      // Elegant gold accent line at top
-      pdf.setFillColor(212, 175, 55); // Premium gold
-      pdf.rect(0, 0, pageWidth, 3, "F");
-
       // === LOGO AREA ===
-      if (logoDataUrl) {
-        // Draw circular logo with gold border effect
-        // Gold circle background
-        pdf.setFillColor(212, 175, 55);
-        pdf.circle(pageWidth / 2, 24, 14, "F");
-        
-        // Add the logo image (centered, circular appearance)
-        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 12, 12, 24, 24);
+      if (circularLogoDataUrl) {
+        // Add circular clipped logo
+        pdf.addImage(circularLogoDataUrl, "PNG", pageWidth / 2 - 14, 10, 28, 28);
       } else {
         // Fallback to "A" emblem if image loading fails
         pdf.setFillColor(212, 175, 55);
@@ -251,15 +280,13 @@ const DashboardQRCode = () => {
       // Generate QR Code data URL from the high-res hidden canvas
       const qrDataUrl = generateQRCodeDataUrl();
 
-      // Load company logo or fallback to Avalia Pro logo
-      let logoDataUrl: string | null = null;
+      // Load circular company logo or fallback to Avalia Pro logo
+      let circularLogoDataUrl: string | null = null;
       if (company?.logo_url) {
-        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+        circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
-      
-      // If no company logo, use Avalia Pro logo
-      if (!logoDataUrl) {
-        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      if (!circularLogoDataUrl) {
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
       }
 
       const pdf = new jsPDF({
@@ -287,20 +314,10 @@ const DashboardQRCode = () => {
         pdf.setFillColor(15, 23, 42);
         pdf.rect(x, y + 40, cardWidth, 5, "F"); // blend
 
-        // Elegant gold accent line at top
-        pdf.setFillColor(212, 175, 55);
-        pdf.roundedRect(x, y, cardWidth, 2.5, 4, 4, "F");
-        pdf.setFillColor(15, 23, 42);
-        pdf.rect(x, y + 2, cardWidth, 2, "F");
-
         // === LOGO AREA ===
-        if (logoDataUrl) {
-          // Gold circle background for logo
-          pdf.setFillColor(212, 175, 55);
-          pdf.circle(x + cardWidth / 2, y + 20, 12, "F");
-          
-          // Add the logo image
-          pdf.addImage(logoDataUrl, "JPEG", x + cardWidth / 2 - 10, y + 10, 20, 20);
+        if (circularLogoDataUrl) {
+          // Add circular clipped logo
+          pdf.addImage(circularLogoDataUrl, "PNG", x + cardWidth / 2 - 12, y + 8, 24, 24);
         } else {
           // Fallback to "A" emblem
           pdf.setFillColor(212, 175, 55);
@@ -344,14 +361,10 @@ const DashboardQRCode = () => {
         pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 120, { align: "center" });
 
         // === FOOTER WITH BRANDING ===
-        // Gold accent line
-        pdf.setFillColor(212, 175, 55);
-        pdf.rect(x + 30, y + 126, 30, 0.4, "F");
-        
         // Powered by text
         pdf.setTextColor(100, 100, 110);
         pdf.setFontSize(6);
-        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 132, { align: "center" });
+        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 130, { align: "center" });
       };
 
       // Draw 4 premium cards in 2x2 grid
@@ -384,12 +397,12 @@ const DashboardQRCode = () => {
     setDownloading("tent");
     try {
       const qrDataUrl = generateQRCodeDataUrl();
-      let logoDataUrl: string | null = null;
+      let circularLogoDataUrl: string | null = null;
       if (company?.logo_url) {
-        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+        circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
-      if (!logoDataUrl) {
-        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      if (!circularLogoDataUrl) {
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
       }
 
       // 10x15cm tent card (folded)
@@ -408,14 +421,10 @@ const DashboardQRCode = () => {
       pdf.rect(0, 0, pageWidth, pageHeight, "F");
       pdf.setFillColor(30, 41, 59);
       pdf.rect(0, 0, pageWidth, 50, "F");
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(0, 0, pageWidth, 3, "F");
 
       // Logo
-      if (logoDataUrl) {
-        pdf.setFillColor(212, 175, 55);
-        pdf.circle(pageWidth / 2, 24, 14, "F");
-        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 12, 12, 24, 24);
+      if (circularLogoDataUrl) {
+        pdf.addImage(circularLogoDataUrl, "PNG", pageWidth / 2 - 14, 10, 28, 28);
       }
 
       // Text
@@ -441,11 +450,9 @@ const DashboardQRCode = () => {
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
       // Footer
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(35, 144, 30, 0.5, "F");
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(7);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 149, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 147, { align: "center" });
 
       pdf.save(`Display-Mesa-10x15cm-${company?.slug}.pdf`);
       toast({ title: "Display de mesa gerado!", description: "Formato 10x15cm para display de mesa." });
@@ -511,12 +518,12 @@ const DashboardQRCode = () => {
     setDownloading("flyer");
     try {
       const qrDataUrl = generateQRCodeDataUrl();
-      let logoDataUrl: string | null = null;
+      let circularLogoDataUrl: string | null = null;
       if (company?.logo_url) {
-        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+        circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
-      if (!logoDataUrl) {
-        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      if (!circularLogoDataUrl) {
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
       }
 
       const pdf = new jsPDF({
@@ -534,16 +541,10 @@ const DashboardQRCode = () => {
       pdf.rect(0, 0, pageWidth, pageHeight, "F");
       pdf.setFillColor(30, 41, 59);
       pdf.rect(0, 0, pageWidth, 80, "F");
-      
-      // Gold accent
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(0, 0, pageWidth, 4, "F");
 
       // Logo
-      if (logoDataUrl) {
-        pdf.setFillColor(212, 175, 55);
-        pdf.circle(pageWidth / 2, 35, 18, "F");
-        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 15, 20, 30, 30);
+      if (circularLogoDataUrl) {
+        pdf.addImage(circularLogoDataUrl, "PNG", pageWidth / 2 - 18, 17, 36, 36);
       }
 
       // Company name
@@ -573,11 +574,9 @@ const DashboardQRCode = () => {
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 196, { align: "center" });
 
       // Footer
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(pageWidth / 2 - 20, 203, 40, 0.5, "F");
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(8);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 208, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 206, { align: "center" });
 
       pdf.save(`Flyer-A5-${company?.slug}.pdf`);
       toast({ title: "Flyer A5 gerado!", description: "Perfeito para distribuição aos clientes." });
@@ -592,12 +591,12 @@ const DashboardQRCode = () => {
     setDownloading("poster");
     try {
       const qrDataUrl = generateQRCodeDataUrl();
-      let logoDataUrl: string | null = null;
+      let circularLogoDataUrl: string | null = null;
       if (company?.logo_url) {
-        logoDataUrl = await loadImageAsDataUrl(company.logo_url);
+        circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
-      if (!logoDataUrl) {
-        logoDataUrl = await loadImageAsDataUrl(avaliaProLogo);
+      if (!circularLogoDataUrl) {
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
       }
 
       const pdf = new jsPDF({
@@ -615,16 +614,10 @@ const DashboardQRCode = () => {
       pdf.rect(0, 0, pageWidth, pageHeight, "F");
       pdf.setFillColor(30, 41, 59);
       pdf.rect(0, 0, pageWidth, 140, "F");
-      
-      // Gold accent
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(0, 0, pageWidth, 8, "F");
 
       // Logo
-      if (logoDataUrl) {
-        pdf.setFillColor(212, 175, 55);
-        pdf.circle(pageWidth / 2, 70, 35, "F");
-        pdf.addImage(logoDataUrl, "JPEG", pageWidth / 2 - 30, 40, 60, 60);
+      if (circularLogoDataUrl) {
+        pdf.addImage(circularLogoDataUrl, "PNG", pageWidth / 2 - 35, 35, 70, 70);
       }
 
       // Company name
@@ -654,11 +647,9 @@ const DashboardQRCode = () => {
       pdf.text("É rápido e fácil - leva apenas 15 segundos", pageWidth / 2, 365, { align: "center" });
 
       // Footer
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(pageWidth / 2 - 40, 395, 80, 1, "F");
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(12);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 408, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, 400, { align: "center" });
 
       pdf.save(`Poster-A3-${company?.slug}.pdf`);
       toast({ title: "Poster A3 gerado!", description: "Ideal para parede ou vitrine." });
@@ -694,14 +685,10 @@ const DashboardQRCode = () => {
         pdf.setFillColor(15, 23, 42);
         pdf.roundedRect(x, y, insertWidth, insertHeight, 3, 3, "F");
         
-        // Gold accent
-        pdf.setFillColor(212, 175, 55);
-        pdf.rect(x, y, insertWidth, 2, "F");
-        
         // QR Code
         pdf.setFillColor(255, 255, 255);
-        pdf.roundedRect(x + 5, y + 8, 35, 35, 2, 2, "F");
-        pdf.addImage(qrDataUrl, "PNG", x + 7, y + 10, 31, 31);
+        pdf.roundedRect(x + 5, y + 7, 36, 36, 2, 2, "F");
+        pdf.addImage(qrDataUrl, "PNG", x + 7, y + 9, 32, 32);
         
         // Text
         pdf.setTextColor(255, 255, 255);
@@ -713,7 +700,7 @@ const DashboardQRCode = () => {
         pdf.setFont("helvetica", "normal");
         pdf.text("Avalie sua experiência", x + 45, y + 26, { align: "left" });
         
-        pdf.setTextColor(212, 175, 55);
+        pdf.setTextColor(180, 180, 190);
         pdf.setFontSize(8);
         pdf.setFont("helvetica", "bold");
         pdf.text("Escaneie o QR Code", x + 45, y + 38, { align: "left" });
