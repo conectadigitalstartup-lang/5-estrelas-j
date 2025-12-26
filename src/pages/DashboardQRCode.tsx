@@ -79,72 +79,86 @@ const DashboardQRCode = () => {
 
   const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+  const generateQRCodeDataUrl = (): string => {
+    // Create a temporary canvas to generate QR Code
+    const tempCanvas = document.createElement("canvas");
+    const size = 280; // High resolution
+    tempCanvas.width = size;
+    tempCanvas.height = size;
+    
+    // Use the existing visible QR Code canvas
+    const existingCanvas = document.getElementById("qr-code-canvas") as HTMLCanvasElement;
+    if (existingCanvas) {
+      const ctx = tempCanvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(existingCanvas, 0, 0, size, size);
+        return tempCanvas.toDataURL("image/png");
+      }
+    }
+    
+    // Fallback: return empty white image
+    const ctx = tempCanvas.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, size, size);
+    }
+    return tempCanvas.toDataURL("image/png");
+  };
+
   const downloadMaterialPDF = async () => {
     setDownloading("pdf");
     
     try {
-      // Wait for QR Code to fully render before capturing
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Generate QR Code data URL from the high-res hidden canvas
+      const qrDataUrl = generateQRCodeDataUrl();
       
-      // Get the QR Code canvas and convert to base64 image
-      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
-      if (!qrCanvas) {
-        throw new Error("QR Code não encontrado");
-      }
-      const qrDataUrl = qrCanvas.toDataURL("image/png");
-      
-      // Create a temporary container with static images instead of canvas
-      const tempContainer = document.createElement("div");
-      tempContainer.style.cssText = "position: absolute; left: -9999px; top: 0;";
-      tempContainer.innerHTML = `
-        <div style="background: linear-gradient(135deg, #1a365d 0%, #2d4a6f 100%); padding: 32px; border-radius: 24px; text-align: center; width: 288px;">
-          ${company?.logo_url 
-            ? `<img src="${company.logo_url}" crossorigin="anonymous" style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; object-fit: cover; background: white; display: block;" />`
-            : `<div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; background: #D4AF37; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 30px; font-weight: bold; color: white;">${company?.name?.charAt(0).toUpperCase() || "R"}</span>
-              </div>`
-          }
-          <h3 style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 8px; font-family: system-ui, sans-serif;">${company?.name || "Seu Restaurante"}</h3>
-          <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 16px;">Como foi sua experiência?</p>
-          <div style="background: white; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
-            <img src="${qrDataUrl}" style="width: 140px; height: 140px; display: block;" />
-          </div>
-          <p style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; margin-bottom: 8px;">Escaneie e avalie agora</p>
-          <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 16px;">
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-          </div>
-          <p style="color: rgba(255,255,255,0.5); font-size: 12px;">Powered by Avalia Pro</p>
-        </div>
-      `;
-      
-      document.body.appendChild(tempContainer);
-      
-      // Wait for images inside the container to load
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
-        scale: 2, 
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-      });
-
-      document.body.removeChild(tempContainer);
-
-      const imgData = canvas.toDataURL("image/png");
-
+      // Create PDF directly with jsPDF
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: [100, 140],
       });
 
-      pdf.addImage(imgData, "PNG", 0, 0, 100, 140);
+      // Draw background gradient (approximated as solid color)
+      pdf.setFillColor(26, 54, 93); // #1a365d
+      pdf.roundedRect(0, 0, 100, 140, 5, 5, "F");
+
+      // Add company name
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "bold");
+      const companyName = company?.name || "Seu Restaurante";
+      pdf.text(companyName, 50, 30, { align: "center" });
+
+      // Add subtitle
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Como foi sua experiência?", 50, 40, { align: "center" });
+
+      // Add white background for QR Code
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(25, 48, 50, 50, 3, 3, "F");
+
+      // Add QR Code image
+      pdf.addImage(qrDataUrl, "PNG", 27, 50, 46, 46);
+
+      // Add call to action
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(10);
+      pdf.text("Escaneie e avalie agora", 50, 108, { align: "center" });
+
+      // Add stars
+      pdf.setTextColor(251, 191, 36); // amber
+      pdf.setFontSize(14);
+      pdf.text("★ ★ ★ ★ ★", 50, 118, { align: "center" });
+
+      // Add footer
+      pdf.setTextColor(255, 255, 255, 0.5);
+      pdf.setFontSize(8);
+      pdf.text("Powered by Avalia Pro", 50, 132, { align: "center" });
+
       pdf.save(`Avalia-Pro-Material-${company?.slug}.pdf`);
       
       toast({
@@ -166,60 +180,8 @@ const DashboardQRCode = () => {
     setDownloading("a4");
     
     try {
-      // Wait for QR Code to fully render before capturing
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Get the QR Code canvas and convert to base64 image
-      const qrCanvas = document.getElementById("qr-code-material") as HTMLCanvasElement;
-      if (!qrCanvas) {
-        throw new Error("QR Code não encontrado");
-      }
-      const qrDataUrl = qrCanvas.toDataURL("image/png");
-      
-      // Create a temporary container with static images instead of canvas
-      const tempContainer = document.createElement("div");
-      tempContainer.style.cssText = "position: absolute; left: -9999px; top: 0;";
-      tempContainer.innerHTML = `
-        <div style="background: linear-gradient(135deg, #1a365d 0%, #2d4a6f 100%); padding: 32px; border-radius: 24px; text-align: center; width: 288px;">
-          ${company?.logo_url 
-            ? `<img src="${company.logo_url}" crossorigin="anonymous" style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; object-fit: cover; background: white; display: block;" />`
-            : `<div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 12px; background: #D4AF37; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 30px; font-weight: bold; color: white;">${company?.name?.charAt(0).toUpperCase() || "R"}</span>
-              </div>`
-          }
-          <h3 style="color: white; font-size: 20px; font-weight: bold; margin-bottom: 8px; font-family: system-ui, sans-serif;">${company?.name || "Seu Restaurante"}</h3>
-          <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 16px;">Como foi sua experiência?</p>
-          <div style="background: white; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 16px;">
-            <img src="${qrDataUrl}" style="width: 140px; height: 140px; display: block;" />
-          </div>
-          <p style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; margin-bottom: 8px;">Escaneie e avalie agora</p>
-          <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 16px;">
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-            <span style="color: #fbbf24; font-size: 18px;">★</span>
-          </div>
-          <p style="color: rgba(255,255,255,0.5); font-size: 12px;">Powered by Avalia Pro</p>
-        </div>
-      `;
-      
-      document.body.appendChild(tempContainer);
-      
-      // Wait for images inside the container to load
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const canvas = await html2canvas(tempContainer.firstElementChild as HTMLElement, { 
-        scale: 2, 
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-      });
-
-      document.body.removeChild(tempContainer);
-
-      const imgData = canvas.toDataURL("image/png");
+      // Generate QR Code data URL from the high-res hidden canvas
+      const qrDataUrl = generateQRCodeDataUrl();
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -230,12 +192,54 @@ const DashboardQRCode = () => {
       const width = 90;
       const height = 126;
       const margin = 10;
+      const gap = 5;
+      const companyName = company?.name || "Seu Restaurante";
 
-      // 4 materiais em grid 2x2
-      pdf.addImage(imgData, "PNG", margin, margin, width, height);
-      pdf.addImage(imgData, "PNG", margin + width + 5, margin, width, height);
-      pdf.addImage(imgData, "PNG", margin, margin + height + 5, width, height);
-      pdf.addImage(imgData, "PNG", margin + width + 5, margin + height + 5, width, height);
+      // Helper function to draw a single material card
+      const drawCard = (x: number, y: number) => {
+        // Background
+        pdf.setFillColor(26, 54, 93);
+        pdf.roundedRect(x, y, width, height, 4, 4, "F");
+
+        // Company name
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(14);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(companyName, x + width / 2, y + 20, { align: "center" });
+
+        // Subtitle
+        pdf.setFontSize(9);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("Como foi sua experiência?", x + width / 2, y + 28, { align: "center" });
+
+        // White background for QR
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(x + 20, y + 34, 50, 50, 2, 2, "F");
+
+        // QR Code
+        pdf.addImage(qrDataUrl, "PNG", x + 22, y + 36, 46, 46);
+
+        // Call to action
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(9);
+        pdf.text("Escaneie e avalie agora", x + width / 2, y + 94, { align: "center" });
+
+        // Stars
+        pdf.setTextColor(251, 191, 36);
+        pdf.setFontSize(12);
+        pdf.text("★ ★ ★ ★ ★", x + width / 2, y + 104, { align: "center" });
+
+        // Footer
+        pdf.setTextColor(180, 180, 200);
+        pdf.setFontSize(7);
+        pdf.text("Powered by Avalia Pro", x + width / 2, y + 118, { align: "center" });
+      };
+
+      // Draw 4 cards in 2x2 grid
+      drawCard(margin, margin);
+      drawCard(margin + width + gap, margin);
+      drawCard(margin, margin + height + gap);
+      drawCard(margin + width + gap, margin + height + gap);
 
       pdf.save(`Avalia-Pro-Impressao-${company?.slug}.pdf`);
       
