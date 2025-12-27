@@ -341,25 +341,32 @@ const DashboardSettings = () => {
     }
   };
 
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
   const handleDeleteAccount = async () => {
-    if (!user || !companyId) return;
+    if (!user) return;
+    setDeletingAccount(true);
 
     try {
-      await supabase.from("feedbacks").delete().eq("company_id", companyId);
-      await supabase.from("companies").delete().eq("id", companyId);
-      await supabase.from("profiles").delete().eq("user_id", user.id);
-      await signOut();
-      
+      const { data, error } = await supabase.functions.invoke('delete-account');
+
+      if (error) throw error;
+
       toast({
         title: "Conta excluída",
         description: "Todos os seus dados foram removidos.",
       });
+      
+      await signOut();
     } catch (error) {
+      console.error('Error deleting account:', error);
       toast({
         title: "Erro",
         description: "Não foi possível excluir a conta.",
         variant: "destructive",
       });
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -849,10 +856,17 @@ const DashboardSettings = () => {
                         </AlertDialogCancel>
                         <AlertDialogAction 
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          disabled={deleteConfirmation !== "EXCLUIR"}
+                          disabled={deleteConfirmation !== "EXCLUIR" || deletingAccount}
                           onClick={handleDeleteAccount}
                         >
-                          Excluir Conta Permanentemente
+                          {deletingAccount ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Excluindo...
+                            </>
+                          ) : (
+                            "Excluir Conta Permanentemente"
+                          )}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
