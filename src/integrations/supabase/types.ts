@@ -78,6 +78,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          google_place_id: string | null
           google_review_link: string | null
           id: string
           logo_url: string | null
@@ -90,6 +91,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          google_place_id?: string | null
           google_review_link?: string | null
           id?: string
           logo_url?: string | null
@@ -102,6 +104,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          google_place_id?: string | null
           google_review_link?: string | null
           id?: string
           logo_url?: string | null
@@ -326,6 +329,13 @@ export type Database = {
       check_company_access: { Args: { company_slug: string }; Returns: boolean }
       check_google_link_exists: {
         Args: { google_link: string }
+        Returns: {
+          exists_flag: boolean
+          masked_email: string
+        }[]
+      }
+      check_place_id_exists: {
+        Args: { place_id: string }
         Returns: {
           exists_flag: boolean
           masked_email: string

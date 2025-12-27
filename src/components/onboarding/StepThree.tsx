@@ -1,14 +1,21 @@
 import { useState } from "react";
-import { ExternalLink, Check, X, Loader2, ChevronDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Loader2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PlaceSearch from "./PlaceSearch";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface PlaceResult {
+  place_id: string;
+  name: string;
+  formatted_address: string;
+  google_maps_url: string;
+}
 
 interface StepThreeProps {
   googleLink: string;
@@ -16,24 +23,24 @@ interface StepThreeProps {
   onComplete: () => void;
   onBack: () => void;
   isSubmitting: boolean;
+  selectedPlace?: PlaceResult | null;
+  onPlaceSelect?: (place: PlaceResult | null) => void;
+  restaurantName?: string;
 }
 
-const StepThree = ({ googleLink, onChange, onComplete, onBack, isSubmitting }: StepThreeProps) => {
-  const [tutorialOpen, setTutorialOpen] = useState(false);
+const StepThree = ({ 
+  googleLink, 
+  onChange, 
+  onComplete, 
+  onBack, 
+  isSubmitting,
+  selectedPlace,
+  onPlaceSelect,
+  restaurantName,
+}: StepThreeProps) => {
+  const [helpOpen, setHelpOpen] = useState(false);
 
-  const isValidGoogleLink = (link: string) => {
-    if (!link.trim()) return null;
-    const lowercased = link.toLowerCase();
-    return (
-      lowercased.includes("google") ||
-      lowercased.includes("g.page") ||
-      lowercased.includes("maps.google") ||
-      lowercased.includes("goo.gl")
-    );
-  };
-
-  const validationState = isValidGoogleLink(googleLink);
-  const isValid = validationState === true;
+  const isValid = selectedPlace !== null && selectedPlace !== undefined;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -42,75 +49,52 @@ const StepThree = ({ googleLink, onChange, onComplete, onBack, isSubmitting }: S
           Último passo! 🎯
         </h2>
         <p className="text-muted-foreground mt-1">
-          Conecte seu perfil do Google para receber avaliações
+          Encontre seu restaurante no Google para conectar as avaliações
         </p>
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="googleLink">Link do seu Google Meu Negócio</Label>
-          <div className="relative">
-            <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="googleLink"
-              type="url"
-              placeholder="https://g.page/r/seu-restaurante/review"
-              value={googleLink}
-              onChange={(e) => onChange(e.target.value)}
-              className={cn(
-                "pl-10 pr-10",
-                validationState === true && "border-green-500 focus-visible:ring-green-500",
-                validationState === false && "border-destructive focus-visible:ring-destructive"
-              )}
-            />
-            {validationState !== null && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {validationState ? (
-                  <Check className="h-4 w-4 text-green-500" />
-                ) : (
-                  <X className="h-4 w-4 text-destructive" />
-                )}
-              </div>
-            )}
-          </div>
-          {validationState === true && (
-            <p className="text-xs text-green-600">Link válido! ✓</p>
-          )}
-          {validationState === false && (
-            <p className="text-xs text-destructive">
-              Por favor, insira um link válido do Google
-            </p>
-          )}
-        </div>
+        <PlaceSearch
+          onSelect={(place) => {
+            if (onPlaceSelect) {
+              onPlaceSelect(place);
+            }
+            if (place) {
+              onChange(place.google_maps_url);
+            } else {
+              onChange("");
+            }
+          }}
+          selectedPlace={selectedPlace || null}
+          restaurantName={restaurantName}
+        />
 
-        <Collapsible open={tutorialOpen} onOpenChange={setTutorialOpen}>
-          <CollapsibleTrigger className="flex items-center gap-2 text-sm text-coral hover:text-coral/80 transition-colors">
-            <span>📖 Como encontrar meu link do Google?</span>
+        <Collapsible open={helpOpen} onOpenChange={setHelpOpen}>
+          <CollapsibleTrigger className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors">
+            <Info className="w-4 h-4" />
+            <span>Não encontrou seu restaurante?</span>
             <ChevronDown
               className={cn(
                 "h-4 w-4 transition-transform",
-                tutorialOpen && "rotate-180"
+                helpOpen && "rotate-180"
               )}
             />
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-3">
             <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-3">
-              <p className="font-medium text-foreground">Opção 1: Via Google Meu Negócio</p>
+              <p className="font-medium text-foreground">Possíveis motivos:</p>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>O restaurante ainda não está cadastrado no Google Meu Negócio</li>
+                <li>O nome está diferente do cadastrado no Google</li>
+                <li>Tente buscar com o nome completo ou endereço</li>
+              </ul>
+              
+              <p className="font-medium text-foreground pt-2">Como cadastrar no Google:</p>
               <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                <li>Acesse google.com/business e faça login</li>
-                <li>Selecione seu estabelecimento</li>
-                <li>Clique em "Início" no menu lateral</li>
-                <li>Procure o card "Receber mais avaliações"</li>
-                <li>Clique em "Compartilhar formulário de avaliação"</li>
-                <li>Copie o link e cole aqui</li>
-              </ol>
-
-              <p className="font-medium text-foreground pt-2">Opção 2: Pesquisa no Google</p>
-              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                <li>Pesquise seu restaurante no Google</li>
-                <li>Clique no nome do seu estabelecimento</li>
-                <li>Clique em "Escrever uma avaliação"</li>
-                <li>Copie a URL da página e cole aqui</li>
+                <li>Acesse <a href="https://business.google.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">business.google.com</a></li>
+                <li>Clique em "Gerenciar agora"</li>
+                <li>Siga as instruções para cadastrar seu estabelecimento</li>
+                <li>Após aprovado, volte aqui e busque novamente</li>
               </ol>
             </div>
           </CollapsibleContent>
