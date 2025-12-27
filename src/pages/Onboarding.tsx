@@ -11,12 +11,20 @@ import StepThree from "@/components/onboarding/StepThree";
 import SuccessScreen from "@/components/onboarding/SuccessScreen";
 import { Loader2 } from "lucide-react";
 
+interface PlaceResult {
+  place_id: string;
+  name: string;
+  formatted_address: string;
+  google_maps_url: string;
+}
+
 interface FormData {
   name: string;
   type: string;
   description: string;
   logoUrl: string | null;
   googleLink: string;
+  selectedPlace: PlaceResult | null;
 }
 
 const generateSlug = (name: string): string => {
@@ -40,12 +48,24 @@ const Onboarding = () => {
   
   const [formData, setFormData] = useState<FormData>(() => {
     const saved = localStorage.getItem("onboarding_data");
-    return saved ? JSON.parse(saved) : {
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        name: parsed.name || "",
+        type: parsed.type || "",
+        description: parsed.description || "",
+        logoUrl: parsed.logoUrl || null,
+        googleLink: parsed.googleLink || "",
+        selectedPlace: parsed.selectedPlace || null,
+      };
+    }
+    return {
       name: "",
       type: "",
       description: "",
       logoUrl: null,
       googleLink: "",
+      selectedPlace: null,
     };
   });
 
@@ -94,25 +114,28 @@ const Onboarding = () => {
       return;
     }
 
+    if (!formData.selectedPlace) {
+      toast.error("Por favor, selecione seu restaurante na busca");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // ANTI-FRAUDE: Verificar se o link do Google já existe
-      if (formData.googleLink) {
-        const { data: linkCheck, error: linkError } = await supabase
-          .rpc('check_google_link_exists', { google_link: formData.googleLink });
+      // ANTI-FRAUDE: Verificar se o place_id já existe
+      const { data: placeCheck, error: placeError } = await supabase
+        .rpc('check_place_id_exists', { place_id: formData.selectedPlace.place_id });
 
-        if (linkError) {
-          console.error("Error checking google link:", linkError);
-        } else if (linkCheck && linkCheck.length > 0 && linkCheck[0].exists_flag) {
-          const maskedEmail = linkCheck[0].masked_email || '***@***';
-          toast.error(
-            `Este restaurante já está cadastrado e vinculado ao e-mail ${maskedEmail}. Contate o suporte.`,
-            { duration: 8000 }
-          );
-          setIsSubmitting(false);
-          return;
-        }
+      if (placeError) {
+        console.error("Error checking place_id:", placeError);
+      } else if (placeCheck && placeCheck.length > 0 && placeCheck[0].exists_flag) {
+        const maskedEmail = placeCheck[0].masked_email || '***@***';
+        toast.error(
+          `Este restaurante já está cadastrado e vinculado ao e-mail ${maskedEmail}. Contate o suporte.`,
+          { duration: 8000 }
+        );
+        setIsSubmitting(false);
+        return;
       }
 
       // Generate unique slug
@@ -136,24 +159,32 @@ const Onboarding = () => {
         }
       }
 
-      // Create company
+      // Create company with place_id
       const { error: companyError } = await supabase.from("companies").insert({
         owner_id: user.id,
         name: formData.name,
         restaurant_type: formData.type,
         description: formData.description || null,
         logo_url: formData.logoUrl,
-        google_review_link: formData.googleLink || null,
+        google_review_link: formData.selectedPlace.google_maps_url,
+        google_place_id: formData.selectedPlace.place_id,
         slug,
       });
 
       if (companyError) {
         // Handle unique constraint violation
-        if (companyError.code === '23505' && companyError.message.includes('google_review_link')) {
-          toast.error(
-            "Este restaurante já está cadastrado. Contate o suporte se você é o dono.",
-            { duration: 8000 }
-          );
+        if (companyError.code === '23505') {
+          if (companyError.message.includes('google_place_id')) {
+            toast.error(
+              "Este restaurante já está cadastrado. Contate o suporte se você é o dono.",
+              { duration: 8000 }
+            );
+          } else if (companyError.message.includes('google_review_link')) {
+            toast.error(
+              "Este restaurante já está cadastrado. Contate o suporte se você é o dono.",
+              { duration: 8000 }
+            );
+          }
           setIsSubmitting(false);
           return;
         }
@@ -247,6 +278,9 @@ const Onboarding = () => {
                   onComplete={handleComplete}
                   onBack={() => setCurrentStep(2)}
                   isSubmitting={isSubmitting}
+                  selectedPlace={formData.selectedPlace}
+                  onPlaceSelect={(place) => updateFormData({ selectedPlace: place })}
+                  restaurantName={formData.name}
                 />
               )}
             </>
