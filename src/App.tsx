@@ -16,6 +16,7 @@ import DashboardQRCode from "./pages/DashboardQRCode";
 import DashboardFeedbacks from "./pages/DashboardFeedbacks";
 import DashboardSettings from "./pages/DashboardSettings";
 import DashboardUpgrade from "./pages/DashboardUpgrade";
+import DashboardSupport from "./pages/DashboardSupport";
 import Avaliar from "./pages/Avaliar";
 import Admin from "./pages/Admin";
 import CompleteRegistration from "./pages/CompleteRegistration";
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/dashboard/feedbacks" element={<ProtectedRoute><DashboardFeedbacks /></ProtectedRoute>} />
               <Route path="/dashboard/settings" element={<ProtectedRoute><DashboardSettings /></ProtectedRoute>} />
               <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
+              <Route path="/dashboard/suporte" element={<ProtectedRoute><DashboardSupport /></ProtectedRoute>} />
               <Route path="/avaliar/:slug" element={<Avaliar />} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
               <Route path="/admin-dashboard" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
