@@ -97,6 +97,24 @@ const Onboarding = () => {
     setIsSubmitting(true);
 
     try {
+      // ANTI-FRAUDE: Verificar se o link do Google já existe
+      if (formData.googleLink) {
+        const { data: linkCheck, error: linkError } = await supabase
+          .rpc('check_google_link_exists', { google_link: formData.googleLink });
+
+        if (linkError) {
+          console.error("Error checking google link:", linkError);
+        } else if (linkCheck && linkCheck.length > 0 && linkCheck[0].exists_flag) {
+          const maskedEmail = linkCheck[0].masked_email || '***@***';
+          toast.error(
+            `Este restaurante já está cadastrado e vinculado ao e-mail ${maskedEmail}. Contate o suporte.`,
+            { duration: 8000 }
+          );
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       // Generate unique slug
       let slug = generateSlug(formData.name);
       let slugExists = true;
@@ -125,11 +143,22 @@ const Onboarding = () => {
         restaurant_type: formData.type,
         description: formData.description || null,
         logo_url: formData.logoUrl,
-        google_review_link: formData.googleLink,
+        google_review_link: formData.googleLink || null,
         slug,
       });
 
-      if (companyError) throw companyError;
+      if (companyError) {
+        // Handle unique constraint violation
+        if (companyError.code === '23505' && companyError.message.includes('google_review_link')) {
+          toast.error(
+            "Este restaurante já está cadastrado. Contate o suporte se você é o dono.",
+            { duration: 8000 }
+          );
+          setIsSubmitting(false);
+          return;
+        }
+        throw companyError;
+      }
 
       // Update profile
       const { error: profileError } = await supabase

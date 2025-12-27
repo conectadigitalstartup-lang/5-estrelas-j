@@ -324,6 +324,13 @@ export type Database = {
     }
     Functions: {
       check_company_access: { Args: { company_slug: string }; Returns: boolean }
+      check_google_link_exists: {
+        Args: { google_link: string }
+        Returns: {
+          exists_flag: boolean
+          masked_email: string
+        }[]
+      }
       has_active_subscription: {
         Args: { check_user_id: string }
         Returns: boolean

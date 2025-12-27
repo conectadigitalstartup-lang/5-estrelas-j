@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardHeader from "./DashboardHeader";
 import { TrialBanner } from "@/components/subscription/TrialBanner";
+import TrialExpiredModal from "@/components/subscription/TrialExpiredModal";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -143,6 +144,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <main className="p-4 md:p-6 lg:p-8">
           {children}
         </main>
+
+        {/* Modal de trial expirado - bloqueia uso se trial expirou e não tem assinatura ativa */}
+        <TrialExpiredModal 
+          isOpen={!isSuperAdmin && status === "inactive" && !subscriptionLoading} 
+        />
       </div>
     </div>
   );

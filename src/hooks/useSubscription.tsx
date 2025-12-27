@@ -46,7 +46,7 @@ export const useSubscription = () => {
     plan: null,
     subscriptionEnd: null,
     trialEndsAt: null,
-    daysLeft: 14,
+    daysLeft: 7, // Changed from 14 to 7
     isLoading: true,
     isSuperAdmin: false,
   });
@@ -117,7 +117,7 @@ export const useSubscription = () => {
           plan: data.plan,
           subscriptionEnd: data.subscription_end,
           trialEndsAt: null,
-          daysLeft: 14,
+          daysLeft: 7, // Changed from 14 to 7
           isLoading: false,
           isSuperAdmin: data.is_super_admin || false,
         });
