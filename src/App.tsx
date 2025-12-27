@@ -19,6 +19,7 @@ import DashboardUpgrade from "./pages/DashboardUpgrade";
 import DashboardSupport from "./pages/DashboardSupport";
 import Avaliar from "./pages/Avaliar";
 import Admin from "./pages/Admin";
+import AdminSupport from "./pages/AdminSupport";
 import CompleteRegistration from "./pages/CompleteRegistration";
 import NotFound from "./pages/NotFound";
 
@@ -48,6 +49,8 @@ const App = () => (
               <Route path="/avaliar/:slug" element={<Avaliar />} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
               <Route path="/admin-dashboard" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+              <Route path="/admin/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
+              <Route path="/admin-dashboard/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
               <Route path="/complete-registration" element={<ProtectedRoute><CompleteRegistration /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
