@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = false
+
+[functions.get-performance-data]
+verify_jwt = true
