@@ -2,3 +2,6 @@ project_id = "iqiebyifudmlgdkvapsk"
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.send-ticket-notification]
+verify_jwt = true
