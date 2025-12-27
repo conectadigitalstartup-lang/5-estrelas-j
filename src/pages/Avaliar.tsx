@@ -12,6 +12,7 @@ type Company = {
   name: string;
   logo_url: string | null;
   google_review_link: string | null;
+  isTestRestaurant?: boolean;
 };
 
 type Step = "rating" | "promoter" | "detractor" | "thankyou";
@@ -32,7 +33,28 @@ const Avaliar = () => {
     const fetchCompanyAndCheckAccess = async () => {
       if (!slug) return;
 
-      // First, check if the company owner has a valid subscription
+      // First, check if this is a test restaurant (CEO test restaurants always have access)
+      const { data: testRestaurant, error: testError } = await supabase
+        .from("admin_test_restaurants")
+        .select("id, name, google_review_link, slug")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (testRestaurant) {
+        // This is a test restaurant - always accessible
+        setHasAccess(true);
+        setCompany({
+          id: testRestaurant.id,
+          name: testRestaurant.name,
+          logo_url: null,
+          google_review_link: testRestaurant.google_review_link,
+          isTestRestaurant: true,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Not a test restaurant, check regular company access
       const { data: accessData, error: accessError } = await supabase
         .rpc('check_company_access', { company_slug: slug });
 
@@ -93,34 +115,39 @@ const Avaliar = () => {
 
     setSubmitting(true);
 
-    const { error } = await supabase.from("feedbacks").insert({
-      company_id: company.id,
-      rating,
-      comment: comment.trim() || null,
-    });
+    // Skip saving feedback for test restaurants (no real company_id)
+    if (!company.isTestRestaurant) {
+      const { error } = await supabase.from("feedbacks").insert({
+        company_id: company.id,
+        rating,
+        comment: comment.trim() || null,
+      });
 
-    setSubmitting(false);
-
-    if (error) {
-      console.error("Error submitting feedback:", error);
-      toast.error("Erro ao enviar feedback");
-      return;
+      if (error) {
+        console.error("Error submitting feedback:", error);
+        toast.error("Erro ao enviar feedback");
+        setSubmitting(false);
+        return;
+      }
     }
 
+    setSubmitting(false);
     setStep("thankyou");
   };
 
   const handleGoToGoogle = () => {
     if (!company) return;
 
-    // Save the positive feedback (fire and forget)
-    supabase.from("feedbacks").insert({
-      company_id: company.id,
-      rating,
-      comment: promoterComment.trim() || null,
-    }).then(() => {
-      // Fire and forget
-    });
+    // Save the positive feedback (fire and forget) - skip for test restaurants
+    if (!company.isTestRestaurant) {
+      supabase.from("feedbacks").insert({
+        company_id: company.id,
+        rating,
+        comment: promoterComment.trim() || null,
+      }).then(() => {
+        // Fire and forget
+      });
+    }
 
     // Copy comment to clipboard if exists (don't await, don't block)
     if (promoterComment.trim()) {

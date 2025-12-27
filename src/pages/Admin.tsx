@@ -47,6 +47,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { SUPER_ADMIN_EMAIL } from "@/config/admin";
+import { TestRestaurantsSection } from "@/components/admin/TestRestaurantsSection";
 
 interface Client {
   id: string;
@@ -196,6 +197,9 @@ const Admin = () => {
             </h1>
             <p className="text-muted-foreground mt-1">Visão executiva do Avalia Pro</p>
           </header>
+
+          {/* Section 0: Test Restaurants for CEO */}
+          <TestRestaurantsSection />
 
           {/* Section 1: Key Performance Indicators */}
           <section className="mb-8">
