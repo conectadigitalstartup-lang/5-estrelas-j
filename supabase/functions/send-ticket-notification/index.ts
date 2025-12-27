@@ -2,7 +2,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
+console.log("🚀 Edge Function send-ticket-notification iniciada");
+console.log("📧 RESEND_API_KEY configurada:", resendApiKey ? "SIM" : "NÃO");
+
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,6 +22,8 @@ interface NotificationRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("📨 Requisição recebida:", req.method);
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -25,6 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { ticketId, ticketSubject, adminMessage, userId }: NotificationRequest = await req.json();
+    console.log("📋 Dados recebidos - ticketId:", ticketId, "userId:", userId);
 
     console.log("Sending notification for ticket:", ticketId, "to user:", userId);
 
@@ -97,7 +104,8 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("✅ Email enviado com sucesso:", JSON.stringify(emailResponse));
+    console.log("🏁 Edge Function finalizada com sucesso");
 
     return new Response(JSON.stringify({ success: true, emailResponse }), {
       status: 200,
