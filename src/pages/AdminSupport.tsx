@@ -167,6 +167,28 @@ const AdminSupport = () => {
 
       if (updateError) throw updateError;
 
+      // Send email notification to user
+      try {
+        const { error: notificationError } = await supabase.functions.invoke("send-ticket-notification", {
+          body: {
+            ticketId: selectedTicket.id,
+            ticketSubject: selectedTicket.subject,
+            adminMessage: replyMessage.trim(),
+            userId: selectedTicket.user_id,
+          },
+        });
+
+        if (notificationError) {
+          console.error("Error sending notification:", notificationError);
+          // Don't block the reply if notification fails
+        } else {
+          console.log("Email notification sent successfully");
+        }
+      } catch (notifyError) {
+        console.error("Failed to send email notification:", notifyError);
+        // Continue even if notification fails
+      }
+
       toast.success("Resposta enviada!");
       setReplyMessage("");
       
