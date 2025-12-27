@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -7,6 +7,13 @@ interface SuccessScreenProps {
 }
 
 const SuccessScreen = ({ onComplete }: SuccessScreenProps) => {
+  const onCompleteRef = useRef(onComplete);
+  
+  // Keep ref updated
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     // Trigger confetti
     confetti({
@@ -17,9 +24,12 @@ const SuccessScreen = ({ onComplete }: SuccessScreenProps) => {
     });
 
     // Redirect after 2 seconds
-    const timer = setTimeout(onComplete, 2000);
+    const timer = setTimeout(() => {
+      onCompleteRef.current();
+    }, 2000);
+    
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center py-12 animate-fade-in">

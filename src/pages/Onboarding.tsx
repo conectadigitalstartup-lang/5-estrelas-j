@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
@@ -203,6 +203,7 @@ const Onboarding = () => {
       localStorage.removeItem("onboarding_data");
 
       // Show success screen
+      setIsSubmitting(false);
       setShowSuccess(true);
     } catch (error) {
       console.error("Error completing onboarding:", error);
@@ -211,9 +212,9 @@ const Onboarding = () => {
     }
   };
 
-  const handleSuccessComplete = () => {
+  const handleSuccessComplete = useCallback(() => {
     navigate("/dashboard", { replace: true });
-  };
+  }, [navigate]);
 
   if (authLoading || checkingStatus) {
     return (
