@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebounce } from "use-debounce";
-import { cn } from "@/lib/utils";
 
 interface PlaceResult {
   place_id: string;
@@ -113,23 +112,28 @@ const PlaceSearch = ({ onSelect, selectedPlace, restaurantName }: PlaceSearchPro
         <label className="block text-sm font-medium text-foreground">
           Restaurante Selecionado
         </label>
-        <div className="flex items-start gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-          <div className="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
-            <Check className="w-5 h-5 text-white" />
+        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+              <Check className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground text-lg">{selectedPlace.name}</p>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleClear}
+              className="flex-shrink-0 text-muted-foreground hover:text-destructive"
+            >
+              <X className="w-4 h-4" />
+            </Button>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate">{selectedPlace.name}</p>
-            <p className="text-sm text-muted-foreground truncate">{selectedPlace.formatted_address}</p>
+          <div className="mt-3 pl-13 flex items-start gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <p className="text-sm leading-relaxed">{selectedPlace.formatted_address}</p>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={handleClear}
-            className="flex-shrink-0 text-muted-foreground hover:text-destructive"
-          >
-            <X className="w-4 h-4" />
-          </Button>
         </div>
         <p className="text-xs text-muted-foreground">
           Este é o restaurante correto? Clique no X para buscar outro.
@@ -165,26 +169,25 @@ const PlaceSearch = ({ onSelect, selectedPlace, restaurantName }: PlaceSearchPro
       {/* Dropdown de resultados */}
       {isOpen && results.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
-          <ul className="max-h-64 overflow-y-auto">
+          <ul className="max-h-80 overflow-y-auto divide-y divide-border">
             {results.map((place) => (
               <li key={place.place_id}>
                 <button
                   type="button"
                   onClick={() => handleSelect(place)}
-                  className={cn(
-                    "w-full flex items-start gap-3 p-3 text-left hover:bg-muted/50 transition-colors",
-                    "border-b border-border last:border-b-0"
-                  )}
+                  className="w-full p-4 text-left hover:bg-muted/50 transition-colors"
                 >
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Building2 className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground truncate">{place.name}</p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1 truncate">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
-                      {place.formatted_address}
-                    </p>
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-foreground">{place.name}</p>
+                      <div className="mt-1 flex items-start gap-1.5 text-muted-foreground">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                        <p className="text-sm leading-relaxed">{place.formatted_address}</p>
+                      </div>
+                    </div>
                   </div>
                 </button>
               </li>
