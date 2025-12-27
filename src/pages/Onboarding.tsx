@@ -16,6 +16,8 @@ interface PlaceResult {
   name: string;
   formatted_address: string;
   google_maps_url: string;
+  rating?: number | null;
+  user_ratings_total?: number | null;
 }
 
 interface FormData {
@@ -159,7 +161,7 @@ const Onboarding = () => {
         }
       }
 
-      // Create company with place_id
+      // Create company with place_id and Google rating data
       const { error: companyError } = await supabase.from("companies").insert({
         owner_id: user.id,
         name: formData.name,
@@ -168,6 +170,8 @@ const Onboarding = () => {
         logo_url: formData.logoUrl,
         google_review_link: formData.selectedPlace.google_maps_url,
         google_place_id: formData.selectedPlace.place_id,
+        google_rating: formData.selectedPlace.rating || null,
+        google_user_ratings_total: formData.selectedPlace.user_ratings_total || null,
         slug,
       });
 

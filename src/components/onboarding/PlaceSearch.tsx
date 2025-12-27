@@ -10,6 +10,8 @@ interface PlaceResult {
   name: string;
   formatted_address: string;
   google_maps_url: string;
+  rating?: number | null;
+  user_ratings_total?: number | null;
 }
 
 interface PlaceSearchProps {
