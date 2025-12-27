@@ -52,6 +52,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     
+    // Send welcome email after successful signup
+    if (!error) {
+      try {
+        await supabase.functions.invoke('send-welcome-email', {
+          body: { email, restaurantName }
+        });
+        console.log("Email de boas-vindas enviado para:", email);
+      } catch (emailError) {
+        console.error("Erro ao enviar email de boas-vindas:", emailError);
+        // Don't fail signup if email fails
+      }
+    }
+    
     return { error: error as Error | null };
   };
 
