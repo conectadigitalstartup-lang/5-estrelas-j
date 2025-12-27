@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { 
   Building2, 
   CreditCard, 
@@ -13,7 +13,8 @@ import {
   DollarSign,
   Clock,
   ArrowLeft,
-  Percent
+  Percent,
+  Headphones
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -197,6 +198,18 @@ const Admin = () => {
             </h1>
             <p className="text-muted-foreground mt-1">Visão executiva do Avalia Pro</p>
           </header>
+
+          {/* Quick Actions */}
+          <section className="mb-8">
+            <div className="flex gap-4">
+              <Link to="/admin/suporte">
+                <Button variant="outline" className="gap-2">
+                  <Headphones className="h-4 w-4" />
+                  Tickets de Suporte
+                </Button>
+              </Link>
+            </div>
+          </section>
 
           {/* Section 0: Test Restaurants for CEO */}
           <TestRestaurantsSection />
