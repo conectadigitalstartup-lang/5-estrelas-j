@@ -7,12 +7,19 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MetricCard from "@/components/dashboard/MetricCard";
 import RecentFeedbacks from "@/components/dashboard/RecentFeedbacks";
 import GoogleReputationCard from "@/components/dashboard/GoogleReputationCard";
+import GrowthChart from "@/components/dashboard/GrowthChart";
+import MonthlyKPIs from "@/components/dashboard/MonthlyKPIs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Smartphone, CheckCircle, MessageSquare, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+interface PerformanceData {
+  date: string;
+  average_rating: number;
+}
 
 interface Feedback {
   id: string;
@@ -37,6 +44,9 @@ const Dashboard = () => {
     positiveReviews: 0,
     negativeFeedbacks: 0,
   });
+  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+  const [monthlyKPIs, setMonthlyKPIs] = useState({ positive: 0, negative: 0 });
+  const [loadingPerformance, setLoadingPerformance] = useState(true);
 
   const getDateFilter = (days: string) => {
     if (days === "all") return null;
@@ -100,6 +110,36 @@ const Dashboard = () => {
 
     fetchData();
   }, [user, period, calculateMetrics]);
+
+  // Fetch performance data
+  useEffect(() => {
+    const fetchPerformanceData = async () => {
+      if (!companyId) return;
+      setLoadingPerformance(true);
+
+      try {
+        const { data, error } = await supabase.functions.invoke("get-performance-data", {
+          body: { company_id: companyId },
+        });
+
+        if (error) {
+          console.error("Erro ao buscar dados de performance:", error);
+        } else if (data) {
+          setPerformanceData(data.performance_data || []);
+          setMonthlyKPIs({
+            positive: data.kpis?.positive_this_month || 0,
+            negative: data.kpis?.negative_this_month || 0,
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao buscar dados de performance:", err);
+      } finally {
+        setLoadingPerformance(false);
+      }
+    };
+
+    fetchPerformanceData();
+  }, [companyId]);
 
   // Real-time subscription for new feedbacks
   useEffect(() => {
@@ -224,6 +264,27 @@ const Dashboard = () => {
                 sublabel="Notas 1 a 3 estrelas"
                 iconColor="text-coral"
               />
+            </>
+          )}
+        </div>
+
+        {/* Monthly KPIs and Growth Chart */}
+        <div className="mb-8 space-y-6">
+          {loadingPerformance ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Skeleton className="h-24 rounded-2xl" />
+                <Skeleton className="h-24 rounded-2xl" />
+              </div>
+              <Skeleton className="h-72 rounded-2xl" />
+            </>
+          ) : (
+            <>
+              <MonthlyKPIs 
+                positiveCount={monthlyKPIs.positive} 
+                negativeCount={monthlyKPIs.negative} 
+              />
+              <GrowthChart data={performanceData} />
             </>
           )}
         </div>
