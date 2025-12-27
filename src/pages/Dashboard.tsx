@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MetricCard from "@/components/dashboard/MetricCard";
 import RecentFeedbacks from "@/components/dashboard/RecentFeedbacks";
+import GoogleReputationCard from "@/components/dashboard/GoogleReputationCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +30,8 @@ const Dashboard = () => {
   const [period, setPeriod] = useState("30");
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [companyName, setCompanyName] = useState<string>("Restaurante");
+  const [googleRating, setGoogleRating] = useState<number | null>(null);
+  const [googleUserRatingsTotal, setGoogleUserRatingsTotal] = useState<number | null>(null);
   const [metrics, setMetrics] = useState({
     totalScans: 0,
     positiveReviews: 0,
@@ -57,10 +60,10 @@ const Dashboard = () => {
       if (!user) return;
       setLoading(true);
 
-      // Fetch company
+      // Fetch company with Google rating data
       const { data: company } = await supabase
         .from("companies")
-        .select("id, name")
+        .select("id, name, google_rating, google_user_ratings_total")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -71,6 +74,8 @@ const Dashboard = () => {
 
       setCompanyId(company.id);
       setCompanyName(company.name);
+      setGoogleRating(company.google_rating);
+      setGoogleUserRatingsTotal(company.google_user_ratings_total);
 
       // Build query with date filter
       const dateFilter = getDateFilter(period);
@@ -180,6 +185,13 @@ const Dashboard = () => {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Google Reputation Card */}
+        {!loading && (googleRating !== null || googleUserRatingsTotal !== null) && (
+          <div className="mb-8">
+            <GoogleReputationCard rating={googleRating} totalRatings={googleUserRatingsTotal} />
+          </div>
+        )}
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

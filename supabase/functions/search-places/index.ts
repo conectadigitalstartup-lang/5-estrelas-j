@@ -13,6 +13,8 @@ interface PlaceResult {
   name: string;
   formatted_address: string;
   google_maps_url: string;
+  rating?: number;
+  user_ratings_total?: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,16 +25,8 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { query } = await req.json();
-    
-    if (!query || query.length < 3) {
-      return new Response(
-        JSON.stringify({ results: [], error: "Query muito curta" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    console.log("🔍 Buscando:", query);
+    const body = await req.json();
+    const { query, place_id } = body;
 
     const apiKey = Deno.env.get("GOOGLE_PLACES_API_KEY");
     if (!apiKey) {
@@ -42,6 +36,54 @@ const handler = async (req: Request): Promise<Response> => {
         { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
+    // If place_id is provided, fetch Place Details
+    if (place_id) {
+      console.log("🔍 Buscando detalhes do place:", place_id);
+
+      const detailsUrl = new URL("https://maps.googleapis.com/maps/api/place/details/json");
+      detailsUrl.searchParams.set("place_id", place_id);
+      detailsUrl.searchParams.set("fields", "name,formatted_address,rating,user_ratings_total");
+      detailsUrl.searchParams.set("language", "pt-BR");
+      detailsUrl.searchParams.set("key", apiKey);
+
+      console.log("📡 Chamando Google Place Details API...");
+      const response = await fetch(detailsUrl.toString());
+      const data = await response.json();
+
+      if (data.status !== "OK") {
+        console.error("❌ Erro na API do Google:", data.status, data.error_message);
+        return new Response(
+          JSON.stringify({ error: `Erro ao buscar detalhes: ${data.status}` }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      const details = {
+        place_id: place_id,
+        name: data.result.name,
+        formatted_address: data.result.formatted_address,
+        rating: data.result.rating || null,
+        user_ratings_total: data.result.user_ratings_total || null,
+      };
+
+      console.log(`✅ Detalhes encontrados:`, details);
+
+      return new Response(
+        JSON.stringify({ details }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Otherwise, search for places
+    if (!query || query.length < 3) {
+      return new Response(
+        JSON.stringify({ results: [], error: "Query muito curta" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    console.log("🔍 Buscando:", query);
 
     // Usar Text Search para buscar restaurantes
     const searchUrl = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
@@ -67,6 +109,8 @@ const handler = async (req: Request): Promise<Response> => {
       name: place.name,
       formatted_address: place.formatted_address,
       google_maps_url: `https://search.google.com/local/writereview?placeid=${place.place_id}`,
+      rating: place.rating || null,
+      user_ratings_total: place.user_ratings_total || null,
     }));
 
     console.log(`✅ Encontrados ${results.length} resultados`);

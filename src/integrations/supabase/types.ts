@@ -79,7 +79,9 @@ export type Database = {
           created_at: string
           description: string | null
           google_place_id: string | null
+          google_rating: number | null
           google_review_link: string | null
+          google_user_ratings_total: number | null
           id: string
           logo_url: string | null
           name: string
@@ -92,7 +94,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           google_place_id?: string | null
+          google_rating?: number | null
           google_review_link?: string | null
+          google_user_ratings_total?: number | null
           id?: string
           logo_url?: string | null
           name: string
@@ -105,7 +109,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           google_place_id?: string | null
+          google_rating?: number | null
           google_review_link?: string | null
+          google_user_ratings_total?: number | null
           id?: string
           logo_url?: string | null
           name?: string
