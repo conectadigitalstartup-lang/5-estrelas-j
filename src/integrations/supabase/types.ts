@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_test_restaurants: {
+        Row: {
+          created_at: string
+          google_review_link: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          google_review_link?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          google_review_link?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
