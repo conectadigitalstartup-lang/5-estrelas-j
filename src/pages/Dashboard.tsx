@@ -123,7 +123,10 @@ const Dashboard = () => {
   // Fetch performance data
   useEffect(() => {
     const fetchPerformanceData = async () => {
-      if (!companyId) return;
+      if (!companyId) {
+        setLoadingPerformance(false);
+        return;
+      }
       setLoadingPerformance(true);
 
       try {
