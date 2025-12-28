@@ -7,46 +7,43 @@ import {
 
 const faqs = [
   {
-    question: "Quanto tempo leva para ver resultados?",
+    question: "Preciso de conhecimento técnico para usar?",
     answer:
-      "A maioria dos nossos clientes vê um aumento nas avaliações 5 estrelas já na primeira semana de uso.",
+      "Não. Você cria sua conta, cadastra seu restaurante e em 5 minutos já tem seu QR Code pronto. É só imprimir e colocar nas mesas.",
   },
   {
-    question: "Isso é contra as regras do Google?",
+    question: "E se eu não gostar, posso cancelar?",
     answer:
-      "Não. O Avalia Pro não compra reviews falsos. Apenas facilita que seus clientes REAIS deixem avaliações. Isso é 100% permitido.",
+      "Sim. Você tem 7 dias grátis para testar tudo. Se não gostar, cancela sem pagar nada. Sem burocracia.",
   },
   {
-    question: "E se eu quiser cancelar?",
+    question: "Funciona para qualquer tipo de restaurante?",
     answer:
-      "Você pode cancelar a qualquer momento, sem multas ou burocracia. Seu teste de 7 dias é totalmente gratuito.",
+      "Sim. Pizzarias, hamburguerias, restaurantes tradicionais, bares, cafeterias... qualquer estabelecimento que atenda clientes presencialmente.",
   },
   {
-    question: "Funciona para qualquer tipo de negócio?",
+    question: "Como o QR Code chega até mim?",
     answer:
-      "Sim! Apesar de ser otimizado para restaurantes, funciona para qualquer negócio que receba clientes presencialmente: salões, clínicas, lojas, etc.",
+      "Você gera e baixa o QR Code direto na plataforma, junto com um display profissional em PDF. É só imprimir em qualquer gráfica ou impressora.",
   },
   {
-    question: "Preciso instalar algum aplicativo?",
+    question: "O cliente é obrigado a deixar feedback?",
     answer:
-      "Não. O Avalia Pro é 100% web. Você só precisa imprimir o QR Code e colocar nas mesas.",
+      "Não. É 100% voluntário. Mas clientes que tiveram uma boa experiência adoram compartilhar, especialmente quando é rápido e fácil.",
   },
 ];
 
 const FAQSection = () => {
   return (
-    <section id="faq" className="py-20 bg-muted/30">
+    <section id="faq" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
-            Dúvidas Frequentes
+            Dúvidas
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
             Perguntas Frequentes
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Tire suas dúvidas sobre o Avalia Pro
-          </p>
         </div>
 
         <div className="max-w-3xl mx-auto">

@@ -3,26 +3,26 @@ import { Star, Quote } from "lucide-react";
 const testimonials = [
   {
     name: "Carlos M.",
-    role: "Pizzaria Bella Napoli",
+    role: "Pizzaria em São Paulo",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     content:
-      "Em 3 semanas, minha nota subiu de 4.1 para 4.6. Os clientes insatisfeitos agora falam comigo primeiro.",
+      "Em 2 meses, minha nota subiu de 4.1 para 4.6. E o melhor: consegui resolver 3 reclamações internamente que teriam virado bomba no Google.",
     rating: 5,
   },
   {
-    name: "Ana L.",
-    role: "Café & Bistrô",
+    name: "Ana Paula",
+    role: "Restaurante no Rio de Janeiro",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
     content:
-      "Simples de usar. Coloquei o QR Code nas mesas e os reviews positivos começaram a aparecer sozinhos.",
+      "O gerador de posts é incrível. Toda semana posto um elogio real de cliente. Meu Instagram nunca teve tanto engajamento.",
     rating: 5,
   },
   {
     name: "Roberto S.",
-    role: "Hamburgueria Premium",
+    role: "Hamburgueria em Belo Horizonte",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     content:
-      "Finalmente parei de perder clientes por causa de avaliações antigas. O filtro funciona de verdade.",
+      "Simples de usar e funciona. Coloquei o QR Code nas mesas e esqueci. Os feedbacks chegam e minha nota só sobe.",
     rating: 5,
   },
 ];
@@ -33,15 +33,11 @@ const TestimonialsSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
-            Depoimentos
+            Prova Social
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            O Que Nossos Clientes Dizem
+            Restaurantes Que Já Estão Protegidos
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Restaurantes de todo o Brasil já transformaram sua reputação online com o
-            Avalia Pro.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">

@@ -1,62 +1,48 @@
 import {
-  Star,
   Shield,
   TrendingUp,
-  Clock,
-  Bell,
   BarChart3,
-  Smartphone,
-  Palette,
+  Bell,
+  Instagram,
+  QrCode,
 } from "lucide-react";
 
 const benefits = [
   {
-    icon: Star,
-    title: "Mais Avaliações 5 Estrelas",
-    description:
-      "Direcione automaticamente clientes satisfeitos para o Google. Aumente suas avaliações positivas sem esforço.",
-  },
-  {
     icon: Shield,
-    title: "Proteção da Reputação",
+    title: "Proteção Contra Críticas Públicas",
     description:
-      "Feedbacks negativos ficam privados. Resolva problemas antes que virem críticas públicas.",
+      "Feedbacks negativos chegam para você, não para o Google. Resolva problemas antes que virem crises.",
   },
   {
     icon: TrendingUp,
-    title: "Melhore sua Nota no Google",
+    title: "Aumento da Nota no Google",
     description:
-      "Com mais reviews positivos e menos negativos públicos, sua nota sobe naturalmente.",
-  },
-  {
-    icon: Clock,
-    title: "Economize Tempo",
-    description:
-      "Sistema 100% automatizado. Configure uma vez e deixe a máquina trabalhar por você.",
-  },
-  {
-    icon: Bell,
-    title: "Alertas em Tempo Real",
-    description:
-      "Receba notificações por email quando um cliente deixar feedback negativo. Aja rapidamente.",
+      "Clientes satisfeitos são direcionados para avaliar você no Google. Sua nota sobe organicamente.",
   },
   {
     icon: BarChart3,
-    title: "Dashboard Completo",
+    title: "Dashboard em Tempo Real",
     description:
-      "Acompanhe métricas importantes: scans, reviews, taxa de satisfação e tendências.",
+      "Acompanhe todos os feedbacks, sua nota atual e a evolução da sua reputação em um painel simples e visual.",
   },
   {
-    icon: Smartphone,
-    title: "QR Code Inteligente",
+    icon: Bell,
+    title: "Alertas Instantâneos",
     description:
-      "Códigos personalizados com sua marca. Estatísticas individuais por mesa ou unidade.",
+      "Receba notificações quando chegar um feedback negativo. Aja rápido e recupere o cliente.",
   },
   {
-    icon: Palette,
-    title: "100% Personalizável",
+    icon: Instagram,
+    title: "Gerador de Posts para Redes Sociais",
     description:
-      "Adicione seu logo, cores e mensagens. A experiência do cliente reflete sua marca.",
+      "Transforme elogios de clientes em posts profissionais para Instagram com 1 clique. Marketing autêntico, zero esforço.",
+  },
+  {
+    icon: QrCode,
+    title: "Material de Mesa Profissional",
+    description:
+      "Receba seu QR Code personalizado e um display elegante pronto para imprimir e colocar nas mesas.",
   },
 ];
 
@@ -69,14 +55,11 @@ const BenefitsSection = () => {
             Benefícios
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            Tudo Que Você Precisa Para Dominar o Google
+            Tudo o Que Você Precisa Para Dominar Sua Reputação
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Uma solução completa que trabalha 24/7 para melhorar sua reputação online.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {benefits.map((benefit, index) => (
             <div
               key={index}
