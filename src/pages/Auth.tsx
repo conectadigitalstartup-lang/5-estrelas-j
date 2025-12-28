@@ -192,7 +192,7 @@ const Auth = () => {
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
                   {isSignUp
-                    ? "Comece seu teste de 14 dias agora"
+                    ? "Comece grátis e explore todas as funcionalidades"
                     : "Entre na sua conta para continuar"
                   }
                 </CardDescription>

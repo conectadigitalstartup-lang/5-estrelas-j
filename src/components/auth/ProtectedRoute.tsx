@@ -13,7 +13,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const location = useLocation();
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
-  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const hasCheckedRef = useRef(false);
 
   useEffect(() => {
@@ -28,32 +27,21 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       hasCheckedRef.current = true;
 
       try {
-        // Check onboarding and subscription status in parallel
-        const [profileResult, subscriptionResult] = await Promise.all([
-          supabase
-            .from("profiles")
-            .select("onboarding_completed")
-            .eq("user_id", user.id)
-            .maybeSingle(),
-          supabase
-            .from("subscriptions")
-            .select("status, trial_ends_at, is_super_admin")
-            .eq("user_id", user.id)
-            .maybeSingle()
-        ]);
+        // Only check onboarding status - subscription is NOT required for dashboard access
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("user_id", user.id)
+          .maybeSingle();
 
-        setOnboardingCompleted(profileResult.data?.onboarding_completed ?? false);
-        
-        // Check if user has active or trialing subscription
-        // Super admin always has access
-        const subscription = subscriptionResult.data;
-        const isSuperAdmin = (subscription as any)?.is_super_admin === true;
-        const isActive = isSuperAdmin || subscription?.status === "active" || subscription?.status === "trialing";
-        setHasActiveSubscription(isActive);
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+        }
+
+        setOnboardingCompleted(profile?.onboarding_completed ?? false);
       } catch (error) {
         console.error("Error checking user status:", error);
         setOnboardingCompleted(false);
-        setHasActiveSubscription(false);
       } finally {
         setCheckingStatus(false);
       }
@@ -91,16 +79,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Allow access to complete-registration page
-  if (location.pathname === "/complete-registration") {
-    return <>{children}</>;
-  }
-
-  // If no active subscription, redirect to complete-registration
-  if (hasActiveSubscription === false) {
-    return <Navigate to="/complete-registration" replace />;
-  }
-
   // If on onboarding page, allow access
   if (location.pathname === "/onboarding") {
     return <>{children}</>;
@@ -111,6 +89,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/onboarding" replace />;
   }
 
+  // Allow access to all dashboard routes - paywall is handled at feature level
   return <>{children}</>;
 };
 

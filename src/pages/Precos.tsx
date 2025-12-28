@@ -35,7 +35,7 @@ const plans = [
       "Suporte prioritário",
     ],
     popular: false,
-    cta: "Começar Teste Grátis de 14 Dias",
+    cta: "Começar Teste Grátis de 7 Dias",
   },
   {
     name: "Profissional",
@@ -56,7 +56,7 @@ const plans = [
     ],
     notIncluded: ["Restaurantes ilimitados", "Gerente de conta dedicado"],
     popular: true,
-    cta: "Começar Teste Grátis de 14 Dias",
+    cta: "Começar Teste Grátis de 7 Dias",
   },
   {
     name: "Empresarial",
@@ -87,7 +87,7 @@ const plans = [
 const securityFaqs = [
   {
     question: "Preciso colocar meu cartão para o teste grátis?",
-    answer: "Sim, mas é apenas para validação. Você não será cobrado nos primeiros 14 dias e pode cancelar a qualquer momento antes disso, sem custo algum."
+    answer: "Sim, mas é apenas para validação. Você não será cobrado nos primeiros 7 dias e pode cancelar a qualquer momento antes disso, sem custo algum."
   },
   {
     question: "Meus dados de cartão estão seguros?",
@@ -95,7 +95,7 @@ const securityFaqs = [
   },
   {
     question: "Como funciona a cobrança?",
-    answer: "Seu trial de 14 dias começa imediatamente. Após esse período, a cobrança é feita automaticamente no cartão cadastrado. Você pode cancelar a qualquer momento."
+    answer: "Seu trial de 7 dias começa imediatamente. Após esse período, a cobrança é feita automaticamente no cartão cadastrado. Você pode cancelar a qualquer momento."
   },
   {
     question: "Posso trocar de plano depois?",
@@ -112,7 +112,7 @@ const Precos = () => {
         <title>Preços - Avalia Pro | Planos para Restaurantes</title>
         <meta
           name="description"
-          content="Conheça os planos do Avalia Pro. A partir de R$99/mês. Teste grátis por 14 dias. Cancele quando quiser."
+          content="Conheça os planos do Avalia Pro. A partir de R$99/mês. Teste grátis por 7 dias. Cancele quando quiser."
         />
         <link rel="canonical" href="https://avaliapro.com.br/precos" />
       </Helmet>
@@ -131,7 +131,7 @@ const Precos = () => {
                 Escolha o Plano Ideal para Você
               </h1>
               <p className="text-muted-foreground text-lg">
-                Todos os planos incluem 14 dias grátis. Cancele quando quiser.
+                Todos os planos incluem 7 dias grátis. Cancele quando quiser.
               </p>
             </div>
 

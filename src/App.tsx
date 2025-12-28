@@ -26,7 +26,6 @@ const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
 const Avaliar = lazy(() => import("./pages/Avaliar"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminSupport = lazy(() => import("./pages/AdminSupport"));
-const CompleteRegistration = lazy(() => import("./pages/CompleteRegistration"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -70,7 +69,7 @@ const App = () => (
                 <Route path="/admin-dashboard" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                 <Route path="/admin/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
                 <Route path="/admin-dashboard/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
-                <Route path="/complete-registration" element={<ProtectedRoute><CompleteRegistration /></ProtectedRoute>} />
+                
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

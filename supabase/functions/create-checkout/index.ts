@@ -68,22 +68,22 @@ serve(async (req) => {
       ],
       mode: "subscription",
       success_url: `${origin}/dashboard?checkout=success`,
-      cancel_url: `${origin}/complete-registration`,
+      cancel_url: `${origin}/dashboard/qr-code`,
       payment_method_collection: "always",
       metadata: {
         user_id: user.id,
       },
     };
 
-    // Add trial period if requested
+    // Add trial period if requested (7 days)
     if (withTrial) {
       sessionParams.subscription_data = {
-        trial_period_days: 14,
+        trial_period_days: 7,
         metadata: {
           user_id: user.id,
         },
       };
-      logStep("Adding 14-day trial period");
+      logStep("Adding 7-day trial period");
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
