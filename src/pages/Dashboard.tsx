@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [period, setPeriod] = useState("30");
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [companyName, setCompanyName] = useState<string>("Restaurante");
+  const [googlePlaceId, setGooglePlaceId] = useState<string | null>(null);
   const [googleRating, setGoogleRating] = useState<number | null>(null);
   const [googleUserRatingsTotal, setGoogleUserRatingsTotal] = useState<number | null>(null);
   const [metrics, setMetrics] = useState({
@@ -82,7 +83,7 @@ const Dashboard = () => {
       // Fetch company with Google rating data
       const { data: company } = await supabase
         .from("companies")
-        .select("id, name, google_rating, google_user_ratings_total")
+        .select("id, name, google_place_id, google_rating, google_user_ratings_total")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -93,6 +94,7 @@ const Dashboard = () => {
 
       setCompanyId(company.id);
       setCompanyName(company.name);
+      setGooglePlaceId(company.google_place_id);
       setGoogleRating(company.google_rating);
       setGoogleUserRatingsTotal(company.google_user_ratings_total);
 
@@ -242,7 +244,16 @@ const Dashboard = () => {
         {/* Google Reputation Card */}
         {!loading && (googleRating !== null || googleUserRatingsTotal !== null) && (
           <div className="mb-8">
-            <GoogleReputationCard rating={googleRating} totalRatings={googleUserRatingsTotal} />
+            <GoogleReputationCard 
+              rating={googleRating} 
+              totalRatings={googleUserRatingsTotal}
+              placeId={googlePlaceId}
+              companyId={companyId}
+              onUpdate={(newRating, newTotal) => {
+                setGoogleRating(newRating);
+                setGoogleUserRatingsTotal(newTotal);
+              }}
+            />
           </div>
         )}
 

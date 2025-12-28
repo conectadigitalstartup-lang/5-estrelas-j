@@ -1,16 +1,74 @@
-import { Star, Users, TrendingUp } from "lucide-react";
+import { Star, Users, TrendingUp, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface GoogleReputationCardProps {
   rating: number | null;
   totalRatings: number | null;
+  placeId: string | null;
+  companyId: string | null;
+  onUpdate?: (rating: number | null, totalRatings: number | null) => void;
 }
 
-const GoogleReputationCard = ({ rating, totalRatings }: GoogleReputationCardProps) => {
+const GoogleReputationCard = ({ 
+  rating, 
+  totalRatings, 
+  placeId, 
+  companyId,
+  onUpdate 
+}: GoogleReputationCardProps) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+
   // Don't render if no Google data available
   if (rating === null && totalRatings === null) {
     return null;
   }
+
+  const handleRefresh = async () => {
+    if (!placeId || !companyId) {
+      toast.error("Dados do Google não disponíveis");
+      return;
+    }
+
+    setIsUpdating(true);
+
+    try {
+      // Fetch updated data from Google Places API
+      const { data, error } = await supabase.functions.invoke("search-places", {
+        body: { place_id: placeId },
+      });
+
+      if (error) throw error;
+
+      if (data?.details) {
+        const newRating = data.details.rating;
+        const newTotal = data.details.user_ratings_total;
+
+        // Update company in database
+        const { error: updateError } = await supabase
+          .from("companies")
+          .update({
+            google_rating: newRating,
+            google_user_ratings_total: newTotal,
+          })
+          .eq("id", companyId);
+
+        if (updateError) throw updateError;
+
+        // Notify parent component
+        onUpdate?.(newRating, newTotal);
+        toast.success("Dados do Google atualizados!");
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar dados:", err);
+      toast.error("Erro ao atualizar. Tente novamente.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -51,10 +109,22 @@ const GoogleReputationCard = ({ rating, totalRatings }: GoogleReputationCardProp
   return (
     <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          Sua Reputação no Google
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            Sua Reputação no Google
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isUpdating}
+            className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/30"
+          >
+            <RefreshCw className={`w-4 h-4 mr-1 ${isUpdating ? "animate-spin" : ""}`} />
+            {isUpdating ? "Atualizando..." : "Atualizar"}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-6">
