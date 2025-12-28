@@ -17,7 +17,7 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-full px-4 py-2 mb-8 animate-fade-in">
             <Star className="w-4 h-4 text-secondary" fill="currentColor" />
             <span className="text-primary-foreground/90 text-sm font-medium">
-              Teste grátis por 14 dias
+              Teste grátis por 7 dias
             </span>
           </div>
 
@@ -40,7 +40,7 @@ const HeroSection = () => {
               asChild
             >
               <Link to="/cadastro">
-                Começar Teste Grátis de 14 Dias
+                Começar Teste Grátis de 7 Dias
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
