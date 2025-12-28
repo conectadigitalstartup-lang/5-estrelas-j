@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Star, ExternalLink, Send, CheckCircle, Loader2, Copy, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 
@@ -26,6 +27,7 @@ const Avaliar = () => {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [step, setStep] = useState<Step>("rating");
   const [comment, setComment] = useState("");
+  const [clientName, setClientName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [promoterComment, setPromoterComment] = useState("");
 
@@ -121,6 +123,7 @@ const Avaliar = () => {
         company_id: company.id,
         rating,
         comment: comment.trim() || null,
+        client_name: clientName.trim() || null,
       });
 
       if (error) {
@@ -144,6 +147,7 @@ const Avaliar = () => {
         company_id: company.id,
         rating,
         comment: promoterComment.trim() || null,
+        client_name: clientName.trim() || null,
       }).then(() => {
         // Fire and forget
       });
@@ -372,6 +376,16 @@ const Avaliar = () => {
                 className="min-h-[120px] resize-none"
                 maxLength={1000}
               />
+
+              <Input
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="Como podemos te chamar?"
+                maxLength={100}
+              />
+              <p className="text-xs text-muted-foreground -mt-4">
+                Seu nome (opcional)
+              </p>
 
               <Button
                 onClick={handleSubmitFeedback}
