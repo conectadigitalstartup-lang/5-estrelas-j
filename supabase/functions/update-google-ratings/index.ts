@@ -81,10 +81,12 @@ const handler = async (req: Request): Promise<Response> => {
         const rating = data.result?.rating || null;
         const userRatingsTotal = data.result?.user_ratings_total || null;
 
-        // Update company in database
+        // Update ONLY current ratings (preserve initial values)
         const { error: updateError } = await supabase
           .from("companies")
           .update({
+            current_google_rating: rating,
+            current_google_ratings_total: userRatingsTotal,
             google_rating: rating,
             google_user_ratings_total: userRatingsTotal,
             updated_at: new Date().toISOString(),
