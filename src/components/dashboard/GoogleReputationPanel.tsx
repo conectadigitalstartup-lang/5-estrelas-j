@@ -1,4 +1,4 @@
-import { Star, TrendingUp, TrendingDown, Minus, Calendar, Users, RefreshCw } from "lucide-react";
+import { Star, TrendingUp, TrendingDown, Minus, Calendar, Users, RefreshCw, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -15,6 +15,7 @@ interface GoogleReputationPanelProps {
   createdAt: string | null;
   placeId: string | null;
   companyId: string | null;
+  isLoading?: boolean;
   onUpdate?: (currentRating: number | null, currentRatingsTotal: number | null) => void;
 }
 
@@ -26,9 +27,27 @@ const GoogleReputationPanel = ({
   createdAt,
   placeId,
   companyId,
+  isLoading = false,
   onUpdate,
 }: GoogleReputationPanelProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-accent/10 border-2 border-primary/20 shadow-xl">
+        <CardContent className="py-12">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <div className="text-center">
+              <p className="text-lg font-medium text-foreground">Analisando sua reputação atual no Google...</p>
+              <p className="text-sm text-muted-foreground mt-1">Estamos buscando os dados do seu estabelecimento</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Don't render if no Google data available
   if (initialRating === null && initialRatingsTotal === null && 
@@ -86,20 +105,20 @@ const GoogleReputationPanel = ({
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <div key={i} className="relative">
-            <Star className="w-4 h-4 text-muted-foreground/30" />
+            <Star className="w-5 h-5 text-muted-foreground/30" />
             <div className="absolute inset-0 overflow-hidden w-1/2">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
             </div>
           </div>
         );
       } else {
         stars.push(
-          <Star key={i} className="w-4 h-4 text-muted-foreground/30" />
+          <Star key={i} className="w-5 h-5 text-muted-foreground/30" />
         );
       }
     }
@@ -115,9 +134,9 @@ const GoogleReputationPanel = ({
     : "Data não disponível";
 
   const getRatingTrendIcon = () => {
-    if (ratingDiff > 0) return <TrendingUp className="w-5 h-5 text-emerald-500" />;
-    if (ratingDiff < 0) return <TrendingDown className="w-5 h-5 text-red-500" />;
-    return <Minus className="w-5 h-5 text-muted-foreground" />;
+    if (ratingDiff > 0) return <TrendingUp className="w-6 h-6 text-emerald-500" />;
+    if (ratingDiff < 0) return <TrendingDown className="w-6 h-6 text-red-500" />;
+    return <Minus className="w-6 h-6 text-muted-foreground" />;
   };
 
   const getRatingTrendColor = () => {
@@ -127,42 +146,49 @@ const GoogleReputationPanel = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-      <CardHeader className="pb-4">
+    <Card className="bg-gradient-to-br from-primary/5 via-primary/10 to-accent/10 border-2 border-primary/20 shadow-xl overflow-hidden">
+      <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-transparent">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            Evolução da Reputação no Google
-          </CardTitle>
+          <div>
+            <CardTitle className="flex items-center gap-3 text-2xl">
+              <div className="p-2 bg-primary/20 rounded-xl">
+                <TrendingUp className="w-7 h-7 text-primary" />
+              </div>
+              Evolução da Sua Reputação no Google
+            </CardTitle>
+            <p className="text-muted-foreground mt-2 ml-14">
+              Acompanhe o impacto real do Avalia Pro no seu negócio
+            </p>
+          </div>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={isUpdating}
-            className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/30"
+            className="border-primary/30 hover:bg-primary/10"
           >
-            <RefreshCw className={`w-4 h-4 mr-1 ${isUpdating ? "animate-spin" : ""}`} />
-            {isUpdating ? "Atualizando..." : "Atualizar"}
+            <RefreshCw className={`w-4 h-4 mr-2 ${isUpdating ? "animate-spin" : ""}`} />
+            {isUpdating ? "Atualizando..." : "Atualizar Agora"}
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <CardContent className="space-y-6 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Bloco 1: Ponto de Partida */}
-          <div className="p-4 bg-white/60 dark:bg-white/5 rounded-xl border border-blue-100 dark:border-blue-800">
-            <div className="flex items-center gap-2 mb-3">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Ponto de Partida
+          <div className="p-5 bg-background/80 backdrop-blur rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-5 h-5 text-muted-foreground" />
+              <h3 className="text-base font-bold text-foreground">
+                Este é o seu ponto de partida no Google
               </h3>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">
-              Em {formattedDate}
+            <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+              Capturamos esta "foto" da sua reputação no momento em que você se cadastrou em {formattedDate}.
             </p>
             {initialRating !== null && (
-              <div className="mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-foreground">
+              <div className="mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl font-bold text-foreground">
                     {initialRating.toFixed(1)}
                   </span>
                   <div className="flex items-center gap-0.5">
@@ -180,20 +206,20 @@ const GoogleReputationPanel = ({
           </div>
 
           {/* Bloco 2: Situação Atual */}
-          <div className="p-4 bg-white/60 dark:bg-white/5 rounded-xl border border-blue-100 dark:border-blue-800">
-            <div className="flex items-center gap-2 mb-3">
-              <Star className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Situação Atual
+          <div className="p-5 bg-background/80 backdrop-blur rounded-2xl border border-border/50 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Star className="w-5 h-5 text-primary" />
+              <h3 className="text-base font-bold text-foreground">
+                Situação Atual no Google
               </h3>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">
-              Atualizado recentemente
+            <p className="text-xs text-muted-foreground mb-4">
+              Dados atualizados automaticamente todos os dias
             </p>
             {currentRating !== null && (
-              <div className="mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-foreground">
+              <div className="mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl font-bold text-foreground">
                     {currentRating.toFixed(1)}
                   </span>
                   <div className="flex items-center gap-0.5">
@@ -210,23 +236,25 @@ const GoogleReputationPanel = ({
             )}
           </div>
 
-          {/* Bloco 3: Seu Crescimento */}
-          <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
-            <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <h3 className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">
-                Seu Crescimento
+          {/* Bloco 3: Impacto do Avalia Pro */}
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl border-2 border-emerald-500/30 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 bg-emerald-500/20 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h3 className="text-base font-bold text-emerald-700 dark:text-emerald-400">
+                O Impacto do Avalia Pro
               </h3>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">
-              Desde o início com o Avalia Pro
+            <p className="text-xs text-muted-foreground mb-4">
+              Veja o que conquistamos juntos desde o início
             </p>
             
             {/* Novas avaliações */}
-            <div className="mb-3">
+            <div className="mb-4">
               <p className="text-xs text-muted-foreground mb-1">Novas Avaliações no Google</p>
               <div className="flex items-center gap-2">
-                <span className={`text-2xl font-bold ${reviewsDiff >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                <span className={`text-3xl font-bold ${reviewsDiff >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                   {reviewsDiff >= 0 ? '+' : ''}{reviewsDiff.toLocaleString('pt-BR')}
                 </span>
               </div>
@@ -237,7 +265,7 @@ const GoogleReputationPanel = ({
               <p className="text-xs text-muted-foreground mb-1">Variação da Nota</p>
               <div className="flex items-center gap-2">
                 {getRatingTrendIcon()}
-                <span className={`text-xl font-bold ${getRatingTrendColor()}`}>
+                <span className={`text-2xl font-bold ${getRatingTrendColor()}`}>
                   {ratingDiff >= 0 ? '+' : ''}{ratingDiff.toFixed(1)}
                 </span>
               </div>
@@ -245,10 +273,10 @@ const GoogleReputationPanel = ({
           </div>
         </div>
 
-        <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
-          <p className="text-xs text-muted-foreground">
-            💡 Este painel mostra sua evolução real no Google desde que começou a usar o Avalia Pro. 
-            Os dados são atualizados automaticamente todos os dias.
+        <div className="pt-4 border-t border-border/50">
+          <p className="text-sm text-muted-foreground text-center">
+            💡 <strong>Dica:</strong> Quanto mais feedbacks você coletar, mais clientes satisfeitos você direciona para o Google, 
+            melhorando sua nota e aumentando sua visibilidade!
           </p>
         </div>
       </CardContent>

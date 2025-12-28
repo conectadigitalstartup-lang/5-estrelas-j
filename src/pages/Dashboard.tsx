@@ -247,24 +247,23 @@ const Dashboard = () => {
           </Select>
         </div>
 
-        {/* Google Reputation Panel */}
-        {!loading && (initialGoogleRating !== null || currentGoogleRating !== null) && (
-          <div className="mb-8">
-            <GoogleReputationPanel 
-              initialRating={initialGoogleRating}
-              initialRatingsTotal={initialGoogleRatingsTotal}
-              currentRating={currentGoogleRating}
-              currentRatingsTotal={currentGoogleRatingsTotal}
-              createdAt={companyCreatedAt}
-              placeId={googlePlaceId}
-              companyId={companyId}
-              onUpdate={(newRating, newTotal) => {
-                setCurrentGoogleRating(newRating);
-                setCurrentGoogleRatingsTotal(newTotal);
-              }}
-            />
-          </div>
-        )}
+        {/* Google Reputation Panel - Elemento Principal */}
+        <div className="mb-8">
+          <GoogleReputationPanel 
+            initialRating={initialGoogleRating}
+            initialRatingsTotal={initialGoogleRatingsTotal}
+            currentRating={currentGoogleRating}
+            currentRatingsTotal={currentGoogleRatingsTotal}
+            createdAt={companyCreatedAt}
+            placeId={googlePlaceId}
+            companyId={companyId}
+            isLoading={loading}
+            onUpdate={(newRating, newTotal) => {
+              setCurrentGoogleRating(newRating);
+              setCurrentGoogleRatingsTotal(newTotal);
+            }}
+          />
+        </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
