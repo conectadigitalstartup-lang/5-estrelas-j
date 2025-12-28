@@ -22,6 +22,7 @@ interface Company {
   slug: string;
   logo_url: string | null;
   google_review_link: string | null;
+  instagram_handle: string | null;
 }
 
 const DashboardQRCode = () => {
@@ -190,6 +191,7 @@ const DashboardQRCode = () => {
       const pageWidth = 100;
       const pageHeight = 150;
       const companyName = company?.name || "Seu Restaurante";
+      const instagramHandle = company?.instagram_handle;
 
       // === PREMIUM BACKGROUND ===
       // Main dark navy background
@@ -247,15 +249,20 @@ const DashboardQRCode = () => {
       pdf.setFontSize(8);
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
+      // === INSTAGRAM (if available) ===
+      let footerStartY = 144;
+      if (instagramHandle) {
+        pdf.setTextColor(200, 200, 210);
+        pdf.setFontSize(8);
+        pdf.text(`@${instagramHandle}`, pageWidth / 2, 143, { align: "center" });
+        footerStartY = 147;
+      }
+
       // === FOOTER WITH BRANDING ===
-      // Gold accent line at bottom
-      pdf.setFillColor(212, 175, 55);
-      pdf.rect(35, 144, 30, 0.5, "F");
-      
       // Powered by text
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(7);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 149, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerStartY + 2, { align: "center" });
 
       pdf.save(`Avalia-Pro-Material-${company?.slug}.pdf`);
       
@@ -301,6 +308,7 @@ const DashboardQRCode = () => {
       const margin = 10;
       const gap = 5;
       const companyName = company?.name || "Seu Restaurante";
+      const instagramHandle = company?.instagram_handle;
 
       // Helper function to draw a premium material card
       const drawPremiumCard = (x: number, y: number) => {
@@ -361,11 +369,20 @@ const DashboardQRCode = () => {
         pdf.setFontSize(7);
         pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 120, { align: "center" });
 
+        // === INSTAGRAM (if available) ===
+        let footerY = 130;
+        if (instagramHandle) {
+          pdf.setTextColor(200, 200, 210);
+          pdf.setFontSize(6);
+          pdf.text(`@${instagramHandle}`, x + cardWidth / 2, y + 126, { align: "center" });
+          footerY = 132;
+        }
+
         // === FOOTER WITH BRANDING ===
         // Powered by text
         pdf.setTextColor(100, 100, 110);
         pdf.setFontSize(6);
-        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + 130, { align: "center" });
+        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + footerY, { align: "center" });
       };
 
       // Draw 4 premium cards in 2x2 grid
@@ -416,6 +433,7 @@ const DashboardQRCode = () => {
       const pageWidth = 100;
       const pageHeight = 150;
       const companyName = company?.name || "Seu Restaurante";
+      const instagramHandle = company?.instagram_handle;
 
       // Background
       pdf.setFillColor(15, 23, 42);
@@ -450,10 +468,19 @@ const DashboardQRCode = () => {
       pdf.setFontSize(8);
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
+      // Instagram (if available)
+      let footerY = 147;
+      if (instagramHandle) {
+        pdf.setTextColor(200, 200, 210);
+        pdf.setFontSize(8);
+        pdf.text(`@${instagramHandle}`, pageWidth / 2, 143, { align: "center" });
+        footerY = 148;
+      }
+
       // Footer
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(7);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 147, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY, { align: "center" });
 
       pdf.save(`Display-Mesa-10x15cm-${company?.slug}.pdf`);
       toast({ title: "Display de mesa gerado!", description: "Formato 10x15cm para display de mesa." });
@@ -536,6 +563,7 @@ const DashboardQRCode = () => {
       const pageWidth = 148;
       const pageHeight = 210;
       const companyName = company?.name || "Seu Restaurante";
+      const instagramHandle = company?.instagram_handle;
 
       // Background gradient effect
       pdf.setFillColor(15, 23, 42);
@@ -574,10 +602,19 @@ const DashboardQRCode = () => {
       pdf.setFont("helvetica", "normal");
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 196, { align: "center" });
 
+      // Instagram (if available)
+      let footerY = 206;
+      if (instagramHandle) {
+        pdf.setTextColor(200, 200, 210);
+        pdf.setFontSize(9);
+        pdf.text(`@${instagramHandle}`, pageWidth / 2, 202, { align: "center" });
+        footerY = 208;
+      }
+
       // Footer
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(8);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 206, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY, { align: "center" });
 
       pdf.save(`Flyer-A5-${company?.slug}.pdf`);
       toast({ title: "Flyer A5 gerado!", description: "Perfeito para distribuição aos clientes." });
@@ -609,6 +646,7 @@ const DashboardQRCode = () => {
       const pageWidth = 297;
       const pageHeight = 420;
       const companyName = company?.name || "Seu Restaurante";
+      const instagramHandle = company?.instagram_handle;
 
       // Background
       pdf.setFillColor(15, 23, 42);
@@ -647,10 +685,19 @@ const DashboardQRCode = () => {
       pdf.setFont("helvetica", "normal");
       pdf.text("É rápido e fácil - leva apenas 15 segundos", pageWidth / 2, 365, { align: "center" });
 
+      // Instagram (if available)
+      let footerY = 400;
+      if (instagramHandle) {
+        pdf.setTextColor(200, 200, 210);
+        pdf.setFontSize(14);
+        pdf.text(`@${instagramHandle}`, pageWidth / 2, 385, { align: "center" });
+        footerY = 405;
+      }
+
       // Footer
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(12);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, 400, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY, { align: "center" });
 
       pdf.save(`Poster-A3-${company?.slug}.pdf`);
       toast({ title: "Poster A3 gerado!", description: "Ideal para parede ou vitrine." });
