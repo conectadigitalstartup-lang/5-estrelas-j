@@ -82,6 +82,7 @@ const DashboardSettings = () => {
     slug: "",
     logo_url: "",
     google_place_id: "",
+    instagram_handle: "",
     initial_google_rating: null as number | null,
     initial_google_ratings_total: null as number | null,
     current_google_rating: null as number | null,
@@ -137,6 +138,7 @@ const DashboardSettings = () => {
           slug: company.slug || "",
           logo_url: company.logo_url || "",
           google_place_id: company.google_place_id || "",
+          instagram_handle: company.instagram_handle || "",
           initial_google_rating: company.initial_google_rating,
           initial_google_ratings_total: company.initial_google_ratings_total,
           current_google_rating: company.current_google_rating,
@@ -181,6 +183,7 @@ const DashboardSettings = () => {
           restaurant_type: companyData.restaurant_type,
           google_review_link: companyData.google_review_link,
           logo_url: companyData.logo_url,
+          instagram_handle: companyData.instagram_handle || null,
         })
         .eq("owner_id", user.id);
 
@@ -519,6 +522,23 @@ const DashboardSettings = () => {
                       <SelectItem value="outro">Outro</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="instagram">Instagram (opcional)</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                    <Input
+                      id="instagram"
+                      value={companyData.instagram_handle}
+                      onChange={(e) => setCompanyData({ ...companyData, instagram_handle: e.target.value.replace(/^@/, '') })}
+                      placeholder="seurestaurante"
+                      className="pl-8"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Será exibido nos materiais de QR Code para download
+                  </p>
                 </div>
 
                 {/* Seção de Vinculação ao Google */}

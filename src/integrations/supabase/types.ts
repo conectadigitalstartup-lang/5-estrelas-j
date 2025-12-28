@@ -87,6 +87,7 @@ export type Database = {
           id: string
           initial_google_rating: number | null
           initial_google_ratings_total: number | null
+          instagram_handle: string | null
           logo_url: string | null
           name: string
           owner_id: string
@@ -106,6 +107,7 @@ export type Database = {
           id?: string
           initial_google_rating?: number | null
           initial_google_ratings_total?: number | null
+          instagram_handle?: string | null
           logo_url?: string | null
           name: string
           owner_id: string
@@ -125,6 +127,7 @@ export type Database = {
           id?: string
           initial_google_rating?: number | null
           initial_google_ratings_total?: number | null
+          instagram_handle?: string | null
           logo_url?: string | null
           name?: string
           owner_id?: string
