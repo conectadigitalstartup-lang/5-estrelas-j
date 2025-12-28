@@ -140,10 +140,10 @@ const Auth = () => {
       } else {
         toast({
           title: "Conta criada com sucesso!",
-          description: "Complete o cadastro para iniciar seu teste grátis."
+          description: "Configure seu restaurante para começar."
         });
-        // Redireciona para página de cadastro do cartão
-        navigate("/complete-registration");
+        // Redireciona para onboarding - fluxo sem checkout imediato
+        navigate("/onboarding");
       }
     }
   };
@@ -221,9 +221,9 @@ const Auth = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="login-password">Senha</Label>
-                        <button type="button" className="text-xs text-coral hover:underline">
+                        <Link to="/esqueci-senha" className="text-xs text-coral hover:underline">
                           Esqueci minha senha
-                        </button>
+                        </Link>
                       </div>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

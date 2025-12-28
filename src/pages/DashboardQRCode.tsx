@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import PaywallButton from "@/components/subscription/PaywallButton";
 import { Download, Copy, Printer, ExternalLink, Lightbulb, Check, Image, FileText, CreditCard, Bookmark, SquareStack, StickyNote } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -925,23 +926,25 @@ const DashboardQRCode = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button
+                <PaywallButton
                   onClick={downloadQRCodePNG}
                   variant="outline"
                   className="w-full justify-start"
                   disabled={!company || !!downloading}
+                  featureName="baixar QR Code"
                 >
                   <Download className="w-4 h-4 mr-3" />
                   {downloading === "png" ? "Baixando..." : "Baixar QR Code (PNG)"}
-                </Button>
-                <Button
+                </PaywallButton>
+                <PaywallButton
                   onClick={downloadMaterialPDF}
                   className="w-full justify-start bg-coral hover:bg-coral-dark"
                   disabled={!company || !!downloading}
+                  featureName="baixar material premium"
                 >
                   <Download className="w-4 h-4 mr-3" />
                   {downloading === "pdf" ? "Gerando PDF..." : "Baixar Material Premium (PDF)"}
-                </Button>
+                </PaywallButton>
               </CardContent>
             </Card>
 
@@ -958,12 +961,13 @@ const DashboardQRCode = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 {printFormats.map((format) => (
-                  <Button
+                  <PaywallButton
                     key={format.id}
                     onClick={format.onClick}
                     variant="outline"
                     className="w-full justify-start h-auto py-3 px-4"
                     disabled={!company || !!downloading}
+                    featureName="baixar material de impressão"
                   >
                     <format.icon className="w-5 h-5 mr-3 flex-shrink-0 text-coral" />
                     <div className="flex flex-col items-start text-left">
@@ -974,7 +978,7 @@ const DashboardQRCode = () => {
                         {format.size} • {format.description}
                       </span>
                     </div>
-                  </Button>
+                  </PaywallButton>
                 ))}
               </CardContent>
             </Card>

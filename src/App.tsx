@@ -14,6 +14,8 @@ import { Loader2 } from "lucide-react";
 const Index = lazy(() => import("./pages/Index"));
 const Precos = lazy(() => import("./pages/Precos"));
 const Auth = lazy(() => import("./pages/Auth"));
+const EsqueciSenha = lazy(() => import("./pages/EsqueciSenha"));
+const AtualizarSenha = lazy(() => import("./pages/AtualizarSenha"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const DashboardQRCode = lazy(() => import("./pages/DashboardQRCode"));
@@ -54,6 +56,8 @@ const App = () => (
                 <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
                 <Route path="/login" element={<PublicRoute><Auth /></PublicRoute>} />
                 <Route path="/cadastro" element={<PublicRoute><Auth /></PublicRoute>} />
+                <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+                <Route path="/atualizar-senha" element={<AtualizarSenha />} />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/dashboard/qr-code" element={<ProtectedRoute><DashboardQRCode /></ProtectedRoute>} />
