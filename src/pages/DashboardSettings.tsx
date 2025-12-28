@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import PlaceSearch from "@/components/onboarding/PlaceSearch";
 import { 
   Building2, 
   User, 
@@ -23,7 +24,11 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Upload
+  Upload,
+  MapPin,
+  Star,
+  RefreshCw,
+  AlertTriangle
 } from "lucide-react";
 import {
   AlertDialog,
@@ -44,6 +49,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface PlaceResult {
+  place_id: string;
+  name: string;
+  formatted_address: string;
+  google_maps_url: string;
+  rating?: number | null;
+  user_ratings_total?: number | null;
+}
 
 interface NotificationPrefs {
   email_notifications: boolean;
@@ -68,7 +82,16 @@ const DashboardSettings = () => {
     google_review_link: "",
     slug: "",
     logo_url: "",
+    google_place_id: "",
+    initial_google_rating: null as number | null,
+    initial_google_ratings_total: null as number | null,
+    current_google_rating: null as number | null,
+    current_google_ratings_total: null as number | null,
   });
+  
+  const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null);
+  const [savingGoogle, setSavingGoogle] = useState(false);
+  const [showGoogleSearch, setShowGoogleSearch] = useState(false);
   
   const [profileData, setProfileData] = useState({
     full_name: "",
@@ -114,6 +137,11 @@ const DashboardSettings = () => {
           google_review_link: company.google_review_link || "",
           slug: company.slug || "",
           logo_url: company.logo_url || "",
+          google_place_id: company.google_place_id || "",
+          initial_google_rating: company.initial_google_rating,
+          initial_google_ratings_total: company.initial_google_ratings_total,
+          current_google_rating: company.current_google_rating,
+          current_google_ratings_total: company.current_google_ratings_total,
         });
       }
 
@@ -171,6 +199,61 @@ const DashboardSettings = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleLinkGoogle = async () => {
+    if (!user || !selectedPlace || !companyId) return;
+    setSavingGoogle(true);
+
+    try {
+      // Get current rating data from the selected place
+      const rating = selectedPlace.rating || null;
+      const ratingsTotal = selectedPlace.user_ratings_total || null;
+
+      const { error } = await supabase
+        .from("companies")
+        .update({
+          google_place_id: selectedPlace.place_id,
+          google_review_link: selectedPlace.google_maps_url,
+          google_rating: rating,
+          google_user_ratings_total: ratingsTotal,
+          initial_google_rating: rating,
+          initial_google_ratings_total: ratingsTotal,
+          current_google_rating: rating,
+          current_google_ratings_total: ratingsTotal,
+        })
+        .eq("id", companyId);
+
+      if (error) throw error;
+
+      // Update local state
+      setCompanyData({
+        ...companyData,
+        google_place_id: selectedPlace.place_id,
+        google_review_link: selectedPlace.google_maps_url,
+        initial_google_rating: rating,
+        initial_google_ratings_total: ratingsTotal,
+        current_google_rating: rating,
+        current_google_ratings_total: ratingsTotal,
+      });
+
+      setShowGoogleSearch(false);
+      setSelectedPlace(null);
+
+      toast({
+        title: "Restaurante vinculado ao Google!",
+        description: `Nota atual: ${rating?.toFixed(1) || "N/A"} com ${ratingsTotal || 0} avaliações`,
+      });
+    } catch (error) {
+      console.error("Erro ao vincular Google:", error);
+      toast({
+        title: "Erro ao vincular",
+        description: "Não foi possível vincular seu restaurante ao Google.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingGoogle(false);
     }
   };
 
@@ -510,28 +593,124 @@ const DashboardSettings = () => {
                   </Select>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="google-link">Link do Google Reviews</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="google-link"
-                      value={companyData.google_review_link}
-                      onChange={(e) => setCompanyData({ ...companyData, google_review_link: e.target.value })}
-                      placeholder="https://maps.google.com/..."
-                      className="flex-1"
-                    />
-                    {companyData.google_review_link && (
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        asChild
-                      >
-                        <a href={companyData.google_review_link} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    )}
+                {/* Seção de Vinculação ao Google */}
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <Label className="text-base font-semibold">Vinculação ao Google</Label>
                   </div>
+
+                  {companyData.google_place_id ? (
+                    // Já vinculado
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                        <span>Restaurante vinculado ao Google</span>
+                      </div>
+                      
+                      {(companyData.current_google_rating !== null || companyData.initial_google_rating !== null) && (
+                        <div className="grid grid-cols-2 gap-4 p-3 bg-background rounded-lg border">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Nota Atual</p>
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <span className="font-semibold">
+                                {companyData.current_google_rating?.toFixed(1) || "N/A"}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                ({companyData.current_google_ratings_total || 0} avaliações)
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Nota Inicial</p>
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-semibold">
+                                {companyData.initial_google_rating?.toFixed(1) || "N/A"}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                ({companyData.initial_google_ratings_total || 0} avaliações)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowGoogleSearch(true)}
+                        >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Alterar Restaurante
+                        </Button>
+                        {companyData.google_review_link && (
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={companyData.google_review_link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              Ver no Google
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    // Não vinculado - mostrar alerta
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                        <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-amber-800 dark:text-amber-200">
+                            Restaurante não vinculado ao Google
+                          </p>
+                          <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                            Vincule seu restaurante para acompanhar sua evolução no Google e direcionar clientes satisfeitos para deixarem avaliações.
+                          </p>
+                        </div>
+                      </div>
+                      <Button onClick={() => setShowGoogleSearch(true)} className="bg-coral hover:bg-coral-dark">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Vincular ao Google
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Modal de busca */}
+                  {showGoogleSearch && (
+                    <div className="space-y-4 p-4 border-2 border-primary/30 rounded-lg bg-background">
+                      <p className="text-sm font-medium">Busque seu restaurante no Google:</p>
+                      <PlaceSearch
+                        onSelect={setSelectedPlace}
+                        selectedPlace={selectedPlace}
+                        restaurantName={companyData.name}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowGoogleSearch(false);
+                            setSelectedPlace(null);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          onClick={handleLinkGoogle}
+                          disabled={!selectedPlace || savingGoogle}
+                          className="bg-coral hover:bg-coral-dark"
+                        >
+                          {savingGoogle ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Save className="w-4 h-4 mr-2" />
+                          )}
+                          Confirmar Vinculação
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
