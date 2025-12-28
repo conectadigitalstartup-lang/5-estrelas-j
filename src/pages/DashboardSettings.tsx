@@ -83,6 +83,7 @@ const DashboardSettings = () => {
     logo_url: "",
     google_place_id: "",
     instagram_handle: "",
+    whatsapp_number: "",
     initial_google_rating: null as number | null,
     initial_google_ratings_total: null as number | null,
     current_google_rating: null as number | null,
@@ -139,6 +140,7 @@ const DashboardSettings = () => {
           logo_url: company.logo_url || "",
           google_place_id: company.google_place_id || "",
           instagram_handle: company.instagram_handle || "",
+          whatsapp_number: company.whatsapp_number || "",
           initial_google_rating: company.initial_google_rating,
           initial_google_ratings_total: company.initial_google_ratings_total,
           current_google_rating: company.current_google_rating,
@@ -184,6 +186,7 @@ const DashboardSettings = () => {
           google_review_link: companyData.google_review_link,
           logo_url: companyData.logo_url,
           instagram_handle: companyData.instagram_handle || null,
+          whatsapp_number: companyData.whatsapp_number || null,
         })
         .eq("owner_id", user.id);
 
@@ -538,6 +541,20 @@ const DashboardSettings = () => {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Será exibido nos materiais de QR Code para download
+                  </p>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="whatsapp">WhatsApp (opcional)</Label>
+                  <Input
+                    id="whatsapp"
+                    value={companyData.whatsapp_number}
+                    onChange={(e) => setCompanyData({ ...companyData, whatsapp_number: e.target.value.replace(/\D/g, '') })}
+                    placeholder="11999999999"
+                    maxLength={11}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Apenas números (DDD + número). Ex: 11999999999
                   </p>
                 </div>
 
