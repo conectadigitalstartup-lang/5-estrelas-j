@@ -808,61 +808,84 @@ const DashboardQRCode = () => {
               ) : (
                 <div
                   id="material-preview"
-                  className="relative overflow-hidden rounded-3xl text-center w-72 shadow-2xl"
-                  style={{ background: 'linear-gradient(to bottom, #1e293b 0%, #0f172a 35%, #0f172a 100%)' }}
+                  className="relative overflow-hidden rounded-3xl text-center w-80 shadow-2xl border border-amber-500/20"
+                  style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1a2e 100%)' }}
                 >
-                  {/* Gold accent line at top */}
-                  <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400" />
+                  {/* Premium gold accent line at top */}
+                  <div className="h-1.5 w-full bg-gradient-to-r from-amber-500/50 via-yellow-400 to-amber-500/50" />
                   
-                  <div className="p-8">
-                    {/* Premium gold emblem */}
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg">
-                      <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center">
-                        <span className="text-2xl font-bold bg-gradient-to-br from-amber-400 to-yellow-500 bg-clip-text text-transparent">
-                          A
-                        </span>
+                  {/* Decorative corner elements */}
+                  <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-amber-500/30 rounded-tl-lg" />
+                  <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-amber-500/30 rounded-tr-lg" />
+                  
+                  <div className="px-8 pt-10 pb-8">
+                    {/* Logo do restaurante ou logo AvaliaP Pro como fallback */}
+                    <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 p-1 shadow-lg shadow-amber-500/25">
+                      <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center">
+                        {company?.logo_url ? (
+                          <img 
+                            src={company.logo_url} 
+                            alt={company.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img 
+                            src={avaliaProLogo} 
+                            alt="Avalia Pro"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </div>
                     </div>
 
-                    {/* Company name */}
-                    <h3 className="text-white font-display text-xl font-bold mb-2">
+                    {/* Company name with subtle glow */}
+                    <h3 className="text-white font-display text-2xl font-bold mb-2 drop-shadow-lg">
                       {company?.name || "Seu Restaurante"}
                     </h3>
                     
                     {/* Main message */}
-                    <p className="text-white/80 text-sm mb-6">
+                    <p className="text-amber-100/70 text-sm mb-8 tracking-wide">
                       Sua opinião é importante para nós
                     </p>
                     
-                    {/* QR Code container */}
-                    <div className="bg-white p-4 rounded-xl inline-block mb-6 shadow-lg">
-                      <QRCodeCanvas
-                        id="qr-code-material"
-                        value={evaluationUrl}
-                        size={140}
-                        level="H"
-                        includeMargin={false}
-                        fgColor="#0f172a"
-                        bgColor="#FFFFFF"
-                      />
+                    {/* QR Code container with premium styling */}
+                    <div className="relative inline-block mb-8">
+                      <div className="absolute -inset-1 bg-gradient-to-br from-amber-400/30 via-yellow-500/20 to-amber-600/30 rounded-2xl blur-sm" />
+                      <div className="relative bg-white p-5 rounded-2xl shadow-xl">
+                        <QRCodeCanvas
+                          id="qr-code-material"
+                          value={evaluationUrl}
+                          size={150}
+                          level="H"
+                          includeMargin={false}
+                          fgColor="#0f172a"
+                          bgColor="#FFFFFF"
+                        />
+                      </div>
                     </div>
                     
-                    {/* Call to action */}
-                    <p className="text-white text-sm font-medium mb-1">
-                      Aponte a câmera para avaliar
-                    </p>
-                    <p className="text-white/50 text-xs mb-6">
-                      Leva apenas 15 segundos
-                    </p>
+                    {/* Call to action with icon */}
+                    <div className="mb-6">
+                      <p className="text-white text-sm font-semibold mb-1.5 tracking-wide">
+                        Aponte a câmera para avaliar
+                      </p>
+                      <p className="text-slate-400 text-xs">
+                        Leva apenas <span className="text-amber-400 font-medium">15 segundos</span>
+                      </p>
+                    </div>
                     
-                    {/* Gold divider */}
-                    <div className="w-16 h-0.5 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-4" />
+                    {/* Premium gold divider */}
+                    <div className="w-20 h-0.5 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-5" />
                     
-                    {/* Footer */}
-                    <p className="text-white/40 text-xs">
+                    {/* Footer branding */}
+                    <p className="text-slate-500 text-xs font-medium tracking-wider uppercase">
                       Powered by Avalia Pro
                     </p>
                   </div>
+                  
+                  {/* Decorative corner elements bottom */}
+                  <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-amber-500/30 rounded-bl-lg" />
+                  <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-amber-500/30 rounded-br-lg" />
                 </div>
               )}
 
