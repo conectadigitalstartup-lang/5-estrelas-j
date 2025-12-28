@@ -116,9 +116,9 @@ const Auth = () => {
 
     setIsLoading(true);
     const { error } = await signUp(data.email, data.password, data.restaurantName);
-    setIsLoading(false);
 
     if (error) {
+      setIsLoading(false);
       let message = "Erro ao criar conta. Tente novamente.";
       if (error.message.includes("User already registered")) {
         message = "Este email já está cadastrado. Tente fazer login.";
@@ -131,20 +131,18 @@ const Auth = () => {
     } else {
       // Super Admin vai direto para o dashboard (bypass checkout)
       const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
-      if (data.email.toLowerCase() === SUPER_ADMIN_EMAIL) {
-        toast({
-          title: "Bem-vindo, Administrador!",
-          description: "Acesso total liberado."
-        });
-        navigate("/dashboard");
-      } else {
-        toast({
-          title: "Conta criada com sucesso!",
-          description: "Configure seu restaurante para começar."
-        });
-        // Redireciona para onboarding - fluxo sem checkout imediato
-        navigate("/onboarding");
-      }
+      const targetRoute = data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "/dashboard" : "/onboarding";
+      
+      toast({
+        title: data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "Bem-vindo, Administrador!" : "Conta criada com sucesso!",
+        description: data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "Acesso total liberado." : "Configure seu restaurante para começar."
+      });
+      
+      // Usar setTimeout para garantir que o estado do auth seja atualizado antes do redirect
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate(targetRoute, { replace: true });
+      }, 100);
     }
   };
 
