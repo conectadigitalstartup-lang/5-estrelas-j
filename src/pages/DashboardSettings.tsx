@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PlaceSearch from "@/components/onboarding/PlaceSearch";
+import LogoUpload from "@/components/settings/LogoUpload";
 import { 
   Building2, 
   User, 
@@ -24,7 +24,6 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Upload,
   MapPin,
   Star,
   RefreshCw,
@@ -73,7 +72,7 @@ const DashboardSettings = () => {
   const [saving, setSaving] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
+  
   
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [companyData, setCompanyData] = useState({
@@ -378,52 +377,6 @@ const DashboardSettings = () => {
     setSavingPassword(false);
   };
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !companyId) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast({
-        title: "Arquivo muito grande",
-        description: "O logo deve ter no máximo 2MB.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploadingLogo(true);
-
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${companyId}-logo.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("logos")
-        .upload(fileName, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("logos")
-        .getPublicUrl(fileName);
-
-      setCompanyData({ ...companyData, logo_url: publicUrl });
-
-      toast({
-        title: "Logo enviado!",
-        description: "Não esqueça de salvar as alterações.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro no upload",
-        description: "Não foi possível enviar o logo.",
-        variant: "destructive",
-      });
-    } finally {
-      setUploadingLogo(false);
-    }
-  };
-
   const [deletingAccount, setDeletingAccount] = useState(false);
 
   const handleDeleteAccount = async () => {
@@ -529,37 +482,12 @@ const DashboardSettings = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Logo Upload */}
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <Avatar className="w-24 h-24">
-                      <AvatarImage src={companyData.logo_url} alt={companyData.name} />
-                      <AvatarFallback className="text-2xl bg-coral/10 text-coral">
-                        {companyData.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    {uploadingLogo && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-full">
-                        <Loader2 className="w-6 h-6 animate-spin text-coral" />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="logo-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-muted transition-colors">
-                        <Upload className="w-4 h-4" />
-                        <span>Alterar Logo</span>
-                      </div>
-                    </Label>
-                    <Input
-                      id="logo-upload"
-                      type="file"
-                      accept="image/png,image/jpeg"
-                      className="hidden"
-                      onChange={handleLogoUpload}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">PNG, JPG até 2MB</p>
-                  </div>
-                </div>
+                <LogoUpload
+                  logoUrl={companyData.logo_url}
+                  companyName={companyData.name}
+                  companyId={companyId}
+                  onLogoChange={(url) => setCompanyData({ ...companyData, logo_url: url })}
+                />
 
                 <div className="grid gap-2">
                   <Label htmlFor="company-name">Nome do Restaurante</Label>
@@ -746,11 +674,11 @@ const DashboardSettings = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <Avatar className="w-16 h-16">
-                    <AvatarFallback className="text-xl bg-primary/10 text-primary">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-xl font-semibold text-primary">
                       {user?.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                    </span>
+                  </div>
                   <div>
                     <p className="font-medium">{profileData.full_name || "Usuário"}</p>
                     <p className="text-sm text-muted-foreground">{user?.email}</p>
