@@ -23,7 +23,19 @@ interface Company {
   logo_url: string | null;
   google_review_link: string | null;
   instagram_handle: string | null;
+  whatsapp_number: string | null;
 }
+
+// Helper to format WhatsApp number for display
+const formatWhatsApp = (number: string): string => {
+  if (number.length === 11) {
+    return `(${number.slice(0, 2)}) ${number.slice(2, 7)}-${number.slice(7)}`;
+  }
+  if (number.length === 10) {
+    return `(${number.slice(0, 2)}) ${number.slice(2, 6)}-${number.slice(6)}`;
+  }
+  return number;
+};
 
 const DashboardQRCode = () => {
   const { user } = useAuth();
@@ -192,6 +204,7 @@ const DashboardQRCode = () => {
       const pageHeight = 150;
       const companyName = company?.name || "Seu Restaurante";
       const instagramHandle = company?.instagram_handle;
+      const whatsappNumber = company?.whatsapp_number;
 
       // === PREMIUM BACKGROUND ===
       // Main dark navy background
@@ -249,12 +262,16 @@ const DashboardQRCode = () => {
       pdf.setFontSize(8);
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
-      // === INSTAGRAM (if available) ===
-      let footerStartY = 144;
-      if (instagramHandle) {
+      // === SOCIAL INFO (if available) ===
+      let footerStartY = 143;
+      const socialParts: string[] = [];
+      if (instagramHandle) socialParts.push(`@${instagramHandle}`);
+      if (whatsappNumber) socialParts.push(formatWhatsApp(whatsappNumber));
+      
+      if (socialParts.length > 0) {
         pdf.setTextColor(200, 200, 210);
-        pdf.setFontSize(8);
-        pdf.text(`@${instagramHandle}`, pageWidth / 2, 143, { align: "center" });
+        pdf.setFontSize(7);
+        pdf.text(socialParts.join("  •  "), pageWidth / 2, footerStartY, { align: "center" });
         footerStartY = 147;
       }
 
@@ -309,6 +326,7 @@ const DashboardQRCode = () => {
       const gap = 5;
       const companyName = company?.name || "Seu Restaurante";
       const instagramHandle = company?.instagram_handle;
+      const whatsappNumber = company?.whatsapp_number;
 
       // Helper function to draw a premium material card
       const drawPremiumCard = (x: number, y: number) => {
@@ -369,20 +387,24 @@ const DashboardQRCode = () => {
         pdf.setFontSize(7);
         pdf.text("Leva apenas 15 segundos", x + cardWidth / 2, y + 120, { align: "center" });
 
-        // === INSTAGRAM (if available) ===
-        let footerY = 130;
-        if (instagramHandle) {
+        // === SOCIAL INFO (if available) ===
+        let footerY = 126;
+        const socialParts: string[] = [];
+        if (instagramHandle) socialParts.push(`@${instagramHandle}`);
+        if (whatsappNumber) socialParts.push(formatWhatsApp(whatsappNumber));
+        
+        if (socialParts.length > 0) {
           pdf.setTextColor(200, 200, 210);
-          pdf.setFontSize(6);
-          pdf.text(`@${instagramHandle}`, x + cardWidth / 2, y + 126, { align: "center" });
-          footerY = 132;
+          pdf.setFontSize(5);
+          pdf.text(socialParts.join("  •  "), x + cardWidth / 2, y + footerY, { align: "center" });
+          footerY = 130;
         }
 
         // === FOOTER WITH BRANDING ===
         // Powered by text
         pdf.setTextColor(100, 100, 110);
         pdf.setFontSize(6);
-        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + footerY, { align: "center" });
+        pdf.text("Powered by Avalia Pro", x + cardWidth / 2, y + footerY + 2, { align: "center" });
       };
 
       // Draw 4 premium cards in 2x2 grid
@@ -434,6 +456,7 @@ const DashboardQRCode = () => {
       const pageHeight = 150;
       const companyName = company?.name || "Seu Restaurante";
       const instagramHandle = company?.instagram_handle;
+      const whatsappNumber = company?.whatsapp_number;
 
       // Background
       pdf.setFillColor(15, 23, 42);
@@ -468,19 +491,23 @@ const DashboardQRCode = () => {
       pdf.setFontSize(8);
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 138, { align: "center" });
 
-      // Instagram (if available)
-      let footerY = 147;
-      if (instagramHandle) {
+      // Social info (if available)
+      let footerY = 143;
+      const socialParts: string[] = [];
+      if (instagramHandle) socialParts.push(`@${instagramHandle}`);
+      if (whatsappNumber) socialParts.push(formatWhatsApp(whatsappNumber));
+      
+      if (socialParts.length > 0) {
         pdf.setTextColor(200, 200, 210);
-        pdf.setFontSize(8);
-        pdf.text(`@${instagramHandle}`, pageWidth / 2, 143, { align: "center" });
-        footerY = 148;
+        pdf.setFontSize(7);
+        pdf.text(socialParts.join("  •  "), pageWidth / 2, footerY, { align: "center" });
+        footerY = 147;
       }
 
       // Footer
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(7);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY + 2, { align: "center" });
 
       pdf.save(`Display-Mesa-10x15cm-${company?.slug}.pdf`);
       toast({ title: "Display de mesa gerado!", description: "Formato 10x15cm para display de mesa." });
@@ -564,6 +591,7 @@ const DashboardQRCode = () => {
       const pageHeight = 210;
       const companyName = company?.name || "Seu Restaurante";
       const instagramHandle = company?.instagram_handle;
+      const whatsappNumber = company?.whatsapp_number;
 
       // Background gradient effect
       pdf.setFillColor(15, 23, 42);
@@ -602,13 +630,17 @@ const DashboardQRCode = () => {
       pdf.setFont("helvetica", "normal");
       pdf.text("Leva apenas 15 segundos", pageWidth / 2, 196, { align: "center" });
 
-      // Instagram (if available)
-      let footerY = 206;
-      if (instagramHandle) {
+      // Social info (if available)
+      let footerY = 202;
+      const socialParts: string[] = [];
+      if (instagramHandle) socialParts.push(`@${instagramHandle}`);
+      if (whatsappNumber) socialParts.push(formatWhatsApp(whatsappNumber));
+      
+      if (socialParts.length > 0) {
         pdf.setTextColor(200, 200, 210);
-        pdf.setFontSize(9);
-        pdf.text(`@${instagramHandle}`, pageWidth / 2, 202, { align: "center" });
-        footerY = 208;
+        pdf.setFontSize(8);
+        pdf.text(socialParts.join("  •  "), pageWidth / 2, footerY, { align: "center" });
+        footerY = 207;
       }
 
       // Footer
@@ -647,6 +679,7 @@ const DashboardQRCode = () => {
       const pageHeight = 420;
       const companyName = company?.name || "Seu Restaurante";
       const instagramHandle = company?.instagram_handle;
+      const whatsappNumber = company?.whatsapp_number;
 
       // Background
       pdf.setFillColor(15, 23, 42);
@@ -685,19 +718,23 @@ const DashboardQRCode = () => {
       pdf.setFont("helvetica", "normal");
       pdf.text("É rápido e fácil - leva apenas 15 segundos", pageWidth / 2, 365, { align: "center" });
 
-      // Instagram (if available)
-      let footerY = 400;
-      if (instagramHandle) {
+      // Social info (if available)
+      let footerY = 385;
+      const socialParts: string[] = [];
+      if (instagramHandle) socialParts.push(`@${instagramHandle}`);
+      if (whatsappNumber) socialParts.push(formatWhatsApp(whatsappNumber));
+      
+      if (socialParts.length > 0) {
         pdf.setTextColor(200, 200, 210);
         pdf.setFontSize(14);
-        pdf.text(`@${instagramHandle}`, pageWidth / 2, 385, { align: "center" });
-        footerY = 405;
+        pdf.text(socialParts.join("  •  "), pageWidth / 2, footerY, { align: "center" });
+        footerY = 400;
       }
 
       // Footer
       pdf.setTextColor(120, 120, 130);
       pdf.setFontSize(12);
-      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY, { align: "center" });
+      pdf.text("Powered by Avalia Pro", pageWidth / 2, footerY + 5, { align: "center" });
 
       pdf.save(`Poster-A3-${company?.slug}.pdf`);
       toast({ title: "Poster A3 gerado!", description: "Ideal para parede ou vitrine." });
