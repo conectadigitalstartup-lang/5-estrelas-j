@@ -21,6 +21,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Share2,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PaywallButton from "@/components/subscription/PaywallButton";
@@ -65,6 +66,7 @@ import { cn } from "@/lib/utils";
 import { sanitizeInput, escapeCSV } from "@/lib/sanitize";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import PostGeneratorModal from "@/components/feedback/PostGeneratorModal";
 
 interface Feedback {
   id: string;
@@ -74,6 +76,7 @@ interface Feedback {
   customer_name: string | null;
   customer_email: string | null;
   is_read: boolean;
+  client_name?: string | null;
 }
 
 interface Stats {
@@ -112,6 +115,8 @@ const DashboardFeedbacks = () => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
+  const [companyData, setCompanyData] = useState<{ name: string; logo_url: string | null } | null>(null);
+  const [postGeneratorFeedback, setPostGeneratorFeedback] = useState<Feedback | null>(null);
 
   // Filters
   const [search, setSearch] = useState("");
@@ -144,7 +149,7 @@ const DashboardFeedbacks = () => {
 
       const { data: company } = await supabase
         .from("companies")
-        .select("id")
+        .select("id, name, logo_url")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -154,6 +159,7 @@ const DashboardFeedbacks = () => {
       }
 
       setCompanyId(company.id);
+      setCompanyData({ name: company.name, logo_url: company.logo_url });
 
       const { data } = await supabase
         .from("feedbacks")
@@ -691,6 +697,12 @@ const DashboardFeedbacks = () => {
                             <Eye className="w-4 h-4 mr-2" />
                             Ver detalhes
                           </DropdownMenuItem>
+                          {feedback.rating >= 4 && feedback.comment && (
+                            <DropdownMenuItem onClick={() => setPostGeneratorFeedback(feedback)}>
+                              <Share2 className="w-4 h-4 mr-2" />
+                              Gerar Post
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => toggleReadStatus(feedback.id, feedback.is_read)}>
                             <Check className="w-4 h-4 mr-2" />
                             {feedback.is_read ? "Marcar como não lido" : "Marcar como lido"}
@@ -826,6 +838,20 @@ const DashboardFeedbacks = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Post Generator Modal */}
+        {postGeneratorFeedback && companyData && (
+          <PostGeneratorModal
+            open={!!postGeneratorFeedback}
+            onOpenChange={(open) => !open && setPostGeneratorFeedback(null)}
+            feedback={{
+              comment: postGeneratorFeedback.comment,
+              rating: postGeneratorFeedback.rating,
+              client_name: postGeneratorFeedback.client_name || postGeneratorFeedback.customer_name,
+            }}
+            company={companyData}
+          />
+        )}
       </DashboardLayout>
     </>
   );
