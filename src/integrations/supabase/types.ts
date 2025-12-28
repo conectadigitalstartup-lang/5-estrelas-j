@@ -77,12 +77,16 @@ export type Database = {
       companies: {
         Row: {
           created_at: string
+          current_google_rating: number | null
+          current_google_ratings_total: number | null
           description: string | null
           google_place_id: string | null
           google_rating: number | null
           google_review_link: string | null
           google_user_ratings_total: number | null
           id: string
+          initial_google_rating: number | null
+          initial_google_ratings_total: number | null
           logo_url: string | null
           name: string
           owner_id: string
@@ -92,12 +96,16 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_google_rating?: number | null
+          current_google_ratings_total?: number | null
           description?: string | null
           google_place_id?: string | null
           google_rating?: number | null
           google_review_link?: string | null
           google_user_ratings_total?: number | null
           id?: string
+          initial_google_rating?: number | null
+          initial_google_ratings_total?: number | null
           logo_url?: string | null
           name: string
           owner_id: string
@@ -107,12 +115,16 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_google_rating?: number | null
+          current_google_ratings_total?: number | null
           description?: string | null
           google_place_id?: string | null
           google_rating?: number | null
           google_review_link?: string | null
           google_user_ratings_total?: number | null
           id?: string
+          initial_google_rating?: number | null
+          initial_google_ratings_total?: number | null
           logo_url?: string | null
           name?: string
           owner_id?: string

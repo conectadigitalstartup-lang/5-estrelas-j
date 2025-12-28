@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MetricCard from "@/components/dashboard/MetricCard";
 import RecentFeedbacks from "@/components/dashboard/RecentFeedbacks";
-import GoogleReputationCard from "@/components/dashboard/GoogleReputationCard";
+import GoogleReputationPanel from "@/components/dashboard/GoogleReputationPanel";
 import GrowthChart from "@/components/dashboard/GrowthChart";
 import MonthlyKPIs from "@/components/dashboard/MonthlyKPIs";
 import MonthlyComparisonChart from "@/components/dashboard/MonthlyComparisonChart";
@@ -45,9 +45,12 @@ const Dashboard = () => {
   const [period, setPeriod] = useState("30");
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [companyName, setCompanyName] = useState<string>("Restaurante");
+  const [companyCreatedAt, setCompanyCreatedAt] = useState<string | null>(null);
   const [googlePlaceId, setGooglePlaceId] = useState<string | null>(null);
-  const [googleRating, setGoogleRating] = useState<number | null>(null);
-  const [googleUserRatingsTotal, setGoogleUserRatingsTotal] = useState<number | null>(null);
+  const [initialGoogleRating, setInitialGoogleRating] = useState<number | null>(null);
+  const [initialGoogleRatingsTotal, setInitialGoogleRatingsTotal] = useState<number | null>(null);
+  const [currentGoogleRating, setCurrentGoogleRating] = useState<number | null>(null);
+  const [currentGoogleRatingsTotal, setCurrentGoogleRatingsTotal] = useState<number | null>(null);
   const [metrics, setMetrics] = useState({
     totalScans: 0,
     positiveReviews: 0,
@@ -83,7 +86,7 @@ const Dashboard = () => {
       // Fetch company with Google rating data
       const { data: company } = await supabase
         .from("companies")
-        .select("id, name, google_place_id, google_rating, google_user_ratings_total")
+        .select("id, name, created_at, google_place_id, initial_google_rating, initial_google_ratings_total, current_google_rating, current_google_ratings_total")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -94,9 +97,12 @@ const Dashboard = () => {
 
       setCompanyId(company.id);
       setCompanyName(company.name);
+      setCompanyCreatedAt(company.created_at);
       setGooglePlaceId(company.google_place_id);
-      setGoogleRating(company.google_rating);
-      setGoogleUserRatingsTotal(company.google_user_ratings_total);
+      setInitialGoogleRating(company.initial_google_rating);
+      setInitialGoogleRatingsTotal(company.initial_google_ratings_total);
+      setCurrentGoogleRating(company.current_google_rating);
+      setCurrentGoogleRatingsTotal(company.current_google_ratings_total);
 
       // Build query with date filter
       const dateFilter = getDateFilter(period);
@@ -241,17 +247,20 @@ const Dashboard = () => {
           </Select>
         </div>
 
-        {/* Google Reputation Card */}
-        {!loading && (googleRating !== null || googleUserRatingsTotal !== null) && (
+        {/* Google Reputation Panel */}
+        {!loading && (initialGoogleRating !== null || currentGoogleRating !== null) && (
           <div className="mb-8">
-            <GoogleReputationCard 
-              rating={googleRating} 
-              totalRatings={googleUserRatingsTotal}
+            <GoogleReputationPanel 
+              initialRating={initialGoogleRating}
+              initialRatingsTotal={initialGoogleRatingsTotal}
+              currentRating={currentGoogleRating}
+              currentRatingsTotal={currentGoogleRatingsTotal}
+              createdAt={companyCreatedAt}
               placeId={googlePlaceId}
               companyId={companyId}
               onUpdate={(newRating, newTotal) => {
-                setGoogleRating(newRating);
-                setGoogleUserRatingsTotal(newTotal);
+                setCurrentGoogleRating(newRating);
+                setCurrentGoogleRatingsTotal(newTotal);
               }}
             />
           </div>

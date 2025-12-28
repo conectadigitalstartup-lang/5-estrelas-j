@@ -161,7 +161,10 @@ const Onboarding = () => {
         }
       }
 
-      // Create company with place_id and Google rating data
+      // Create company with place_id and Google rating data (initial + current)
+      const rating = formData.selectedPlace.rating || null;
+      const ratingsTotal = formData.selectedPlace.user_ratings_total || null;
+      
       const { error: companyError } = await supabase.from("companies").insert({
         owner_id: user.id,
         name: formData.name,
@@ -170,8 +173,14 @@ const Onboarding = () => {
         logo_url: formData.logoUrl,
         google_review_link: formData.selectedPlace.google_maps_url,
         google_place_id: formData.selectedPlace.place_id,
-        google_rating: formData.selectedPlace.rating || null,
-        google_user_ratings_total: formData.selectedPlace.user_ratings_total || null,
+        google_rating: rating,
+        google_user_ratings_total: ratingsTotal,
+        // Snapshot inicial (momento do cadastro)
+        initial_google_rating: rating,
+        initial_google_ratings_total: ratingsTotal,
+        // Valores atuais (inicialmente iguais ao inicial)
+        current_google_rating: rating,
+        current_google_ratings_total: ratingsTotal,
         slug,
       });
 
