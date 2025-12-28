@@ -23,6 +23,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import PaywallButton from "@/components/subscription/PaywallButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -415,10 +416,15 @@ const DashboardFeedbacks = () => {
               Gerencie os feedbacks privados dos seus clientes
             </p>
           </div>
-          <Button variant="outline" onClick={exportToCSV} disabled={filteredFeedbacks.length === 0}>
+          <PaywallButton 
+            variant="outline" 
+            onClick={exportToCSV} 
+            disabled={filteredFeedbacks.length === 0}
+            featureName="exportar dados"
+          >
             <Download className="w-4 h-4 mr-2" />
             Exportar CSV
-          </Button>
+          </PaywallButton>
         </div>
 
         {/* Stats Cards */}
