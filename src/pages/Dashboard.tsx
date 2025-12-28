@@ -9,6 +9,7 @@ import RecentFeedbacks from "@/components/dashboard/RecentFeedbacks";
 import GoogleReputationCard from "@/components/dashboard/GoogleReputationCard";
 import GrowthChart from "@/components/dashboard/GrowthChart";
 import MonthlyKPIs from "@/components/dashboard/MonthlyKPIs";
+import MonthlyComparisonChart from "@/components/dashboard/MonthlyComparisonChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,6 +20,13 @@ import { useToast } from "@/hooks/use-toast";
 interface PerformanceData {
   date: string;
   average_rating: number;
+  trend?: number | null;
+}
+
+interface MonthlyComparison {
+  month: string;
+  average_rating: number;
+  total_feedbacks: number;
 }
 
 interface Feedback {
@@ -45,6 +53,7 @@ const Dashboard = () => {
     negativeFeedbacks: 0,
   });
   const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+  const [monthlyComparison, setMonthlyComparison] = useState<MonthlyComparison[]>([]);
   const [monthlyKPIs, setMonthlyKPIs] = useState({ positive: 0, negative: 0 });
   const [loadingPerformance, setLoadingPerformance] = useState(true);
 
@@ -126,6 +135,7 @@ const Dashboard = () => {
           console.error("Erro ao buscar dados de performance:", error);
         } else if (data) {
           setPerformanceData(data.performance_data || []);
+          setMonthlyComparison(data.monthly_comparison || []);
           setMonthlyKPIs({
             positive: data.kpis?.positive_this_month || 0,
             negative: data.kpis?.negative_this_month || 0,
@@ -277,6 +287,7 @@ const Dashboard = () => {
                 <Skeleton className="h-24 rounded-2xl" />
               </div>
               <Skeleton className="h-72 rounded-2xl" />
+              <Skeleton className="h-64 rounded-2xl" />
             </>
           ) : (
             <>
@@ -285,6 +296,7 @@ const Dashboard = () => {
                 negativeCount={monthlyKPIs.negative} 
               />
               <GrowthChart data={performanceData} />
+              <MonthlyComparisonChart data={monthlyComparison} />
             </>
           )}
         </div>

@@ -51,7 +51,11 @@ const handler = async (req: Request): Promise<Response> => {
     if (!feedbacks || feedbacks.length === 0) {
       console.log("📊 Nenhum feedback encontrado");
       return new Response(
-        JSON.stringify({ performance_data: [], kpis: { positive_this_month: 0, negative_this_month: 0 } }),
+        JSON.stringify({ 
+          performance_data: [], 
+          monthly_comparison: [],
+          kpis: { positive_this_month: 0, negative_this_month: 0 } 
+        }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -77,16 +81,30 @@ const handler = async (req: Request): Promise<Response> => {
       }))
       .sort((a, b) => a.date.localeCompare(b.date));
 
-    // Calculate KPIs for current month
+    // Calculate KPIs for current month and previous month
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
     let positiveThisMonth = 0;
     let negativeThisMonth = 0;
 
+    // Group by month for comparison
+    const monthlyData: { [key: string]: { ratings: number[], count: number } } = {};
+
     for (const feedback of feedbacks) {
       const feedbackDate = new Date(feedback.created_at);
+      const monthKey = `${feedbackDate.getFullYear()}-${String(feedbackDate.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = { ratings: [], count: 0 };
+      }
+      monthlyData[monthKey].ratings.push(feedback.rating);
+      monthlyData[monthKey].count++;
+
+      // Current month KPIs
       if (feedbackDate.getMonth() === currentMonth && feedbackDate.getFullYear() === currentYear) {
         if (feedback.rating > 3) {
           positiveThisMonth++;
@@ -96,11 +114,52 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    console.log(`✅ Performance data calculada: ${performanceData.length} dias, KPIs: +${positiveThisMonth} -${negativeThisMonth}`);
+    // Calculate monthly averages for comparison chart
+    const monthlyComparison = Object.entries(monthlyData)
+      .map(([month, data]) => ({
+        month,
+        average_rating: data.ratings.reduce((sum, r) => sum + r, 0) / data.ratings.length,
+        total_feedbacks: data.count,
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+
+    // Calculate trend line (simple linear regression)
+    const calculateTrendLine = (data: { date: string; average_rating: number }[]) => {
+      if (data.length < 2) return [];
+      
+      const n = data.length;
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+      
+      data.forEach((point, index) => {
+        sumX += index;
+        sumY += point.average_rating;
+        sumXY += index * point.average_rating;
+        sumX2 += index * index;
+      });
+      
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+      
+      return data.map((point, index) => ({
+        date: point.date,
+        trend: Math.max(1, Math.min(5, intercept + slope * index)),
+      }));
+    };
+
+    const trendData = calculateTrendLine(performanceData);
+
+    // Merge performance data with trend
+    const performanceWithTrend = performanceData.map((item, index) => ({
+      ...item,
+      trend: trendData[index]?.trend || null,
+    }));
+
+    console.log(`✅ Performance data calculada: ${performanceData.length} dias, ${monthlyComparison.length} meses, KPIs: +${positiveThisMonth} -${negativeThisMonth}`);
 
     return new Response(
       JSON.stringify({
-        performance_data: performanceData,
+        performance_data: performanceWithTrend,
+        monthly_comparison: monthlyComparison,
         kpis: {
           positive_this_month: positiveThisMonth,
           negative_this_month: negativeThisMonth,
