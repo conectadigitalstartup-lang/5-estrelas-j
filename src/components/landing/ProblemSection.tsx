@@ -1,29 +1,20 @@
-import { AlertTriangle, TrendingDown, Clock, Users } from "lucide-react";
+import { AlertTriangle, TrendingDown, Users } from "lucide-react";
 
-const problems = [
+const stats = [
   {
     icon: AlertTriangle,
-    title: "Avaliações Negativas Públicas",
-    description:
-      "Um cliente insatisfeito corre para o Google e deixa uma crítica que todos veem. Isso afasta dezenas de potenciais clientes.",
+    value: "94%",
+    description: "dos clientes evitam restaurantes com avaliações negativas",
   },
   {
     icon: TrendingDown,
-    title: "Nota Baixa no Google",
-    description:
-      "Com poucas avaliações positivas e algumas negativas, sua nota despenca. Restaurantes com menos de 4 estrelas perdem 70% dos clientes.",
-  },
-  {
-    icon: Clock,
-    title: "Sem Tempo para Gerenciar",
-    description:
-      "Você está ocupado demais cuidando do restaurante para ficar pedindo reviews ou respondendo críticas online.",
+    value: "-9%",
+    description: "de faturamento para cada 1 estrela perdida no Google",
   },
   {
     icon: Users,
-    title: "Clientes Felizes Vão Embora",
-    description:
-      "95% dos clientes satisfeitos saem sem deixar avaliação. Eles amaram a experiência, mas simplesmente esquecem de avaliar.",
+    value: "9-15",
+    description: "pessoas ouvem sobre cada experiência ruim de um cliente",
   },
 ];
 
@@ -31,33 +22,35 @@ const ProblemSection = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-destructive font-semibold text-sm uppercase tracking-wider">
             O Problema
           </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            Sua Reputação Está em Risco
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-6">
+            Uma Avaliação Negativa Pode Custar Dezenas de Clientes
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Enquanto você se dedica ao seu restaurante, clientes insatisfeitos estão
-            destruindo sua imagem online — e os satisfeitos não fazem nada para ajudar.
+          <p className="text-muted-foreground text-lg leading-relaxed">
+            Você trabalha duro todos os dias para oferecer a melhor experiência. Mas basta UM cliente insatisfeito postar uma crítica no Google para afastar dezenas de novos clientes que pesquisam antes de escolher onde comer.
+          </p>
+          <p className="text-muted-foreground text-lg leading-relaxed mt-4">
+            O pior? Você nem fica sabendo do problema a tempo de resolver. A crítica já está lá, pública, manchando sua reputação.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {problems.map((problem, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-card border border-border rounded-xl p-6 hover:shadow-elevated transition-shadow duration-300"
+              className="bg-card border border-border rounded-xl p-8 text-center hover:shadow-elevated transition-shadow duration-300"
             >
-              <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center mb-4">
-                <problem.icon className="w-6 h-6 text-destructive" />
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 mx-auto">
+                <stat.icon className="w-8 h-8 text-destructive" />
               </div>
-              <h3 className="font-semibold text-lg text-foreground mb-2">
-                {problem.title}
-              </h3>
+              <p className="text-4xl font-bold text-foreground mb-2">
+                {stat.value}
+              </p>
               <p className="text-muted-foreground leading-relaxed">
-                {problem.description}
+                {stat.description}
               </p>
             </div>
           ))}
