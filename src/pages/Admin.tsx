@@ -262,7 +262,7 @@ const Admin = () => {
               <Card className="shadow-elevated border-amber-500/30 bg-amber-500/5">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Em Trial (14 dias)
+                    Em Trial (7 dias)
                   </CardTitle>
                   <Clock className="h-5 w-5 text-amber-500" />
                 </CardHeader>

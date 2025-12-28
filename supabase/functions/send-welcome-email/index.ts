@@ -75,7 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
 
             <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border-left: 4px solid #f59e0b;">
               <p style="color: #92400e; margin: 0; font-size: 14px;">
-                <strong>💡 Dica:</strong> Você tem 14 dias de teste grátis! Aproveite para explorar todas as funcionalidades.
+                <strong>💡 Dica:</strong> Você tem 7 dias de teste grátis! Aproveite para explorar todas as funcionalidades.
               </p>
             </div>
           </div>

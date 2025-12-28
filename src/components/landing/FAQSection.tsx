@@ -19,7 +19,7 @@ const faqs = [
   {
     question: "E se eu quiser cancelar?",
     answer:
-      "Você pode cancelar a qualquer momento, sem multas ou burocracia. Seu teste de 14 dias é totalmente gratuito.",
+      "Você pode cancelar a qualquer momento, sem multas ou burocracia. Seu teste de 7 dias é totalmente gratuito.",
   },
   {
     question: "Funciona para qualquer tipo de negócio?",

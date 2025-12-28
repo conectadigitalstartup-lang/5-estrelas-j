@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, CheckCircle } from "lucide-react";
 
 const features = [
-  "14 dias grátis para testar",
+  "7 dias grátis para testar",
   "Sem cartão de crédito",
   "Cancele quando quiser",
   "Suporte em português",
@@ -56,7 +56,7 @@ const CTASection = () => {
             asChild
           >
             <Link to="/cadastro">
-              Começar Agora - É Grátis por 14 Dias
+              Começar Agora - É Grátis por 7 Dias
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>

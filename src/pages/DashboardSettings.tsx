@@ -984,7 +984,7 @@ const DashboardSettings = () => {
                   <div className="p-4 rounded-lg bg-coral/10 border border-coral/20">
                     <p className="font-medium text-foreground">Período de Trial</p>
                     <p className="text-sm text-muted-foreground">
-                      Você está no período de teste gratuito de 14 dias.
+                      Você está no período de teste gratuito de 7 dias.
                     </p>
                   </div>
                 </CardContent>
