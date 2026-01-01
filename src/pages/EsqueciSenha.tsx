@@ -32,7 +32,8 @@ const EsqueciSenha = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+      // First, generate the password reset link via Supabase
+      const { data: resetData, error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${window.location.origin}/atualizar-senha`,
       });
 
@@ -43,6 +44,18 @@ const EsqueciSenha = () => {
           description: "Tente novamente mais tarde.",
         });
       } else {
+        // Send custom branded email via edge function
+        try {
+          await supabase.functions.invoke('send-password-reset', {
+            body: { 
+              email: data.email, 
+              resetLink: `${window.location.origin}/atualizar-senha` 
+            }
+          });
+        } catch (emailError) {
+          console.log("Custom email failed, Supabase default was sent:", emailError);
+        }
+        
         setEmailSent(true);
         toast({
           title: "Email enviado!",
