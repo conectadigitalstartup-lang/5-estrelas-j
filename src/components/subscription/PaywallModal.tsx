@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -8,7 +9,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Sparkles, X, Loader2 } from "lucide-react";
+import { AlertTriangle, X, Loader2 } from "lucide-react";
 import { useSubscription, PLANS } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/use-toast";
 
@@ -19,14 +20,15 @@ interface PaywallModalProps {
 }
 
 const PaywallModal = ({ open, onOpenChange, featureName }: PaywallModalProps) => {
-  const { createCheckoutWithTrial } = useSubscription();
+  const { createCheckout } = useSubscription();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStartTrial = async () => {
+  const handleSubscribe = async () => {
     setIsLoading(true);
     try {
-      await createCheckoutWithTrial(PLANS.basico.priceId);
+      await createCheckout(PLANS.basico.priceId);
     } catch (error) {
       console.error("Error creating checkout:", error);
       toast({
@@ -51,41 +53,34 @@ const PaywallModal = ({ open, onOpenChange, featureName }: PaywallModalProps) =>
         
         <AlertDialogHeader className="text-center">
           <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-4">
-            <Sparkles className="w-8 h-8 text-white" />
+            <AlertTriangle className="w-8 h-8 text-white" />
           </div>
           <AlertDialogTitle className="text-2xl font-bold">
-            🎉 Seu restaurante está quase pronto!
+            Seu teste grátis acabou!
           </AlertDialogTitle>
           <AlertDialogDescription className="text-base text-muted-foreground mt-2">
             {featureName 
-              ? `Para ${featureName}, inicie seu teste grátis.`
-              : "Para ativar seu QR Code e começar a receber feedbacks filtrados, inicie seu teste grátis."
+              ? `Para continuar usando ${featureName}, assine o plano profissional.`
+              : "Para reativar seu QR Code e continuar recebendo feedbacks, assine um plano."
             }
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="py-4 space-y-3">
-          {[
-            "7 dias grátis para testar",
-            "Cancele quando quiser",
-            "Cobrança automática apenas após o teste",
-          ].map((benefit, index) => (
-            <div key={index} className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              <span className="text-foreground">{benefit}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-muted/50 rounded-lg p-3 text-center">
-          <p className="text-sm text-muted-foreground">
-            Plano Básico: <span className="font-semibold text-foreground">R$99/mês</span> após o teste
+        <div className="bg-muted/50 rounded-lg p-4 text-center my-4">
+          <p className="text-lg font-semibold text-foreground">
+            Plano Profissional
+          </p>
+          <p className="text-3xl font-bold text-foreground mt-1">
+            R$99<span className="text-base font-normal text-muted-foreground">/mês</span>
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Cancele quando quiser
           </p>
         </div>
 
         <AlertDialogFooter className="mt-4 sm:flex-col sm:space-x-0 gap-2">
           <Button
-            onClick={handleStartTrial}
+            onClick={handleSubscribe}
             disabled={isLoading}
             className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-lg shadow-lg"
           >
@@ -95,15 +90,18 @@ const PaywallModal = ({ open, onOpenChange, featureName }: PaywallModalProps) =>
                 Redirecionando...
               </>
             ) : (
-              "Iniciar Teste Grátis de 7 Dias"
+              "Assinar Agora"
             )}
           </Button>
           <Button
             variant="ghost"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              onOpenChange(false);
+              navigate("/dashboard/upgrade");
+            }}
             className="w-full text-muted-foreground"
           >
-            Talvez depois
+            Ver detalhes do plano
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

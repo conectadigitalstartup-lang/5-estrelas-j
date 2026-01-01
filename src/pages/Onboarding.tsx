@@ -24,6 +24,7 @@ interface FormData {
   name: string;
   type: string;
   description: string;
+  whatsapp: string;
   logoUrl: string | null;
   googleLink: string;
   selectedPlace: PlaceResult | null;
@@ -56,6 +57,7 @@ const Onboarding = () => {
         name: parsed.name || "",
         type: parsed.type || "",
         description: parsed.description || "",
+        whatsapp: parsed.whatsapp || "",
         logoUrl: parsed.logoUrl || null,
         googleLink: parsed.googleLink || "",
         selectedPlace: parsed.selectedPlace || null,
@@ -65,6 +67,7 @@ const Onboarding = () => {
       name: "",
       type: "",
       description: "",
+      whatsapp: "",
       logoUrl: null,
       googleLink: "",
       selectedPlace: null,
@@ -161,9 +164,12 @@ const Onboarding = () => {
         }
       }
 
-      // Create company with place_id and Google rating data (initial + current)
+      // Create company with place_id, Google rating data, and WhatsApp
       const rating = formData.selectedPlace.rating || null;
       const ratingsTotal = formData.selectedPlace.user_ratings_total || null;
+      
+      // Limpar WhatsApp para salvar apenas números
+      const whatsappClean = formData.whatsapp.replace(/\D/g, "");
       
       const { error: companyError } = await supabase.from("companies").insert({
         owner_id: user.id,
@@ -181,6 +187,8 @@ const Onboarding = () => {
         // Valores atuais (inicialmente iguais ao inicial)
         current_google_rating: rating,
         current_google_ratings_total: ratingsTotal,
+        // WhatsApp do restaurante
+        whatsapp_number: whatsappClean,
         slug,
       });
 
@@ -270,6 +278,7 @@ const Onboarding = () => {
                     name: formData.name,
                     type: formData.type,
                     description: formData.description,
+                    whatsapp: formData.whatsapp,
                   }}
                   onChange={(data) => updateFormData(data)}
                   onNext={() => setCurrentStep(2)}

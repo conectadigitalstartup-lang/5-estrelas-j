@@ -102,6 +102,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return null;
   }
 
+  // Calcular se trial expirou
+  const isTrialExpired = !isSuperAdmin && status === "trial" && daysLeft <= 0;
+  const showTrialBanner = !isSuperAdmin && (status === "trial" || status === "inactive");
+
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar - Desktop */}
@@ -133,9 +137,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           !isMobile && (sidebarCollapsed ? "ml-16" : "ml-64")
         )}
       >
+        {/* Trial Banner - Novo modelo */}
+        {showTrialBanner && (
+          <TrialBanner 
+            daysLeft={daysLeft} 
+            status={status as "trial" | "active" | "inactive"} 
+            isSuperAdmin={isSuperAdmin}
+          />
+        )}
+
         <DashboardHeader
           companyName={profile?.restaurant_name || "Meu Restaurante"}
-          trialDaysLeft={!isSuperAdmin && status === "trial" ? daysLeft : undefined}
+          trialDaysLeft={!isSuperAdmin && status === "trial" && daysLeft > 0 ? daysLeft : undefined}
           unreadCount={unreadCount}
           onMenuClick={() => setMobileMenuOpen(true)}
           isMobile={isMobile}
@@ -145,9 +158,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {children}
         </main>
 
-        {/* Modal de trial expirado - bloqueia uso se trial expirou e não tem assinatura ativa */}
+        {/* Modal de trial expirado - bloqueia uso se trial expirou ou inactive */}
         <TrialExpiredModal 
-          isOpen={!isSuperAdmin && status === "inactive" && !subscriptionLoading} 
+          isOpen={!isSuperAdmin && (status === "inactive" || isTrialExpired) && !subscriptionLoading} 
         />
       </div>
     </div>
