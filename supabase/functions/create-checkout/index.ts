@@ -54,7 +54,7 @@ serve(async (req) => {
       logStep("Found existing customer", { customerId });
     }
 
-    const origin = req.headers.get("origin") || "https://preview--avalia-ai-reviews.lovable.app";
+    const origin = req.headers.get("origin") || "https://avaliapro.com.br";
 
     // Build session params
     const sessionParams: Stripe.Checkout.SessionCreateParams = {

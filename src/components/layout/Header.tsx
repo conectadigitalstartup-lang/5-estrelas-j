@@ -20,7 +20,7 @@ const Header = () => {
                 Avalia Pro
               </span>
               <span className="text-[10px] text-muted-foreground leading-tight hidden sm:block">
-                A sua máquina de reviews 5 estrelas
+                Gestão de Reputação Online
               </span>
             </div>
           </Link>
