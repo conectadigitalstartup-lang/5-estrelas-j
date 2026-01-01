@@ -21,29 +21,31 @@ serve(async (req) => {
     
     const token = authHeader.replace("Bearer ", "");
     const { data: userData } = await supabaseAdmin.auth.getUser(token);
-    const { data: adminCheck } = await supabaseAdmin.from("subscriptions").select("is_super_admin").eq("user_id", userData.user?.id).single();
+    const { data: adminCheck } = await supabaseAdmin.from("subscriptions").select("is_super_admin").eq("user_id", userData.user?.id).maybeSingle();
     if (!adminCheck?.is_super_admin) throw new Error("Forbidden");
 
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("user_id, full_name, restaurant_name, phone, created_at, is_blocked");
-    const { data: subscriptions } = await supabaseAdmin.from("subscriptions").select("user_id, status, plan, stripe_customer_id");
+    const { data: subscriptions } = await supabaseAdmin.from("subscriptions").select("*").order("created_at", { ascending: false });
+    const { data: profiles } = await supabaseAdmin.from("profiles").select("user_id, full_name, restaurant_name");
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
 
-    const users = profiles?.map(p => {
-      const sub = subscriptions?.find(s => s.user_id === p.user_id);
-      const authUser = authUsers?.users?.find(u => u.id === p.user_id);
+    const subs = (subscriptions || []).map(sub => {
+      const profile = profiles?.find(p => p.user_id === sub.user_id);
+      const authUser = authUsers?.users?.find(u => u.id === sub.user_id);
       return {
-        id: p.user_id,
-        user_id: p.user_id,
-        name: p.full_name || p.restaurant_name || "-",
+        id: sub.id,
+        user_id: sub.user_id,
         email: authUser?.email || "-",
-        status: sub?.status || "trialing",
-        plan: sub?.plan || "basico",
-        created_at: p.created_at,
-        is_blocked: p.is_blocked || false,
+        name: profile?.full_name || profile?.restaurant_name || "-",
+        status: sub.status,
+        plan: sub.plan || "basico",
+        stripe_customer_id: sub.stripe_customer_id,
+        stripe_subscription_id: sub.stripe_subscription_id,
+        current_period_end: sub.current_period_end,
+        created_at: sub.created_at,
       };
-    }) || [];
+    });
 
-    return new Response(JSON.stringify({ users }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ subscriptions: subs }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

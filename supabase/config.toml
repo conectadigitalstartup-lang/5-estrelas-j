@@ -32,3 +32,12 @@ verify_jwt = true
 
 [functions.admin-users]
 verify_jwt = true
+
+[functions.admin-user-detail]
+verify_jwt = true
+
+[functions.admin-restaurants]
+verify_jwt = true
+
+[functions.admin-subscriptions]
+verify_jwt = true
