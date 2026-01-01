@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState, useRef } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,18 +13,14 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const location = useLocation();
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
-  const hasCheckedRef = useRef(false);
 
   useEffect(() => {
     const checkUserStatus = async () => {
       if (!user) {
         setCheckingStatus(false);
+        setOnboardingCompleted(null);
         return;
       }
-
-      // Prevent duplicate checks
-      if (hasCheckedRef.current) return;
-      hasCheckedRef.current = true;
 
       try {
         // Only check onboarding status - subscription is NOT required for dashboard access
@@ -36,9 +32,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
         if (profileError) {
           console.error("Error fetching profile:", profileError);
+          setOnboardingCompleted(false);
+        } else {
+          setOnboardingCompleted(profile?.onboarding_completed ?? false);
         }
-
-        setOnboardingCompleted(profile?.onboarding_completed ?? false);
       } catch (error) {
         console.error("Error checking user status:", error);
         setOnboardingCompleted(false);
@@ -47,20 +44,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       }
     };
 
-    // Only check status after auth loading is complete
+    // Reset state and check when user or auth loading changes
     if (!authLoading) {
-      if (user) {
-        checkUserStatus();
-      } else {
-        setCheckingStatus(false);
-      }
+      setCheckingStatus(true);
+      checkUserStatus();
     }
-  }, [user, authLoading]);
-
-  // Reset ref when user changes
-  useEffect(() => {
-    hasCheckedRef.current = false;
-  }, [user?.id]);
+  }, [user?.id, authLoading]);
 
   // Show loading while auth is being verified OR while checking user status
   if (authLoading || checkingStatus) {
