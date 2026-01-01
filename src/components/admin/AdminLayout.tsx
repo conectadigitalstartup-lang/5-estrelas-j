@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -138,7 +139,19 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border space-y-2">
+          <Link to="/dashboard">
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-primary/10",
+                !sidebarOpen && "justify-center px-0"
+              )}
+            >
+              <Home className="h-5 w-5 shrink-0" />
+              {sidebarOpen && <span>Voltar ao App</span>}
+            </Button>
+          </Link>
           <Button
             variant="ghost"
             className={cn(
@@ -192,7 +205,16 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                 </Link>
               ))}
             </nav>
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border space-y-2">
+              <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                >
+                  <Home className="h-5 w-5 shrink-0" />
+                  <span>Voltar ao App</span>
+                </Button>
+              </Link>
               <Button
                 variant="ghost"
                 className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
