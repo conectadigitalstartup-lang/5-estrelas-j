@@ -24,9 +24,15 @@ const DashboardSettings = lazy(() => import("./pages/DashboardSettings"));
 const DashboardUpgrade = lazy(() => import("./pages/DashboardUpgrade"));
 const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
 const Avaliar = lazy(() => import("./pages/Avaliar"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminSupport = lazy(() => import("./pages/AdminSupport"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Admin pages
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminUserDetail = lazy(() => import("./pages/admin/AdminUserDetail"));
+const AdminRestaurants = lazy(() => import("./pages/admin/AdminRestaurants"));
+const AdminSubscriptions = lazy(() => import("./pages/admin/AdminSubscriptions"));
+const AdminSupportPage = lazy(() => import("./pages/admin/AdminSupportPage"));
 
 const queryClient = new QueryClient();
 
@@ -65,10 +71,14 @@ const App = () => (
                 <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
                 <Route path="/dashboard/suporte" element={<ProtectedRoute><DashboardSupport /></ProtectedRoute>} />
                 <Route path="/avaliar/:slug" element={<Avaliar />} />
-                <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-                <Route path="/admin-dashboard" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-                <Route path="/admin/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
-                <Route path="/admin-dashboard/suporte" element={<ProtectedRoute><AdminSupport /></ProtectedRoute>} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/users/:userId" element={<AdminUserDetail />} />
+                <Route path="/admin/restaurants" element={<AdminRestaurants />} />
+                <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+                <Route path="/admin/support" element={<AdminSupportPage />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
