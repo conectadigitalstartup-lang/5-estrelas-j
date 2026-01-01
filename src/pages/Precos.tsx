@@ -5,7 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Check, Star, Zap, Crown, Lock, Shield } from "lucide-react";
+import { Check, Zap, Crown, Lock, Shield, Construction } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -15,91 +15,63 @@ import {
 
 const plans = [
   {
-    name: "Básico",
-    icon: Star,
-    description: "Ideal para começar a melhorar sua reputação online",
+    name: "Profissional",
+    icon: Zap,
+    description: "Tudo que você precisa para dominar sua reputação online",
     monthlyPrice: 99,
     yearlyPrice: 79,
     features: [
       "1 restaurante",
       "QR Codes ilimitados",
-      "Dashboard básico",
-      "Notificações por email",
-      "Suporte por email",
-      "Relatório mensal",
-    ],
-    notIncluded: [
-      "Personalização completa",
-      "Analytics avançado",
-      "Múltiplas unidades",
-      "Suporte prioritário",
-    ],
-    popular: false,
-    cta: "Começar Teste Grátis de 7 Dias",
-  },
-  {
-    name: "Profissional",
-    icon: Zap,
-    description: "Para restaurantes que querem crescer rapidamente",
-    monthlyPrice: 197,
-    yearlyPrice: 157,
-    features: [
-      "Até 3 restaurantes",
-      "QR Codes ilimitados",
       "Dashboard completo",
-      "Notificações em tempo real",
+      "Notificações por email",
       "Suporte prioritário",
       "Relatórios semanais",
-      "Personalização completa",
-      "Analytics avançado",
-      "Integração com WhatsApp",
+      "Gerador de posts para redes sociais",
+      "Filtro de avaliações negativas",
     ],
-    notIncluded: ["Restaurantes ilimitados", "Gerente de conta dedicado"],
+    notIncluded: [],
     popular: true,
+    available: true,
     cta: "Começar Teste Grátis de 7 Dias",
   },
   {
     name: "Empresarial",
     icon: Crown,
     description: "Para redes e franquias que dominam o mercado",
-    monthlyPrice: 397,
-    yearlyPrice: 317,
+    monthlyPrice: 297,
+    yearlyPrice: 237,
     features: [
-      "Restaurantes ilimitados",
-      "QR Codes ilimitados",
-      "Dashboard completo",
-      "Notificações em tempo real",
-      "Suporte VIP 24/7",
-      "Relatórios diários",
-      "Personalização completa",
-      "Analytics avançado",
-      "Integração com WhatsApp",
+      "Múltiplos restaurantes",
+      "Tudo do plano Profissional",
       "API completa",
       "Gerente de conta dedicado",
       "Treinamento da equipe",
+      "Integrações personalizadas",
     ],
     notIncluded: [],
     popular: false,
-    cta: "Falar com Vendas",
+    available: false,
+    cta: "Em Breve",
   },
 ];
 
 const securityFaqs = [
   {
     question: "Preciso colocar meu cartão para o teste grátis?",
-    answer: "Sim, mas é apenas para validação. Você não será cobrado nos primeiros 7 dias e pode cancelar a qualquer momento antes disso, sem custo algum."
+    answer: "NÃO! Você pode testar o Avalia Pro por 7 dias completamente grátis, sem precisar cadastrar cartão de crédito. Só pedimos o cartão se você decidir assinar após o teste."
+  },
+  {
+    question: "O que acontece após os 7 dias?",
+    answer: "Após os 7 dias, você precisará assinar o plano Profissional para continuar usando. Seu QR Code será desativado até você assinar, mas seus dados ficam salvos."
   },
   {
     question: "Meus dados de cartão estão seguros?",
     answer: "100% seguros. Usamos o Stripe, a mesma plataforma de pagamentos usada por empresas como Google, Amazon e Uber. Seus dados são criptografados e nunca passam pelos nossos servidores."
   },
   {
-    question: "Como funciona a cobrança?",
-    answer: "Seu trial de 7 dias começa imediatamente. Após esse período, a cobrança é feita automaticamente no cartão cadastrado. Você pode cancelar a qualquer momento."
-  },
-  {
-    question: "Posso trocar de plano depois?",
-    answer: "Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento. A diferença é calculada proporcionalmente."
+    question: "Posso cancelar a qualquer momento?",
+    answer: "Sim! Você pode cancelar sua assinatura a qualquer momento, sem multas ou taxas extras. Basta acessar o portal de assinatura."
   }
 ];
 
@@ -160,21 +132,31 @@ const Precos = () => {
             </div>
 
             {/* Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {plans.map((plan, index) => (
                 <div
                   key={index}
                   className={`relative bg-card border rounded-2xl p-8 transition-all duration-300 hover:shadow-elevated ${
-                    plan.popular
-                      ? "border-primary shadow-lg scale-105 md:scale-110"
+                    plan.popular && plan.available
+                      ? "border-primary shadow-lg scale-105"
                       : "border-border"
-                  }`}
+                  } ${!plan.available ? "opacity-75" : ""}`}
                 >
                   {/* Popular badge */}
-                  {plan.popular && (
+                  {plan.popular && plan.available && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                       <span className="bg-primary text-primary-foreground text-sm font-semibold px-4 py-1 rounded-full">
-                        Mais Popular
+                        Recomendado
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Coming Soon Overlay */}
+                  {!plan.available && (
+                    <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] z-10 rounded-2xl flex flex-col items-center justify-center">
+                      <Construction className="h-12 w-12 text-amber-500 mb-2" />
+                      <span className="bg-amber-500 text-white text-sm font-semibold px-4 py-1 rounded-full">
+                        Em Breve
                       </span>
                     </div>
                   )}
@@ -221,19 +203,26 @@ const Precos = () => {
                   <div className="mb-8">
                     <Button
                       className={`w-full ${
-                        plan.popular
+                        plan.popular && plan.available
                           ? "bg-primary text-primary-foreground hover:bg-primary/90"
                           : ""
                       }`}
-                      variant={plan.popular ? "default" : "outline"}
+                      variant={plan.popular && plan.available ? "default" : "outline"}
                       size="lg"
-                      asChild
+                      asChild={plan.available}
+                      disabled={!plan.available}
                     >
-                      <Link to="/cadastro">{plan.cta}</Link>
+                      {plan.available ? (
+                        <Link to="/auth">{plan.cta}</Link>
+                      ) : (
+                        <span>{plan.cta}</span>
+                      )}
                     </Button>
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                      Cancele quando quiser. Cobrança só após o trial.
-                    </p>
+                    {plan.available && (
+                      <p className="text-xs text-center text-muted-foreground mt-2">
+                        Sem cartão de crédito. Teste 7 dias grátis.
+                      </p>
+                    )}
                   </div>
 
                   {/* Features */}
