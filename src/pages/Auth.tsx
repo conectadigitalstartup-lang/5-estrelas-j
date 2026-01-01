@@ -129,20 +129,31 @@ const Auth = () => {
         description: message
       });
     } else {
-      // Super Admin vai direto para o dashboard (bypass checkout)
-      const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
-      const targetRoute = data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "/dashboard" : "/onboarding";
+      setIsLoading(false);
       
+      // Super Admin vai direto para o dashboard (bypass email confirmation)
+      const SUPER_ADMIN_EMAIL = "alexandrehugolb@gmail.com";
+      if (data.email.toLowerCase() === SUPER_ADMIN_EMAIL) {
+        toast({
+          title: "Bem-vindo, Administrador!",
+          description: "Acesso total liberado."
+        });
+        setTimeout(() => {
+          navigate("/dashboard", { replace: true });
+        }, 100);
+        return;
+      }
+      
+      // Usuários normais precisam confirmar email
       toast({
-        title: data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "Bem-vindo, Administrador!" : "Conta criada com sucesso!",
-        description: data.email.toLowerCase() === SUPER_ADMIN_EMAIL ? "Acesso total liberado." : "Configure seu restaurante para começar."
+        title: "📧 Verifique seu email!",
+        description: `Enviamos um link de confirmação para ${data.email}. Clique no link para ativar sua conta.`,
+        duration: 10000,
       });
       
-      // Usar setTimeout para garantir que o estado do auth seja atualizado antes do redirect
-      setTimeout(() => {
-        setIsLoading(false);
-        navigate(targetRoute, { replace: true });
-      }, 100);
+      // Mudar para tela de login com mensagem
+      setIsSignUp(false);
+      navigate("/auth");
     }
   };
 
