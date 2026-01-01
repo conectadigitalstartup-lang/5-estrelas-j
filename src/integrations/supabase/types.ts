@@ -191,6 +191,7 @@ export type Database = {
           full_name: string | null
           google_business_url: string | null
           id: string
+          is_blocked: boolean | null
           marketing_emails: boolean | null
           negative_alerts: boolean | null
           onboarding_completed: boolean | null
@@ -208,6 +209,7 @@ export type Database = {
           full_name?: string | null
           google_business_url?: string | null
           id?: string
+          is_blocked?: boolean | null
           marketing_emails?: boolean | null
           negative_alerts?: boolean | null
           onboarding_completed?: boolean | null
@@ -225,6 +227,7 @@ export type Database = {
           full_name?: string | null
           google_business_url?: string | null
           id?: string
+          is_blocked?: boolean | null
           marketing_emails?: boolean | null
           negative_alerts?: boolean | null
           onboarding_completed?: boolean | null
