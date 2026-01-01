@@ -17,7 +17,7 @@ const Footer = () => {
                   Avalia Pro
                 </span>
                 <span className="text-[10px] text-primary-foreground/60">
-                  A sua máquina de reviews 5 estrelas
+                  Gestão de Reputação Online
                 </span>
               </div>
             </Link>

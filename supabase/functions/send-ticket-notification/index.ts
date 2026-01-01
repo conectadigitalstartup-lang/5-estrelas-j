@@ -91,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
               Para responder ou ver o histórico completo, acesse seu painel:
             </p>
             
-            <a href="https://avalia-pro.lovable.app/dashboard/suporte" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 15px;">
+            <a href="https://avaliapro.com.br/dashboard/suporte" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 15px;">
               Ver Ticket
             </a>
           </div>

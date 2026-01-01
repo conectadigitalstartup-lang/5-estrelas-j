@@ -122,7 +122,7 @@ const DashboardUpgrade = () => {
   return (
     <>
       <Helmet>
-        <title>Upgrade - Avalia Aí</title>
+        <title>Upgrade - Avalia Pro</title>
         <meta name="description" content="Escolha o plano ideal para o seu negócio." />
       </Helmet>
 

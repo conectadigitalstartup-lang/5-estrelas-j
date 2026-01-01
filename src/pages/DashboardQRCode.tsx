@@ -863,7 +863,7 @@ const DashboardQRCode = () => {
   return (
     <>
       <Helmet>
-        <title>Meu QR Code - Avalia Aí</title>
+        <title>Meu QR Code - Avalia Pro</title>
         <meta name="description" content="Gere e baixe seu QR Code personalizado para coletar avaliações." />
       </Helmet>
 

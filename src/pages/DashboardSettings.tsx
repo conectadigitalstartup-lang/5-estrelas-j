@@ -424,7 +424,7 @@ const DashboardSettings = () => {
     return (
       <>
         <Helmet>
-          <title>Configurações - Avalia Aí</title>
+          <title>Configurações - Avalia Pro</title>
         </Helmet>
         <DashboardLayout>
           <div className="space-y-6">
@@ -440,7 +440,7 @@ const DashboardSettings = () => {
   return (
     <>
       <Helmet>
-        <title>Configurações - Avalia Aí</title>
+        <title>Configurações - Avalia Pro</title>
         <meta name="description" content="Configure as informações do seu restaurante e conta." />
       </Helmet>
 

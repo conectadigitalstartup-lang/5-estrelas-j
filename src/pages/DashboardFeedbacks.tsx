@@ -407,7 +407,7 @@ const DashboardFeedbacks = () => {
   return (
     <>
       <Helmet>
-        <title>Feedbacks - Avalia Aí</title>
+        <title>Feedbacks - Avalia Pro</title>
         <meta name="description" content="Veja todos os feedbacks recebidos dos seus clientes." />
       </Helmet>
 

@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <tr>
                   <td align="center" style="padding-top: 16px;">
                     <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Avalia Pro</h1>
-                    <p style="margin: 4px 0 0 0; font-size: 12px; color: rgba(255,255,255,0.7);">A sua máquina de reviews 5 estrelas</p>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: rgba(255,255,255,0.7);">Gestão de Reputação Online</p>
                   </td>
                 </tr>
               </table>
