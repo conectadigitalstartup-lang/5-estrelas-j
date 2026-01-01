@@ -57,6 +57,7 @@ interface User {
   plan: string;
   created_at: string;
   is_blocked: boolean;
+  google_rating?: number | null;
 }
 
 const AdminUsers = () => {
@@ -66,6 +67,8 @@ const AdminUsers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -134,14 +137,36 @@ const AdminUsers = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
+    if (!deletePassword) {
+      toast.error("Digite sua senha para confirmar");
+      return;
+    }
+    
     setActionLoading(userId);
     try {
+      // Verify admin password by re-authenticating
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) throw new Error("User not found");
+      
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: deletePassword,
+      });
+      
+      if (authError) {
+        toast.error("Senha incorreta");
+        setActionLoading(null);
+        return;
+      }
+      
       const { error } = await supabase.functions.invoke("admin-operations", {
         body: { action: "delete", userId }
       });
       if (error) throw error;
       
       toast.success("Usuário deletado com sucesso");
+      setDeleteDialogOpen(null);
+      setDeletePassword("");
       fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -230,22 +255,32 @@ const AdminUsers = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Cadastro</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
+                                <TableHead>Nome</TableHead>
+                                      <TableHead>Email</TableHead>
+                                      <TableHead>Nota Google</TableHead>
+                                      <TableHead>Status</TableHead>
+                                      <TableHead>Cadastro</TableHead>
+                                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedUsers.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name || "-"}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{getStatusBadge(user.status, user.is_blocked)}</TableCell>
-                        <TableCell>
-                          {format(new Date(user.created_at), "dd/MM/yyyy", { locale: ptBR })}
-                        </TableCell>
+                                    {paginatedUsers.map((user) => (
+                                      <TableRow key={user.id}>
+                                        <TableCell className="font-medium">{user.name || "-"}</TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>
+                                          {user.google_rating ? (
+                                            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">
+                                              ⭐ {user.google_rating.toFixed(1)}
+                                            </Badge>
+                                          ) : (
+                                            <span className="text-muted-foreground text-sm">-</span>
+                                          )}
+                                        </TableCell>
+                                        <TableCell>{getStatusBadge(user.status, user.is_blocked)}</TableCell>
+                                        <TableCell>
+                                          {format(new Date(user.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
                             <Tooltip>
@@ -297,36 +332,62 @@ const AdminUsers = () => {
                               <TooltipContent>Resetar Senha</TooltipContent>
                             </Tooltip>
 
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Deletar Usuário</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    <strong className="text-destructive">Atenção!</strong> Esta ação é irreversível. 
-                                    Todos os dados do usuário serão permanentemente deletados, incluindo:
-                                    <ul className="list-disc list-inside mt-2">
-                                      <li>Restaurantes cadastrados</li>
-                                      <li>Feedbacks coletados</li>
-                                      <li>Assinatura e histórico</li>
-                                    </ul>
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteUser(user.user_id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Deletar Permanentemente
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                            <AlertDialog open={deleteDialogOpen === user.user_id} onOpenChange={(open) => {
+                                              if (!open) {
+                                                setDeleteDialogOpen(null);
+                                                setDeletePassword("");
+                                              }
+                                            }}>
+                                              <AlertDialogTrigger asChild>
+                                                <Button 
+                                                  variant="ghost" 
+                                                  size="icon"
+                                                  onClick={() => setDeleteDialogOpen(user.user_id)}
+                                                >
+                                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                                </Button>
+                                              </AlertDialogTrigger>
+                                              <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                  <AlertDialogTitle>Deletar Usuário</AlertDialogTitle>
+                                                  <AlertDialogDescription asChild>
+                                                    <div>
+                                                      <p><strong className="text-destructive">Atenção!</strong> Esta ação é irreversível. 
+                                                      Todos os dados do usuário serão permanentemente deletados, incluindo:</p>
+                                                      <ul className="list-disc list-inside mt-2 mb-4">
+                                                        <li>Restaurantes cadastrados</li>
+                                                        <li>Feedbacks coletados</li>
+                                                        <li>Assinatura e histórico</li>
+                                                      </ul>
+                                                      <div className="space-y-2">
+                                                        <label className="text-sm font-medium text-foreground">
+                                                          Digite sua senha para confirmar:
+                                                        </label>
+                                                        <Input
+                                                          type="password"
+                                                          placeholder="Sua senha de admin"
+                                                          value={deletePassword}
+                                                          onChange={(e) => setDeletePassword(e.target.value)}
+                                                        />
+                                                      </div>
+                                                    </div>
+                                                  </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                  <AlertDialogCancel onClick={() => setDeletePassword("")}>Cancelar</AlertDialogCancel>
+                                                  <Button
+                                                    onClick={() => handleDeleteUser(user.user_id)}
+                                                    disabled={!deletePassword || actionLoading === user.user_id}
+                                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                  >
+                                                    {actionLoading === user.user_id ? (
+                                                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                                    ) : null}
+                                                    Deletar Permanentemente
+                                                  </Button>
+                                                </AlertDialogFooter>
+                                              </AlertDialogContent>
+                                            </AlertDialog>
                           </div>
                         </TableCell>
                       </TableRow>

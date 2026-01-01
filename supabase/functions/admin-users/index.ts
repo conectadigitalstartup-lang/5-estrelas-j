@@ -26,11 +26,13 @@ serve(async (req) => {
 
     const { data: profiles } = await supabaseAdmin.from("profiles").select("user_id, full_name, restaurant_name, phone, created_at, is_blocked");
     const { data: subscriptions } = await supabaseAdmin.from("subscriptions").select("user_id, status, plan, stripe_customer_id");
+    const { data: companies } = await supabaseAdmin.from("companies").select("owner_id, current_google_rating");
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
 
     const users = profiles?.map(p => {
       const sub = subscriptions?.find(s => s.user_id === p.user_id);
       const authUser = authUsers?.users?.find(u => u.id === p.user_id);
+      const company = companies?.find(c => c.owner_id === p.user_id);
       return {
         id: p.user_id,
         user_id: p.user_id,
@@ -40,6 +42,7 @@ serve(async (req) => {
         plan: sub?.plan || "basico",
         created_at: p.created_at,
         is_blocked: p.is_blocked || false,
+        google_rating: company?.current_google_rating || null,
       };
     }) || [];
 

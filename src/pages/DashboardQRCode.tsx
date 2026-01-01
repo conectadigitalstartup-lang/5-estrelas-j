@@ -959,12 +959,21 @@ const DashboardQRCode = () => {
                     </div>
                     
                     {/* Premium gold divider */}
-                    <div className="w-20 h-0.5 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-5" />
+                    <div className="w-20 h-0.5 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-4" />
                     
-                    {/* Footer branding */}
-                    <p className="text-slate-500 text-xs font-medium tracking-wider uppercase">
-                      Powered by Avalia Pro
-                    </p>
+                    {/* Footer branding with logo */}
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-6 h-6 rounded-full overflow-hidden border border-amber-500/30">
+                        <img 
+                          src={avaliaProLogo} 
+                          alt="Avalia Pro"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="text-slate-400 text-xs font-semibold tracking-wide">
+                        Avalia Pro
+                      </span>
+                    </div>
                   </div>
                   
                   {/* Decorative corner elements bottom */}
