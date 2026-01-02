@@ -47,3 +47,6 @@ verify_jwt = true
 
 [functions.admin-stats-extended]
 verify_jwt = true
+
+[functions.generate-reply-suggestions]
+verify_jwt = true

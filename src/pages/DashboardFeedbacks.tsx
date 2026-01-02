@@ -22,6 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Share2,
+  Sparkles,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PaywallButton from "@/components/subscription/PaywallButton";
@@ -67,6 +68,7 @@ import { sanitizeInput, escapeCSV } from "@/lib/sanitize";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import PostGeneratorModal from "@/components/feedback/PostGeneratorModal";
+import ReplySuggestionsModal from "@/components/feedback/ReplySuggestionsModal";
 
 interface Feedback {
   id: string;
@@ -117,6 +119,7 @@ const DashboardFeedbacks = () => {
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [companyData, setCompanyData] = useState<{ name: string; logo_url: string | null } | null>(null);
   const [postGeneratorFeedback, setPostGeneratorFeedback] = useState<Feedback | null>(null);
+  const [replySuggestionsFeedback, setReplySuggestionsFeedback] = useState<Feedback | null>(null);
 
   // Filters
   const [search, setSearch] = useState("");
@@ -703,6 +706,12 @@ const DashboardFeedbacks = () => {
                               Gerar Post
                             </DropdownMenuItem>
                           )}
+                          {feedback.comment && (
+                            <DropdownMenuItem onClick={() => setReplySuggestionsFeedback(feedback)}>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Ver Sugestões de Resposta
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => toggleReadStatus(feedback.id, feedback.is_read)}>
                             <Check className="w-4 h-4 mr-2" />
                             {feedback.is_read ? "Marcar como não lido" : "Marcar como lido"}
@@ -850,6 +859,18 @@ const DashboardFeedbacks = () => {
               client_name: postGeneratorFeedback.client_name || postGeneratorFeedback.customer_name,
             }}
             company={companyData}
+          />
+        )}
+
+        {/* Reply Suggestions Modal */}
+        {replySuggestionsFeedback && (
+          <ReplySuggestionsModal
+            open={!!replySuggestionsFeedback}
+            onOpenChange={(open) => !open && setReplySuggestionsFeedback(null)}
+            feedback={{
+              comment: replySuggestionsFeedback.comment,
+              rating: replySuggestionsFeedback.rating,
+            }}
           />
         )}
       </DashboardLayout>
