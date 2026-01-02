@@ -51,6 +51,9 @@ serve(async (req) => {
     logStep("Event received", { type: event.type, id: event.id });
 
     switch (event.type) {
+      // ========================================
+      // CHECKOUT COMPLETED - Initial payment
+      // ========================================
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         logStep("Checkout completed", { sessionId: session.id, customerId: session.customer });
@@ -78,7 +81,13 @@ serve(async (req) => {
           }
 
           const productId = subscription.items.data[0].price.product as string;
-          const plan = PRODUCT_PLANS[productId] || "basico";
+          const plan = PRODUCT_PLANS[productId] || "profissional";
+
+          // Determine status based on subscription state
+          let status = "active";
+          if (subscription.status === "trialing") {
+            status = "trialing";
+          }
 
           // Upsert subscription record
           const { error: upsertError } = await supabaseClient
@@ -87,40 +96,152 @@ serve(async (req) => {
               user_id: user.id,
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: subscription.id,
-              status: "active",
+              status,
               plan,
               current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
               current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-              trial_ends_at: null,
+              trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
               cancel_at_period_end: subscription.cancel_at_period_end,
             }, { onConflict: "user_id" });
 
           if (upsertError) {
             logStep("ERROR: Failed to upsert subscription", { error: upsertError.message });
           } else {
-            logStep("Subscription created/updated", { userId: user.id, plan });
+            logStep("Subscription created/updated", { userId: user.id, plan, status });
+          }
+
+          // Update profile status
+          await supabaseClient
+            .from("profiles")
+            .update({ subscription_status: status })
+            .eq("user_id", user.id);
+        }
+        break;
+      }
+
+      // ========================================
+      // INVOICE PAID - Recurring payment success
+      // ========================================
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+        logStep("Invoice paid", { invoiceId: invoice.id, subscriptionId: invoice.subscription });
+
+        if (invoice.subscription) {
+          // Get the full subscription to update period dates
+          const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+          
+          const { data: subData, error: findError } = await supabaseClient
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", invoice.subscription as string)
+            .maybeSingle();
+
+          if (findError || !subData) {
+            logStep("Subscription not found locally, might be first invoice", { subscriptionId: invoice.subscription });
+            break;
+          }
+
+          const { error } = await supabaseClient
+            .from("subscriptions")
+            .update({
+              status: "active",
+              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            })
+            .eq("stripe_subscription_id", invoice.subscription as string);
+
+          if (error) {
+            logStep("ERROR: Failed to update subscription", { error: error.message });
+          } else {
+            logStep("Subscription reactivated after payment", { userId: subData.user_id });
           }
 
           // Update profile status
           await supabaseClient
             .from("profiles")
             .update({ subscription_status: "active" })
-            .eq("user_id", user.id);
+            .eq("user_id", subData.user_id);
         }
         break;
       }
 
+      // ========================================
+      // INVOICE PAYMENT FAILED - Card declined
+      // ========================================
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        logStep("Payment failed", { invoiceId: invoice.id, subscriptionId: invoice.subscription });
+
+        if (invoice.subscription) {
+          const { data: subData, error: findError } = await supabaseClient
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", invoice.subscription as string)
+            .maybeSingle();
+
+          if (!findError && subData) {
+            const { error } = await supabaseClient
+              .from("subscriptions")
+              .update({ status: "past_due" })
+              .eq("stripe_subscription_id", invoice.subscription as string);
+
+            if (error) {
+              logStep("ERROR: Failed to update subscription status", { error: error.message });
+            } else {
+              logStep("Subscription marked as past_due", { userId: subData.user_id });
+            }
+
+            // Update profile status
+            await supabaseClient
+              .from("profiles")
+              .update({ subscription_status: "past_due" })
+              .eq("user_id", subData.user_id);
+          }
+        }
+        break;
+      }
+
+      // ========================================
+      // SUBSCRIPTION UPDATED - Status changed
+      // ========================================
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        logStep("Subscription updated", { subscriptionId: subscription.id, status: subscription.status });
+        logStep("Subscription updated", { 
+          subscriptionId: subscription.id, 
+          status: subscription.status,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end 
+        });
 
         const productId = subscription.items.data[0].price.product as string;
-        const plan = PRODUCT_PLANS[productId] || "basico";
+        const plan = PRODUCT_PLANS[productId] || "profissional";
+
+        // Map Stripe status to our internal status
+        let internalStatus = subscription.status;
+        if (subscription.status === "active") {
+          internalStatus = "active";
+        } else if (subscription.status === "trialing") {
+          internalStatus = "trialing";
+        } else if (subscription.status === "past_due") {
+          internalStatus = "past_due";
+        } else if (subscription.status === "canceled" || subscription.status === "unpaid") {
+          internalStatus = "canceled";
+        }
+
+        const { data: subData, error: findError } = await supabaseClient
+          .from("subscriptions")
+          .select("user_id")
+          .eq("stripe_subscription_id", subscription.id)
+          .maybeSingle();
+
+        if (findError || !subData) {
+          logStep("Subscription not found locally", { subscriptionId: subscription.id });
+          break;
+        }
 
         const { error } = await supabaseClient
           .from("subscriptions")
           .update({
-            status: subscription.status === "active" ? "active" : subscription.status,
+            status: internalStatus,
             plan,
             current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
@@ -130,10 +251,23 @@ serve(async (req) => {
 
         if (error) {
           logStep("ERROR: Failed to update subscription", { error: error.message });
+        } else {
+          logStep("Subscription status updated", { userId: subData.user_id, status: internalStatus });
         }
+
+        // Update profile status
+        const profileStatus = internalStatus === "active" || internalStatus === "trialing" ? internalStatus : "inactive";
+        await supabaseClient
+          .from("profiles")
+          .update({ subscription_status: profileStatus })
+          .eq("user_id", subData.user_id);
+
         break;
       }
 
+      // ========================================
+      // SUBSCRIPTION DELETED - Fully canceled
+      // ========================================
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
         logStep("Subscription deleted", { subscriptionId: subscription.id });
@@ -142,7 +276,7 @@ serve(async (req) => {
           .from("subscriptions")
           .select("user_id")
           .eq("stripe_subscription_id", subscription.id)
-          .single();
+          .maybeSingle();
 
         if (findError || !subData) {
           logStep("ERROR: Subscription not found", { error: findError?.message });
@@ -159,6 +293,8 @@ serve(async (req) => {
 
         if (error) {
           logStep("ERROR: Failed to update subscription status", { error: error.message });
+        } else {
+          logStep("Subscription fully canceled", { userId: subData.user_id });
         }
 
         // Update profile status
@@ -167,23 +303,6 @@ serve(async (req) => {
           .update({ subscription_status: "inactive" })
           .eq("user_id", subData.user_id);
 
-        break;
-      }
-
-      case "invoice.payment_failed": {
-        const invoice = event.data.object as Stripe.Invoice;
-        logStep("Payment failed", { invoiceId: invoice.id, subscriptionId: invoice.subscription });
-
-        if (invoice.subscription) {
-          const { error } = await supabaseClient
-            .from("subscriptions")
-            .update({ status: "past_due" })
-            .eq("stripe_subscription_id", invoice.subscription as string);
-
-          if (error) {
-            logStep("ERROR: Failed to update subscription status", { error: error.message });
-          }
-        }
         break;
       }
 

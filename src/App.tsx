@@ -8,6 +8,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import PublicRoute from "@/components/auth/PublicRoute";
+import { SubscriptionGuard } from "@/components/subscription/SubscriptionGuard";
 import { Loader2 } from "lucide-react";
 
 // Lazy load pages for better initial load performance
@@ -26,6 +27,7 @@ const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
 const DashboardFoodPhotos = lazy(() => import("./pages/DashboardFoodPhotos"));
 const Avaliar = lazy(() => import("./pages/Avaliar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AssinaturaPendente = lazy(() => import("./pages/AssinaturaPendente"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -57,6 +59,7 @@ const App = () => (
           <BrowserRouter>
             <Suspense fallback={<GlobalLoader />}>
               <Routes>
+                {/* Public Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/precos" element={<Precos />} />
                 <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
@@ -64,15 +67,48 @@ const App = () => (
                 <Route path="/cadastro" element={<PublicRoute><Auth /></PublicRoute>} />
                 <Route path="/esqueci-senha" element={<EsqueciSenha />} />
                 <Route path="/atualizar-senha" element={<AtualizarSenha />} />
+                <Route path="/avaliar/:slug" element={<Avaliar />} />
+                
+                {/* Onboarding - Protected but no subscription check */}
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/dashboard/qr-code" element={<ProtectedRoute><DashboardQRCode /></ProtectedRoute>} />
-                <Route path="/dashboard/feedbacks" element={<ProtectedRoute><DashboardFeedbacks /></ProtectedRoute>} />
+                
+                {/* Subscription Pending - Protected but no subscription check */}
+                <Route path="/assinatura-pendente" element={<ProtectedRoute><AssinaturaPendente /></ProtectedRoute>} />
+                
+                {/* Dashboard Routes - Protected AND Subscription Gated */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard requireActive>
+                      <Dashboard />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/qr-code" element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard requireActive>
+                      <DashboardQRCode />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/feedbacks" element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard requireActive>
+                      <DashboardFeedbacks />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/melhorar-fotos" element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard requireActive>
+                      <DashboardFoodPhotos />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                } />
+                
+                {/* Settings, Support, Upgrade - Protected but accessible for payment recovery */}
                 <Route path="/dashboard/settings" element={<ProtectedRoute><DashboardSettings /></ProtectedRoute>} />
                 <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
                 <Route path="/dashboard/suporte" element={<ProtectedRoute><DashboardSupport /></ProtectedRoute>} />
-                <Route path="/dashboard/melhorar-fotos" element={<ProtectedRoute><DashboardFoodPhotos /></ProtectedRoute>} />
-                <Route path="/avaliar/:slug" element={<Avaliar />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
