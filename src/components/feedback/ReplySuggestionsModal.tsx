@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Sparkles, Copy, Smile, Briefcase, TrendingUp, Loader2, Star, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sparkles, Copy, Smile, Briefcase, TrendingUp, Loader2, Star, Check, Pencil, RotateCcw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -49,8 +50,19 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
+  const [originalSuggestions, setOriginalSuggestions] = useState<Suggestions | null>(null);
+  const [editedSuggestions, setEditedSuggestions] = useState<Suggestions | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+
+  // Sync editedSuggestions when suggestions change
+  useEffect(() => {
+    if (suggestions) {
+      setEditedSuggestions({ ...suggestions });
+      setOriginalSuggestions({ ...suggestions });
+    }
+  }, [suggestions]);
 
   const generateSuggestions = async () => {
     if (!feedback.comment) {
@@ -65,6 +77,9 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     setLoading(true);
     setError(null);
     setSuggestions(null);
+    setEditedSuggestions(null);
+    setOriginalSuggestions(null);
+    setEditingKey(null);
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke("generate-reply-suggestions", {
@@ -116,6 +131,22 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     }
   };
 
+  const handleEditChange = (key: keyof Suggestions, value: string) => {
+    if (editedSuggestions) {
+      setEditedSuggestions({ ...editedSuggestions, [key]: value });
+    }
+  };
+
+  const handleResetSuggestion = (key: keyof Suggestions) => {
+    if (editedSuggestions && originalSuggestions) {
+      setEditedSuggestions({ ...editedSuggestions, [key]: originalSuggestions[key] });
+    }
+  };
+
+  const isEdited = (key: keyof Suggestions) => {
+    return editedSuggestions && originalSuggestions && editedSuggestions[key] !== originalSuggestions[key];
+  };
+
   // Trigger generation when modal opens
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen && !suggestions && !loading) {
@@ -123,34 +154,37 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     }
     if (!isOpen) {
       setSuggestions(null);
+      setEditedSuggestions(null);
+      setOriginalSuggestions(null);
       setError(null);
+      setEditingKey(null);
     }
     onOpenChange(isOpen);
   };
 
   const suggestionCards = [
     {
-      key: "amigavel",
+      key: "amigavel" as const,
       title: "Sugestão Amigável",
       icon: Smile,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
-      key: "profissional",
+      key: "profissional" as const,
       title: "Sugestão Profissional",
       icon: Briefcase,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      key: "vendedora",
+      key: "vendedora" as const,
       title: "Sugestão Vendedora",
       icon: TrendingUp,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
     },
-  ] as const;
+  ];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -192,38 +226,96 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
         )}
 
         {/* Suggestions */}
-        {suggestions && !loading && (
+        {editedSuggestions && !loading && (
           <div className="space-y-4">
             {suggestionCards.map(({ key, title, icon: Icon, color, bgColor }) => (
               <Card key={key} className="overflow-hidden">
                 <CardHeader className={cn("py-3", bgColor)}>
-                  <CardTitle className={cn("text-base flex items-center gap-2", color)}>
-                    <Icon className="w-4 h-4" />
-                    {title}
+                  <CardTitle className={cn("text-base flex items-center justify-between", color)}>
+                    <div className="flex items-center gap-2">
+                      <Icon className="w-4 h-4" />
+                      {title}
+                      {isEdited(key) && (
+                        <span className="text-xs font-normal bg-primary/10 text-primary px-2 py-0.5 rounded">
+                          editado
+                        </span>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn("h-7 px-2", color)}
+                      onClick={() => setEditingKey(editingKey === key ? null : key)}
+                    >
+                      <Pencil className="w-3.5 h-3.5 mr-1" />
+                      {editingKey === key ? "Fechar" : "Editar"}
+                    </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <p className="text-foreground mb-4 whitespace-pre-wrap">
-                    {suggestions[key]}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(suggestions[key], key)}
-                    className="w-full sm:w-auto"
-                  >
-                    {copiedKey === key ? (
-                      <>
-                        <Check className="w-4 h-4 mr-2 text-green-600" />
-                        Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copiar Texto
-                      </>
-                    )}
-                  </Button>
+                  {editingKey === key ? (
+                    <div className="space-y-3">
+                      <Textarea
+                        value={editedSuggestions[key]}
+                        onChange={(e) => handleEditChange(key, e.target.value)}
+                        className="min-h-[100px] resize-none"
+                        placeholder="Digite sua resposta personalizada..."
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(editedSuggestions[key], key)}
+                        >
+                          {copiedKey === key ? (
+                            <>
+                              <Check className="w-4 h-4 mr-2 text-green-600" />
+                              Copiado!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4 mr-2" />
+                              Copiar Texto
+                            </>
+                          )}
+                        </Button>
+                        {isEdited(key) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleResetSuggestion(key)}
+                          >
+                            <RotateCcw className="w-4 h-4 mr-2" />
+                            Restaurar original
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-foreground mb-4 whitespace-pre-wrap">
+                        {editedSuggestions[key]}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyToClipboard(editedSuggestions[key], key)}
+                        className="w-full sm:w-auto"
+                      >
+                        {copiedKey === key ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2 text-green-600" />
+                            Copiado!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4 mr-2" />
+                            Copiar Texto
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             ))}
