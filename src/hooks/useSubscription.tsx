@@ -13,8 +13,15 @@ interface SubscriptionState {
   isSuperAdmin: boolean;
 }
 
-// Plan configuration
+// Plan configuration - Plano Profissional R$ 97/mês
 export const PLANS = {
+  profissional: {
+    name: "Profissional",
+    priceId: "price_1SlHRWKB3IHyjJpde93MOKgA",
+    productId: "prod_TiittWhXGYX07a",
+    price: 97,
+  },
+  // Legacy plans for backwards compatibility with existing subscriptions
   basico: {
     name: "Básico",
     priceId: "price_1SfVcLKB3IHyjJpdGUY69Fbs",
