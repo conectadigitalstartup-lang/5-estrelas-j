@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import avaliaProLogo from "@/assets/avalia-pro-logo.jpg";
+import avaliaProLogo from "@/assets/avalia-pro-logo.png";
 
 interface Company {
   id: string;

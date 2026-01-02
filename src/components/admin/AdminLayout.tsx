@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import avaliaProLogo from "@/assets/avalia-pro-logo.png";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -103,9 +104,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="h-16 flex items-center justify-between px-4 border-b border-border">
           {sidebarOpen && (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-coral flex items-center justify-center">
-                <span className="text-white font-bold text-sm">A</span>
-              </div>
+              <img 
+                src={avaliaProLogo} 
+                alt="Avalia Pro Admin" 
+                className="h-8 w-auto object-contain"
+              />
               <span className="font-display font-bold text-foreground">Admin</span>
             </div>
           )}
@@ -169,9 +172,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-card border-b border-border flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-coral flex items-center justify-center">
-            <span className="text-white font-bold text-sm">A</span>
-          </div>
+          <img 
+            src={avaliaProLogo} 
+            alt="Avalia Pro Admin" 
+            className="h-8 w-auto object-contain"
+          />
           <span className="font-display font-bold text-foreground">Admin</span>
         </div>
         <Button
