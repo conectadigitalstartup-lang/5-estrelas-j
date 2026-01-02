@@ -7,9 +7,49 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import BeforeAfterSlider from "./BeforeAfterSlider";
+
+// Import all before/after images
 import paparazziBefore from "@/assets/paparazzi-before.jpg";
 import paparazziAfter from "@/assets/paparazzi-after.jpg";
-import BeforeAfterSlider from "./BeforeAfterSlider";
+import pizzaBefore from "@/assets/paparazzi-pizza-before.jpg";
+import pizzaAfter from "@/assets/paparazzi-pizza-after.jpg";
+import saladBefore from "@/assets/paparazzi-salad-before.jpg";
+import saladAfter from "@/assets/paparazzi-salad-after.jpg";
+import dessertBefore from "@/assets/paparazzi-dessert-before.jpg";
+import dessertAfter from "@/assets/paparazzi-dessert-after.jpg";
+
+// Carousel examples
+const sliderExamples = [
+  {
+    beforeImage: paparazziBefore,
+    afterImage: paparazziAfter,
+    beforeAlt: "Foto amadora de hambúrguer com fundo de cozinha bagunçado",
+    afterAlt: "Foto profissional de hambúrguer com fundo elegante",
+    label: "🍔 Hambúrguer",
+  },
+  {
+    beforeImage: pizzaBefore,
+    afterImage: pizzaAfter,
+    beforeAlt: "Foto amadora de pizza com fundo de cozinha bagunçado",
+    afterAlt: "Foto profissional de pizza em mesa de mármore",
+    label: "🍕 Pizza",
+  },
+  {
+    beforeImage: saladBefore,
+    afterImage: saladAfter,
+    beforeAlt: "Foto amadora de salada com fundo bagunçado",
+    afterAlt: "Foto profissional de salada com fundo limpo",
+    label: "🥗 Salada",
+  },
+  {
+    beforeImage: dessertBefore,
+    afterImage: dessertAfter,
+    beforeAlt: "Foto amadora de sobremesa com fundo de cozinha",
+    afterAlt: "Foto profissional de sobremesa com fundo elegante",
+    label: "🍫 Sobremesa",
+  },
+];
 
 const benefits = [
   {
@@ -133,13 +173,8 @@ const BenefitsSection = () => {
               {/* Visual - Interactive Before/After Slider */}
               <div className="relative">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  {/* Interactive Before/After Slider Component */}
-                  <BeforeAfterSlider
-                    beforeImage={paparazziBefore}
-                    afterImage={paparazziAfter}
-                    beforeAlt="Foto amadora de hambúrguer com fundo de cozinha bagunçado"
-                    afterAlt="Foto profissional de hambúrguer com fundo elegante"
-                  />
+                  {/* Interactive Before/After Slider Carousel */}
+                  <BeforeAfterSlider examples={sliderExamples} />
 
                   <div className="flex items-center justify-center gap-2 mt-4 text-white/60 text-sm">
                     <span className="inline-block w-8 h-0.5 bg-secondary/50" />
