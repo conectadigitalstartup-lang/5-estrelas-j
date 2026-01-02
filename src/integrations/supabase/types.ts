@@ -249,6 +249,7 @@ export type Database = {
           current_period_start: string | null
           id: string
           is_super_admin: boolean | null
+          photo_enhancements_count: number | null
           plan: string | null
           status: string
           stripe_customer_id: string | null
@@ -264,6 +265,7 @@ export type Database = {
           current_period_start?: string | null
           id?: string
           is_super_admin?: boolean | null
+          photo_enhancements_count?: number | null
           plan?: string | null
           status?: string
           stripe_customer_id?: string | null
@@ -279,6 +281,7 @@ export type Database = {
           current_period_start?: string | null
           id?: string
           is_super_admin?: boolean | null
+          photo_enhancements_count?: number | null
           plan?: string | null
           status?: string
           stripe_customer_id?: string | null
