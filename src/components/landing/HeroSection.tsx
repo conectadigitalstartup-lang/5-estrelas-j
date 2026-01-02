@@ -31,13 +31,13 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Headline */}
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in">
-            Proteja Seu Restaurante de Avaliações Negativas e{" "}
-            <span className="text-gradient-gold">Aumente Sua Nota no Google</span>
+            Aumente sua Nota no Google.{" "}
+            <span className="text-gradient-gold">Encha seu Restaurante.</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-primary-foreground/70 max-w-3xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            O Avalia Pro intercepta feedbacks negativos antes que virem críticas públicas e direciona clientes satisfeitos para avaliarem você no Google. Resultado: sua reputação sobe e seu restaurante enche.
+            Proteja sua reputação de críticas negativas, responda clientes em segundos com IA e transforme elogios em posts de Instagram automaticamente.
           </p>
 
           {/* CTAs */}

@@ -1,82 +1,172 @@
 import {
   Shield,
-  TrendingUp,
-  BarChart3,
-  Bell,
-  Instagram,
-  QrCode,
+  Rocket,
+  Bot,
+  Camera,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const benefits = [
   {
     icon: Shield,
-    title: "Proteção Contra Críticas Públicas",
+    title: "Filtro de Críticas Inteligente",
     description:
-      "Feedbacks negativos chegam para você, não para o Google. Resolva problemas antes que virem crises.",
+      "Interceptamos avaliações negativas antes que cheguem ao Google. Resolva problemas internamente e receba apenas os elogios publicamente.",
+    highlight: "O Core",
   },
   {
-    icon: TrendingUp,
-    title: "Aumento da Nota no Google",
+    icon: Rocket,
+    title: "Gerador de Posts Imediato",
     description:
-      "Clientes satisfeitos são direcionados para avaliar você no Google. Sua nota sobe organicamente.",
+      "Transforme a avaliação de um cliente feliz em um post lindo para o seu Instagram com 1 clique. Esqueça o bloqueio criativo.",
+    highlight: "Marketing Automático",
   },
   {
-    icon: BarChart3,
-    title: "Dashboard em Tempo Real",
+    icon: Bot,
+    title: "Secretária Virtual de Respostas",
     description:
-      "Acompanhe todos os feedbacks, sua nota atual e a evolução da sua reputação em um painel simples e visual.",
-  },
-  {
-    icon: Bell,
-    title: "Alertas Instantâneos",
-    description:
-      "Receba notificações quando chegar um feedback negativo. Aja rápido e recupere o cliente.",
-  },
-  {
-    icon: Instagram,
-    title: "Gerador de Posts para Redes Sociais",
-    description:
-      "Transforme elogios de clientes em posts profissionais para Instagram com 1 clique. Marketing autêntico, zero esforço.",
-  },
-  {
-    icon: QrCode,
-    title: "Material de Mesa Profissional",
-    description:
-      "Receba seu QR Code personalizado e um display elegante pronto para imprimir e colocar nas mesas.",
+      "Nossa IA escreve respostas perfeitas para cada avaliação. Agradeça elogios e contorne críticas com classe e zero esforço.",
+    highlight: "Produtividade com IA",
   },
 ];
 
 const BenefitsSection = () => {
   return (
-    <section id="beneficios" className="py-20 bg-muted/50">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
-            Benefícios
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            Tudo o Que Você Precisa Para Dominar Sua Reputação
-          </h2>
+    <>
+      {/* Main Benefits Section */}
+      <section id="beneficios" className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
+              Funcionalidades com IA
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
+              Tudo o Que Você Precisa Para Dominar Sua Reputação
+            </h2>
+            <p className="text-muted-foreground">
+              Ferramentas inteligentes que trabalham por você 24 horas por dia
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {benefits.map((benefit, index) => (
+              <div
+                key={index}
+                className="bg-card border border-border rounded-xl p-8 hover:shadow-elevated hover:-translate-y-1 transition-all duration-300 group text-center"
+              >
+                <span className="inline-block text-xs font-semibold text-secondary bg-secondary/10 px-3 py-1 rounded-full mb-4">
+                  {benefit.highlight}
+                </span>
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-secondary/20 transition-colors">
+                  <benefit.icon className="w-8 h-8 text-primary group-hover:text-secondary transition-colors" />
+                </div>
+                <h3 className="font-bold text-lg text-foreground mb-3">{benefit.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Paparazzi de Comida - Premium Feature Section */}
+      <section className="py-20 bg-navy text-primary-foreground relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {benefits.map((benefit, index) => (
-            <div
-              key={index}
-              className="bg-card border border-border rounded-xl p-6 hover:shadow-elevated hover:-translate-y-1 transition-all duration-300 group"
-            >
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
-                <benefit.icon className="w-6 h-6 text-primary group-hover:text-secondary transition-colors" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Content */}
+              <div>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-secondary bg-secondary/20 px-4 py-2 rounded-full mb-6">
+                  <Camera className="w-4 h-4" />
+                  Exclusivo do Plano Profissional
+                </span>
+                <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
+                  Suas Fotos de Celular com{" "}
+                  <span className="text-secondary">Qualidade de Estúdio</span>
+                </h2>
+                <p className="text-lg text-primary-foreground/70 mb-6">
+                  Conheça o <strong className="text-secondary">Paparazzi de Comida</strong> — sua ferramenta secreta para fotos que vendem.
+                </p>
+                <p className="text-primary-foreground/60 mb-8">
+                  Tirou uma foto do prato e o fundo ficou feio? Nossa IA remove a bagunça, melhora a iluminação e coloca seu prato em um cenário profissional em 5 segundos. Perfeito para Instagram, iFood e cardápio.
+                </p>
+
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                    <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
+                    Remove fundos bagunçados automaticamente
+                  </li>
+                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                    <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
+                    Melhora iluminação e cores do prato
+                  </li>
+                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                    <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
+                    6 cenários profissionais para escolher
+                  </li>
+                </ul>
+
+                <Button
+                  size="lg"
+                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                  asChild
+                >
+                  <Link to="/cadastro">
+                    Experimentar Grátis
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">{benefit.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {benefit.description}
-              </p>
+
+              {/* Visual - Before/After placeholder */}
+              <div className="relative">
+                <div className="bg-navy-light/50 border border-primary-foreground/10 rounded-2xl p-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Before */}
+                    <div className="space-y-2">
+                      <span className="text-xs font-semibold text-primary-foreground/50 uppercase">Antes</span>
+                      <div className="aspect-square bg-navy-dark/50 rounded-lg flex items-center justify-center border border-primary-foreground/10">
+                        <div className="text-center p-4">
+                          <div className="text-4xl mb-2">📱</div>
+                          <p className="text-xs text-primary-foreground/40">Foto de celular com fundo bagunçado</p>
+                        </div>
+                      </div>
+                    </div>
+                    {/* After */}
+                    <div className="space-y-2">
+                      <span className="text-xs font-semibold text-secondary uppercase">Depois</span>
+                      <div className="aspect-square bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-lg flex items-center justify-center border border-secondary/30">
+                        <div className="text-center p-4">
+                          <div className="text-4xl mb-2">✨</div>
+                          <p className="text-xs text-primary-foreground/60">Foto profissional pronta para postar</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-center text-primary-foreground/50 text-sm mt-4">
+                    Transformação em menos de 5 segundos
+                  </p>
+                </div>
+
+                {/* Floating badge */}
+                <div className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                  IA Avançada
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
