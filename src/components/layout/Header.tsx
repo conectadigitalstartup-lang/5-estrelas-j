@@ -113,39 +113,39 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <nav className="flex flex-col gap-4">
+          <div className="md:hidden py-4 border-t border-border animate-fade-in">
+            <nav className="flex flex-col gap-1">
               <Link
                 to="/"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2"
+                className="text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-lg ripple-btn touch-feedback"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Início
               </Link>
               <Link
                 to="/precos"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2"
+                className="text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-lg ripple-btn touch-feedback"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Preços
               </Link>
               <button
                 onClick={() => scrollToSection("como-funciona")}
-                className="text-muted-foreground hover:text-foreground transition-colors py-2 text-left bg-transparent border-none cursor-pointer"
+                className="text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-lg text-left bg-transparent border-none cursor-pointer ripple-btn touch-feedback"
               >
                 Como Funciona
               </button>
               <button
                 onClick={() => scrollToSection("beneficios")}
-                className="text-muted-foreground hover:text-foreground transition-colors py-2 text-left bg-transparent border-none cursor-pointer"
+                className="text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-lg text-left bg-transparent border-none cursor-pointer ripple-btn touch-feedback"
               >
                 Benefícios
               </button>
-              <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                <Button variant="outline" asChild>
+              <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-border">
+                <Button variant="outline" className="ripple-btn" asChild>
                   <Link to="/auth">Entrar</Link>
                 </Button>
-                <Button className="bg-secondary text-secondary-foreground hover:bg-gold-dark" asChild>
+                <Button className="bg-secondary text-secondary-foreground hover:bg-gold-dark ripple-btn" asChild>
                   <Link to="/cadastro">Teste Grátis</Link>
                 </Button>
               </div>

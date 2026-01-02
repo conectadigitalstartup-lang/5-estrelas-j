@@ -131,4 +131,42 @@
   .group:hover .clip-path-right {
     clip-path: inset(0 0 0 0) !important;
   }
+
+  /* Ripple Effect for Mobile Touch Feedback */
+  .ripple-btn {
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ripple-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: hsl(var(--coral) / 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+  }
+
+  .ripple-btn:active::after {
+    width: 200%;
+    height: 200%;
+    opacity: 1;
+    transition: width 0s, height 0s, opacity 0s;
+  }
+
+  /* Alternative subtle ripple */
+  .touch-feedback {
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+  }
+
+  .touch-feedback:active {
+    background-color: hsl(var(--coral) / 0.1);
+  }
 }
