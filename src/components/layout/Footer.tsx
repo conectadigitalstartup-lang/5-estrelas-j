@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Footer = () => {
   return (
@@ -9,12 +9,15 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <img 
-                src={avaliaProLogo} 
-                alt="Avalia Pro" 
-                className="h-12 w-auto object-contain"
-              />
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <div className="h-12 w-12 rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center">
+                <img 
+                  src={avaliaProShield} 
+                  alt="Avalia Pro" 
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="font-display font-bold text-primary-foreground text-xl">Avalia Pro</span>
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               O filtro inteligente que transforma clientes satisfeitos em reviews no Google e protege sua reputação.

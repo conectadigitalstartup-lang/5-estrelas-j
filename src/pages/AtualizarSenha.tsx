@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const schema = z.object({
   password: z.string().min(8, { message: "Senha deve ter no mínimo 8 caracteres" }).max(72),
@@ -115,11 +115,14 @@ const AtualizarSenha = () => {
           <div className="w-full max-w-[420px]">
             {/* Logo */}
             <div className="flex flex-col items-center mb-8">
-              <img 
-                src={avaliaProLogo} 
-                alt="Avalia Pro" 
-                className="h-16 w-auto object-contain"
-              />
+              <div className="h-20 w-20 rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center mb-3">
+                <img 
+                  src={avaliaProShield} 
+                  alt="Avalia Pro" 
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="font-display font-bold text-foreground text-2xl">Avalia Pro</span>
             </div>
 
             <Card className="border-border/50 shadow-xl rounded-2xl">

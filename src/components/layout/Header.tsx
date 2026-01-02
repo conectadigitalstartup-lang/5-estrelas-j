@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,12 +12,15 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img 
-              src={avaliaProLogo} 
-              alt="Avalia Pro" 
-              className="h-10 md:h-12 w-auto object-contain"
-            />
+          <Link to="/" className="flex items-center gap-2">
+            <div className="h-10 md:h-12 w-10 md:w-12 rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center">
+              <img 
+                src={avaliaProShield} 
+                alt="Avalia Pro" 
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="font-display font-bold text-foreground text-lg md:text-xl">Avalia Pro</span>
           </Link>
 
           {/* Desktop Navigation */}
