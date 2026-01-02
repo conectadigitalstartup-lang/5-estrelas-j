@@ -1,14 +1,24 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import ctaBackground from "@/assets/cta-background.mp4";
 
 const CTASection = () => {
   return (
     <section className="py-20 bg-navy relative overflow-hidden">
-      {/* Background decorations */}
+      {/* Background video */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+        >
+          <source src={ctaBackground} type="video/mp4" />
+        </video>
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-navy/60" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
