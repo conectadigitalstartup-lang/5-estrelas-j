@@ -22,29 +22,29 @@ import dessertAfter from "@/assets/paparazzi-dessert-after.jpg";
 // Carousel examples - before = foto amadora, after = foto profissional IA
 const sliderExamples = [
   {
-    beforeImage: paparazziAfter,
-    afterImage: paparazziBefore,
+    beforeImage: paparazziBefore,
+    afterImage: paparazziAfter,
     beforeAlt: "Foto amadora de hambúrguer com fundo de cozinha bagunçado",
     afterAlt: "Foto profissional de hambúrguer com fundo elegante",
     label: "🍔 Hambúrguer",
   },
   {
-    beforeImage: pizzaAfter,
-    afterImage: pizzaBefore,
+    beforeImage: pizzaBefore,
+    afterImage: pizzaAfter,
     beforeAlt: "Foto amadora de pizza com fundo de cozinha bagunçado",
     afterAlt: "Foto profissional de pizza em mesa de mármore",
     label: "🍕 Pizza",
   },
   {
-    beforeImage: saladAfter,
-    afterImage: saladBefore,
+    beforeImage: saladBefore,
+    afterImage: saladAfter,
     beforeAlt: "Foto amadora de salada com fundo bagunçado",
     afterAlt: "Foto profissional de salada com fundo limpo",
     label: "🥗 Salada",
   },
   {
-    beforeImage: dessertAfter,
-    afterImage: dessertBefore,
+    beforeImage: dessertBefore,
+    afterImage: dessertAfter,
     beforeAlt: "Foto amadora de sobremesa com fundo de cozinha",
     afterAlt: "Foto profissional de sobremesa com fundo elegante",
     label: "🍫 Sobremesa",
