@@ -215,8 +215,62 @@ serve(async (req) => {
       })
       .eq("user_id", user.id);
 
+    // Save the enhanced photo to storage
+    let savedPhotoUrl = null;
+    let savedPhotoId = null;
+    try {
+      // Extract base64 data from data URL
+      const base64Data = enhancedImageUrl.replace(/^data:image\/\w+;base64,/, "");
+      const imageBuffer = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      
+      // Generate unique filename
+      const timestamp = Date.now();
+      const filename = `${user.id}/${timestamp}.png`;
+      
+      // Upload to storage
+      const { error: uploadError } = await adminClient.storage
+        .from("enhanced-photos")
+        .upload(filename, imageBuffer, {
+          contentType: "image/png",
+          upsert: false,
+        });
+
+      if (!uploadError) {
+        // Get public URL
+        const { data: urlData } = adminClient.storage
+          .from("enhanced-photos")
+          .getPublicUrl(filename);
+        
+        savedPhotoUrl = urlData.publicUrl;
+
+        // Save record to database
+        const { data: photoRecord } = await adminClient
+          .from("enhanced_photos")
+          .insert({
+            user_id: user.id,
+            storage_path: filename,
+            background_choice: backgroundChoice || "default",
+          })
+          .select("id")
+          .single();
+
+        if (photoRecord) {
+          savedPhotoId = photoRecord.id;
+        }
+
+        console.log("Photo saved to storage:", filename);
+      } else {
+        console.error("Error uploading to storage:", uploadError);
+      }
+    } catch (saveError) {
+      console.error("Error saving photo:", saveError);
+      // Don't fail the request if saving fails
+    }
+
     return new Response(JSON.stringify({ 
       enhancedImageUrl,
+      savedPhotoUrl,
+      savedPhotoId,
       message: "Foto processada com sucesso!",
       used: newCount,
       limit: isSuperAdmin ? -1 : limit,

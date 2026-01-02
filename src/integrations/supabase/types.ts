@@ -140,6 +140,33 @@ export type Database = {
         }
         Relationships: []
       }
+      enhanced_photos: {
+        Row: {
+          background_choice: string | null
+          created_at: string
+          id: string
+          original_filename: string | null
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          background_choice?: string | null
+          created_at?: string
+          id?: string
+          original_filename?: string | null
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          background_choice?: string | null
+          created_at?: string
+          id?: string
+          original_filename?: string | null
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedbacks: {
         Row: {
           client_name: string | null
