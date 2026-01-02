@@ -53,11 +53,13 @@ const Index = () => {
         <meta property="og:url" content="https://avaliapro.com.br" />
         <meta property="og:site_name" content="Avalia Pro" />
         <meta property="og:locale" content="pt_BR" />
+        <meta property="og:image" content="/og-image.png" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Avalia Pro - Proteja Seu Restaurante de Avaliações Negativas" />
         <meta name="twitter:description" content="O Avalia Pro intercepta feedbacks negativos antes que virem críticas públicas e direciona clientes satisfeitos para avaliarem você no Google." />
+        <meta name="twitter:image" content="/og-image.png" />
         
         {/* Schema.org */}
         <script type="application/ld+json">
