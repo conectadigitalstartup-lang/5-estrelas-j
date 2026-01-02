@@ -250,6 +250,7 @@ export type Database = {
           id: string
           is_super_admin: boolean | null
           photo_enhancements_count: number | null
+          photo_enhancements_reset_at: string | null
           plan: string | null
           status: string
           stripe_customer_id: string | null
@@ -266,6 +267,7 @@ export type Database = {
           id?: string
           is_super_admin?: boolean | null
           photo_enhancements_count?: number | null
+          photo_enhancements_reset_at?: string | null
           plan?: string | null
           status?: string
           stripe_customer_id?: string | null
@@ -282,6 +284,7 @@ export type Database = {
           id?: string
           is_super_admin?: boolean | null
           photo_enhancements_count?: number | null
+          photo_enhancements_reset_at?: string | null
           plan?: string | null
           status?: string
           stripe_customer_id?: string | null
@@ -374,6 +377,7 @@ export type Database = {
           masked_email: string
         }[]
       }
+      get_photo_limit: { Args: { plan_name: string }; Returns: number }
       has_active_subscription: {
         Args: { check_user_id: string }
         Returns: boolean
