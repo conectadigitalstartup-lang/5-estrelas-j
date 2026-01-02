@@ -1,5 +1,5 @@
 import { QrCode, Filter, TrendingUp } from "lucide-react";
-import triageFlowVideo from "@/assets/triage-flow.mp4";
+import qrScanScene from "@/assets/qr-scan-scene.jpg";
 
 const steps = [
   {
@@ -38,21 +38,17 @@ const HowItWorksSection = () => {
           </p>
         </div>
 
-        {/* Animated flow video */}
+        {/* Static QR scan scene image */}
         <div className="max-w-3xl mx-auto mb-16">
           <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-border">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
+            <img
+              src={qrScanScene}
+              alt="Cliente escaneando QR code para avaliar experiência"
               className="w-full h-auto"
-            >
-              <source src={triageFlowVideo} type="video/mp4" />
-            </video>
+            />
           </div>
           <p className="text-center text-muted-foreground text-sm mt-4">
-            Veja como o sistema filtra automaticamente as avaliações
+            Cliente escaneia o QR Code para avaliar sua experiência
           </p>
         </div>
 
