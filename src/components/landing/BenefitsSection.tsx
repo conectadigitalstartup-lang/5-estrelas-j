@@ -75,7 +75,7 @@ const BenefitsSection = () => {
       </section>
 
       {/* Paparazzi de Comida - Premium Feature Section */}
-      <section className="py-20 bg-navy text-primary-foreground relative overflow-hidden">
+      <section className="py-20 bg-navy relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
@@ -91,27 +91,27 @@ const BenefitsSection = () => {
                   <Camera className="w-4 h-4" />
                   Exclusivo do Plano Profissional
                 </span>
-                <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
+                <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-white">
                   Suas Fotos de Celular com{" "}
                   <span className="text-secondary">Qualidade de Estúdio</span>
                 </h2>
-                <p className="text-lg text-primary-foreground/70 mb-6">
+                <p className="text-lg text-white/80 mb-6">
                   Conheça o <strong className="text-secondary">Paparazzi de Comida</strong> — sua ferramenta secreta para fotos que vendem.
                 </p>
-                <p className="text-primary-foreground/60 mb-8">
+                <p className="text-white/60 mb-8">
                   Tirou uma foto do prato e o fundo ficou feio? Nossa IA remove a bagunça, melhora a iluminação e coloca seu prato em um cenário profissional em 5 segundos. Perfeito para Instagram, iFood e cardápio.
                 </p>
 
                 <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                  <li className="flex items-center gap-3 text-white/80">
                     <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
                     Remove fundos bagunçados automaticamente
                   </li>
-                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                  <li className="flex items-center gap-3 text-white/80">
                     <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
                     Melhora iluminação e cores do prato
                   </li>
-                  <li className="flex items-center gap-3 text-primary-foreground/80">
+                  <li className="flex items-center gap-3 text-white/80">
                     <span className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm">✓</span>
                     6 cenários profissionais para escolher
                   </li>
@@ -129,42 +129,59 @@ const BenefitsSection = () => {
                 </Button>
               </div>
 
-              {/* Visual - Before/After with real images */}
+              {/* Visual - Interactive Before/After Slider */}
               <div className="relative">
-                <div className="bg-navy-light/50 border border-primary-foreground/10 rounded-2xl p-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Before */}
-                    <div className="space-y-2">
-                      <span className="text-xs font-semibold text-primary-foreground/50 uppercase tracking-wider">Antes</span>
-                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary-foreground/10 relative group">
-                        <img 
-                          src={paparazziBefore} 
-                          alt="Foto amadora de hambúrguer com fundo de cozinha bagunçado" 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                        <span className="absolute bottom-2 left-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">
-                          📱 Celular
-                        </span>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                  {/* Interactive Before/After Container */}
+                  <div className="relative aspect-square rounded-lg overflow-hidden cursor-pointer group">
+                    {/* Before Image (Bottom Layer) */}
+                    <img 
+                      src={paparazziBefore} 
+                      alt="Foto amadora de hambúrguer com fundo de cozinha bagunçado" 
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    
+                    {/* After Image (Top Layer with clip on hover) */}
+                    <div className="absolute inset-0 w-full h-full overflow-hidden transition-all duration-500 ease-out clip-path-right group-hover:clip-path-full"
+                      style={{
+                        clipPath: 'inset(0 50% 0 0)',
+                      }}
+                    >
+                      <img 
+                        src={paparazziAfter} 
+                        alt="Foto profissional de hambúrguer com fundo elegante" 
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Divider Line */}
+                    <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1 bg-white/80 shadow-lg z-10 transition-all duration-500 group-hover:left-full group-hover:opacity-0">
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+                        <span className="text-navy font-bold text-xs">↔</span>
                       </div>
                     </div>
-                    {/* After */}
-                    <div className="space-y-2">
-                      <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Depois</span>
-                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-secondary/50 relative group shadow-lg shadow-secondary/20">
-                        <img 
-                          src={paparazziAfter} 
-                          alt="Foto profissional de hambúrguer com fundo elegante" 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                        <span className="absolute bottom-2 left-2 text-xs text-white bg-secondary/90 px-2 py-1 rounded font-medium">
-                          ✨ IA
-                        </span>
-                      </div>
+
+                    {/* Labels */}
+                    <div className="absolute top-3 left-3 z-20">
+                      <span className="text-xs text-white bg-black/60 px-2 py-1 rounded font-medium transition-opacity duration-300 group-hover:opacity-0">
+                        📱 ANTES
+                      </span>
+                    </div>
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="text-xs text-white bg-secondary/90 px-2 py-1 rounded font-medium transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                        ✨ DEPOIS
+                      </span>
+                    </div>
+
+                    {/* Hover instruction */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 transition-opacity duration-300 group-hover:opacity-0">
+                      <span className="text-xs text-white bg-black/60 px-3 py-1.5 rounded-full font-medium">
+                        Passe o mouse para ver a mágica ✨
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-center gap-2 mt-4 text-primary-foreground/60 text-sm">
+
+                  <div className="flex items-center justify-center gap-2 mt-4 text-white/60 text-sm">
                     <span className="inline-block w-8 h-0.5 bg-secondary/50" />
                     <span>Transformação em 5 segundos</span>
                     <span className="inline-block w-8 h-0.5 bg-secondary/50" />
