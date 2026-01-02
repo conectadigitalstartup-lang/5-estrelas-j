@@ -65,9 +65,20 @@ const HeroSection = () => {
               size="lg"
               variant="outline"
               className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold text-lg px-8 py-6"
-              asChild
+              onClick={() => {
+                const element = document.getElementById("como-funciona");
+                if (element) {
+                  const headerOffset = 80;
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                  });
+                }
+              }}
             >
-              <a href="#como-funciona">Ver Como Funciona</a>
+              Ver Como Funciona
             </Button>
           </div>
         </div>
