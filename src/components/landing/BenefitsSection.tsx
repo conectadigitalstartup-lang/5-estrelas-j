@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import paparazziBefore from "@/assets/paparazzi-before.jpg";
 import paparazziAfter from "@/assets/paparazzi-after.jpg";
+import BeforeAfterSlider from "./BeforeAfterSlider";
 
 const benefits = [
   {
@@ -132,54 +133,13 @@ const BenefitsSection = () => {
               {/* Visual - Interactive Before/After Slider */}
               <div className="relative">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  {/* Interactive Before/After Container */}
-                  <div className="relative aspect-square rounded-lg overflow-hidden cursor-pointer group">
-                    {/* Before Image (Bottom Layer) */}
-                    <img 
-                      src={paparazziBefore} 
-                      alt="Foto amadora de hambúrguer com fundo de cozinha bagunçado" 
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    
-                    {/* After Image (Top Layer with clip on hover) */}
-                    <div className="absolute inset-0 w-full h-full overflow-hidden transition-all duration-500 ease-out clip-path-right group-hover:clip-path-full"
-                      style={{
-                        clipPath: 'inset(0 50% 0 0)',
-                      }}
-                    >
-                      <img 
-                        src={paparazziAfter} 
-                        alt="Foto profissional de hambúrguer com fundo elegante" 
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Divider Line */}
-                    <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1 bg-white/80 shadow-lg z-10 transition-all duration-500 group-hover:left-full group-hover:opacity-0">
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-                        <span className="text-navy font-bold text-xs">↔</span>
-                      </div>
-                    </div>
-
-                    {/* Labels */}
-                    <div className="absolute top-3 left-3 z-20">
-                      <span className="text-xs text-white bg-black/60 px-2 py-1 rounded font-medium transition-opacity duration-300 group-hover:opacity-0">
-                        📱 ANTES
-                      </span>
-                    </div>
-                    <div className="absolute top-3 right-3 z-20">
-                      <span className="text-xs text-white bg-secondary/90 px-2 py-1 rounded font-medium transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                        ✨ DEPOIS
-                      </span>
-                    </div>
-
-                    {/* Hover instruction */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 transition-opacity duration-300 group-hover:opacity-0">
-                      <span className="text-xs text-white bg-black/60 px-3 py-1.5 rounded-full font-medium">
-                        Passe o mouse para ver a mágica ✨
-                      </span>
-                    </div>
-                  </div>
+                  {/* Interactive Before/After Slider Component */}
+                  <BeforeAfterSlider
+                    beforeImage={paparazziBefore}
+                    afterImage={paparazziAfter}
+                    beforeAlt="Foto amadora de hambúrguer com fundo de cozinha bagunçado"
+                    afterAlt="Foto profissional de hambúrguer com fundo elegante"
+                  />
 
                   <div className="flex items-center justify-center gap-2 mt-4 text-white/60 text-sm">
                     <span className="inline-block w-8 h-0.5 bg-secondary/50" />
