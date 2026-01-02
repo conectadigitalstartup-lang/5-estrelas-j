@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircle, Loader2, CreditCard } from "lucide-react";
+import { AlertCircle, Loader2, CreditCard, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,19 +15,29 @@ interface TrialExpiredModalProps {
   isOpen: boolean;
 }
 
+const features = [
+  "Filtro de Avaliações Negativas",
+  "Incentivo para Avaliações 5 Estrelas",
+  "Dashboard de Métricas em Tempo Real",
+  "Secretária Virtual com IA",
+  "Gerador de Posts para Instagram",
+  "QR Code Dinâmico",
+  "Suporte Prioritário via WhatsApp",
+];
+
 const TrialExpiredModal = ({ isOpen }: TrialExpiredModalProps) => {
   const { createCheckout } = useSubscription();
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = async (planKey: "basico" | "pro") => {
-    setLoadingPlan(planKey);
+  const handleSubscribe = async () => {
+    setIsLoading(true);
     try {
-      await createCheckout(PLANS[planKey].priceId);
+      await createCheckout(PLANS.profissional.priceId);
     } catch (error) {
       console.error("Error creating checkout:", error);
       toast.error("Erro ao iniciar pagamento. Tente novamente.");
     } finally {
-      setLoadingPlan(null);
+      setIsLoading(false);
     }
   };
 
@@ -49,66 +59,51 @@ const TrialExpiredModal = ({ isOpen }: TrialExpiredModalProps) => {
           </DialogTitle>
           <DialogDescription className="text-center text-base mt-2">
             Para continuar usando o Avalia Pro e manter seu QR Code ativo, 
-            escolha um plano abaixo.
+            assine o Plano Profissional.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 mt-6">
-          {/* Plano Básico */}
-          <div className="border border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="font-semibold text-lg">Plano Básico</h3>
-                <p className="text-muted-foreground text-sm">Para pequenos negócios</p>
-              </div>
-              <div className="text-right">
-                <span className="text-2xl font-bold">R$ {PLANS.basico.price}</span>
-                <span className="text-muted-foreground text-sm">/mês</span>
-              </div>
-            </div>
-            <Button 
-              className="w-full" 
-              variant="outline"
-              onClick={() => handleSubscribe("basico")}
-              disabled={loadingPlan !== null}
-            >
-              {loadingPlan === "basico" ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <CreditCard className="h-4 w-4 mr-2" />
-              )}
-              Assinar Básico
-            </Button>
-          </div>
-
-          {/* Plano Pro */}
-          <div className="border-2 border-primary rounded-lg p-4 relative">
+        <div className="mt-6">
+          {/* Plano Profissional */}
+          <div className="border-2 border-secondary rounded-lg p-6 relative">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                RECOMENDADO
+              <span className="bg-secondary text-secondary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                PLANO ÚNICO
               </span>
             </div>
-            <div className="flex items-center justify-between mb-3 mt-2">
-              <div>
-                <h3 className="font-semibold text-lg">Plano Pro</h3>
-                <p className="text-muted-foreground text-sm">Para negócios em crescimento</p>
+            
+            <div className="text-center mb-4 mt-2">
+              <h3 className="font-semibold text-xl">Plano Profissional</h3>
+              <div className="mt-2">
+                <span className="text-4xl font-bold">R$ {PLANS.profissional.price}</span>
+                <span className="text-muted-foreground">/mês</span>
               </div>
-              <div className="text-right">
-                <span className="text-2xl font-bold">R$ {PLANS.pro.price}</span>
-                <span className="text-muted-foreground text-sm">/mês</span>
-              </div>
+              <p className="text-muted-foreground text-sm mt-1 italic">
+                *Cancele quando quiser
+              </p>
             </div>
+
+            <ul className="space-y-2 mb-6">
+              {features.map((feature, index) => (
+                <li key={index} className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
             <Button 
-              className="w-full"
-              onClick={() => handleSubscribe("pro")}
-              disabled={loadingPlan !== null}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
+              size="lg"
+              onClick={handleSubscribe}
+              disabled={isLoading}
             >
-              {loadingPlan === "pro" ? (
+              {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
               ) : (
                 <CreditCard className="h-4 w-4 mr-2" />
               )}
-              Assinar Pro
+              Assinar Agora
             </Button>
           </div>
         </div>

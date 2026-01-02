@@ -28,7 +28,7 @@ const PaywallModal = ({ open, onOpenChange, featureName }: PaywallModalProps) =>
   const handleSubscribe = async () => {
     setIsLoading(true);
     try {
-      await createCheckout(PLANS.basico.priceId);
+      await createCheckout(PLANS.profissional.priceId);
     } catch (error) {
       console.error("Error creating checkout:", error);
       toast({

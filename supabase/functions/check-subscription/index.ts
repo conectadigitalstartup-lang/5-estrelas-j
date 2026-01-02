@@ -14,8 +14,9 @@ const logStep = (step: string, details?: any) => {
 
 // Product IDs to plan mapping
 const PRODUCT_PLANS: Record<string, string> = {
-  "prod_Tcl8m303dMbLrU": "basico",
-  "prod_Tcl8KdZ5nWaUR3": "pro",
+  "prod_TiittWhXGYX07a": "profissional", // New R$ 97/month plan
+  "prod_Tcl8m303dMbLrU": "basico", // Legacy
+  "prod_Tcl8KdZ5nWaUR3": "pro", // Legacy
 };
 
 serve(async (req) => {
