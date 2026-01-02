@@ -13,19 +13,33 @@ import {
   Instagram,
   Clock,
   Sparkles,
+  AlertCircle,
+  Crown,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface BackgroundOption {
   id: string;
   label: string;
   preview: string;
   type: "color" | "texture" | "transparent";
+}
+
+interface UsageInfo {
+  used: number;
+  limit: number;
+  remaining: number;
+  plan: string;
+  isSuperAdmin: boolean;
 }
 
 const backgroundOptions: BackgroundOption[] = [
@@ -69,6 +83,7 @@ const benefits = [
 
 const DashboardFoodPhotos = () => {
   const { toast } = useToast();
+  const { plan } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -77,6 +92,29 @@ const DashboardFoodPhotos = () => {
   const [processing, setProcessing] = useState(false);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const [loadingUsage, setLoadingUsage] = useState(true);
+
+  // Fetch usage info on mount
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("enhance-food-photo", {
+          body: { checkOnly: true },
+        });
+
+        if (!error && data) {
+          setUsage(data);
+        }
+      } catch (err) {
+        console.error("Error fetching usage:", err);
+      } finally {
+        setLoadingUsage(false);
+      }
+    };
+
+    fetchUsage();
+  }, []);
 
   // Rotate loading messages
   useEffect(() => {
@@ -138,6 +176,16 @@ const DashboardFoodPhotos = () => {
   const handleApplyMagic = async () => {
     if (!originalImage) return;
 
+    // Check limit before processing
+    if (usage && usage.limit !== -1 && usage.remaining <= 0) {
+      toast({
+        title: "Limite atingido",
+        description: `Você usou todas as ${usage.limit} fotos do seu plano. Faça upgrade para continuar!`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setProcessing(true);
     setLoadingMessageIndex(0);
     setResultImage(null);
@@ -154,15 +202,33 @@ const DashboardFoodPhotos = () => {
         throw new Error(error.message);
       }
 
+      if (data.limitReached) {
+        setUsage(prev => prev ? { ...prev, remaining: 0 } : null);
+        toast({
+          title: "Limite atingido",
+          description: data.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (data.error) {
         throw new Error(data.error);
       }
 
       if (data.enhancedImageUrl) {
         setResultImage(data.enhancedImageUrl);
+        // Update usage after successful processing
+        if (data.used !== undefined && data.limit !== undefined) {
+          setUsage(prev => prev ? {
+            ...prev,
+            used: data.used,
+            remaining: data.remaining,
+          } : null);
+        }
         toast({
           title: "Foto processada! ✨",
-          description: "Sua foto profissional está pronta para download.",
+          description: `Sua foto profissional está pronta. ${data.remaining !== -1 ? `Restam ${data.remaining} fotos este mês.` : ''}`,
         });
       }
     } catch (err) {
@@ -230,14 +296,86 @@ const DashboardFoodPhotos = () => {
       <DashboardLayout>
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2 flex items-center gap-2">
-            <Sparkles className="w-8 h-8 text-primary" />
-            Paparazzi de Comida
-          </h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Transforme fotos do celular em imagens profissionais em 5 segundos. Perfeitas para Instagram, iFood e cardápio.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2 flex items-center gap-2">
+                <Sparkles className="w-8 h-8 text-primary" />
+                Paparazzi de Comida
+              </h1>
+              <p className="text-muted-foreground max-w-2xl">
+                Transforme fotos do celular em imagens profissionais em 5 segundos. Perfeitas para Instagram, iFood e cardápio.
+              </p>
+            </div>
+
+            {/* Usage Card */}
+            {!loadingUsage && usage && (
+              <Card className="sm:min-w-[220px]">
+                <CardContent className="p-4">
+                  {usage.limit === -1 ? (
+                    <div className="flex items-center gap-2">
+                      <Crown className="w-5 h-5 text-amber-500" />
+                      <span className="text-sm font-medium">Uso ilimitado</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Fotos este mês</span>
+                        <Badge variant={usage.remaining > 0 ? "secondary" : "destructive"}>
+                          {usage.used}/{usage.limit}
+                        </Badge>
+                      </div>
+                      <Progress 
+                        value={(usage.used / usage.limit) * 100} 
+                        className={cn("h-2", usage.remaining === 0 && "bg-destructive/20")}
+                      />
+                      {usage.remaining === 0 ? (
+                        <div className="flex items-center gap-1 text-xs text-destructive">
+                          <AlertCircle className="w-3 h-3" />
+                          Limite atingido
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Restam <strong>{usage.remaining}</strong> fotos
+                        </p>
+                      )}
+                      {usage.plan === "basico" && (
+                        <Button asChild size="sm" variant="outline" className="w-full mt-2">
+                          <Link to="/dashboard/upgrade">
+                            <Crown className="w-3 h-3 mr-1" />
+                            Upgrade para 40/mês
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
+
+        {/* Limit Reached Warning */}
+        {usage && usage.limit !== -1 && usage.remaining === 0 && (
+          <Card className="mb-6 border-destructive/50 bg-destructive/5">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3 flex-1">
+                <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-foreground">Limite de fotos atingido</p>
+                  <p className="text-sm text-muted-foreground">
+                    Você usou todas as {usage.limit} fotos do plano {usage.plan === "pro" ? "Pro" : "Básico"} este mês.
+                  </p>
+                </div>
+              </div>
+              <Button asChild>
+                <Link to="/dashboard/upgrade">
+                  <Crown className="w-4 h-4 mr-2" />
+                  Fazer Upgrade
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-2 gap-6 mb-12">
@@ -330,24 +468,37 @@ const DashboardFoodPhotos = () => {
               </div>
 
               {/* Action Button */}
-              <Button
-                size="lg"
-                onClick={handleApplyMagic}
-                disabled={!originalImage || processing}
-                className="w-full bg-gradient-to-r from-primary to-coral hover:from-primary/90 hover:to-coral/90 text-white"
-              >
-                {processing ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Aplicar Mágica!
-                  </>
-                )}
-              </Button>
+              {usage && usage.limit !== -1 && usage.remaining === 0 ? (
+                <Button
+                  size="lg"
+                  asChild
+                  className="w-full"
+                >
+                  <Link to="/dashboard/upgrade">
+                    <Crown className="w-5 h-5 mr-2" />
+                    Fazer Upgrade para Continuar
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={handleApplyMagic}
+                  disabled={!originalImage || processing || (usage && usage.limit !== -1 && usage.remaining <= 0)}
+                  className="w-full bg-gradient-to-r from-primary to-coral hover:from-primary/90 hover:to-coral/90 text-white"
+                >
+                  {processing ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Processando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Aplicar Mágica!
+                    </>
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
 
