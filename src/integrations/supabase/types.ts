@@ -409,6 +409,10 @@ export type Database = {
         Args: { check_user_id: string }
         Returns: boolean
       }
+      has_valid_subscription: {
+        Args: { check_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
