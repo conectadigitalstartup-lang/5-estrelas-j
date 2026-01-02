@@ -26,6 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
+import PhotoGallery from "@/components/food-photos/PhotoGallery";
 
 interface BackgroundOption {
   id: string;
@@ -94,6 +95,7 @@ const DashboardFoodPhotos = () => {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   const [usage, setUsage] = useState<UsageInfo | null>(null);
   const [loadingUsage, setLoadingUsage] = useState(true);
+  const [galleryKey, setGalleryKey] = useState(0);
 
   // Fetch usage info on mount
   useEffect(() => {
@@ -218,6 +220,8 @@ const DashboardFoodPhotos = () => {
 
       if (data.enhancedImageUrl) {
         setResultImage(data.enhancedImageUrl);
+        // Refresh gallery to show new photo
+        setGalleryKey(prev => prev + 1);
         // Update usage after successful processing
         if (data.used !== undefined && data.limit !== undefined) {
           setUsage(prev => prev ? {
@@ -227,7 +231,7 @@ const DashboardFoodPhotos = () => {
           } : null);
         }
         toast({
-          title: "Foto processada! ✨",
+          title: "Foto processada e salva! ✨",
           description: `Sua foto profissional está pronta. ${data.remaining !== -1 ? `Restam ${data.remaining} fotos este mês.` : ''}`,
         });
       }
@@ -556,6 +560,11 @@ const DashboardFoodPhotos = () => {
               ) : null}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Photo Gallery */}
+        <div className="mb-8">
+          <PhotoGallery key={galleryKey} />
         </div>
 
         {/* Benefits Section */}
