@@ -6,7 +6,6 @@ import {
   Settings,
   Rocket,
   LogOut,
-  Star,
   ChevronLeft,
   ChevronRight,
   Shield,
@@ -17,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { SUPER_ADMIN_EMAIL } from "@/config/admin";
+import avaliaProLogo from "@/assets/avalia-pro-logo.png";
 
 interface DashboardSidebarProps {
   collapsed: boolean;
@@ -58,14 +58,14 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
       {/* Logo */}
       <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         <Link to="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sidebar-primary flex items-center justify-center flex-shrink-0">
-            <Star className="w-5 h-5 text-sidebar-primary-foreground" fill="currentColor" />
-          </div>
-          {!collapsed && (
-            <span className="font-display text-lg font-bold text-sidebar-foreground">
-              Avalia Pro
-            </span>
-          )}
+          <img 
+            src={avaliaProLogo} 
+            alt="Avalia Pro" 
+            className={cn(
+              "h-10 w-auto object-contain",
+              collapsed && "h-8"
+            )}
+          />
         </Link>
         <Button
           variant="ghost"

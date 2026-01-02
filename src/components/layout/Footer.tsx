@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Star, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import avaliaProLogo from "@/assets/avalia-pro-logo.png";
 
 const Footer = () => {
   return (
@@ -9,17 +10,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                <Star className="w-6 h-6 text-navy" fill="currentColor" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display text-xl font-bold text-primary-foreground">
-                  Avalia Pro
-                </span>
-                <span className="text-[10px] text-primary-foreground/60">
-                  Gestão de Reputação Online
-                </span>
-              </div>
+              <img 
+                src={avaliaProLogo} 
+                alt="Avalia Pro" 
+                className="h-12 w-auto object-contain"
+              />
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               O filtro inteligente que transforma clientes satisfeitos em reviews no Google e protege sua reputação.

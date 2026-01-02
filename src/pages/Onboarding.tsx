@@ -10,6 +10,7 @@ import StepTwo from "@/components/onboarding/StepTwo";
 import StepThree from "@/components/onboarding/StepThree";
 import SuccessScreen from "@/components/onboarding/SuccessScreen";
 import { Loader2 } from "lucide-react";
+import avaliaProLogo from "@/assets/avalia-pro-logo.png";
 
 interface PlaceResult {
   place_id: string;
@@ -266,8 +267,12 @@ const Onboarding = () => {
             <SuccessScreen onComplete={handleSuccessComplete} />
           ) : (
             <>
-              <div className="text-center mb-4">
-                <h1 className="text-2xl font-bold text-navy">Avalia Pro</h1>
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={avaliaProLogo} 
+                  alt="Avalia Pro" 
+                  className="h-14 w-auto object-contain"
+                />
               </div>
 
               <OnboardingProgress currentStep={currentStep} totalSteps={3} />
