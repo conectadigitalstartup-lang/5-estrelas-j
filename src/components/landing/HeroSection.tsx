@@ -64,7 +64,7 @@ const HeroSection = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-lg px-8 py-6"
+              className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold text-lg px-8 py-6"
               asChild
             >
               <a href="#como-funciona">Ver Como Funciona</a>
