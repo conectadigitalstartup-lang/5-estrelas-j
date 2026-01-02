@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 interface Company {
   id: string;
@@ -190,7 +190,7 @@ const DashboardQRCode = () => {
         circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
       if (!circularLogoDataUrl) {
-        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProShield);
       }
       
       // Create premium PDF with professional design
@@ -311,7 +311,7 @@ const DashboardQRCode = () => {
         circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
       if (!circularLogoDataUrl) {
-        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProShield);
       }
 
       const pdf = new jsPDF({
@@ -442,7 +442,7 @@ const DashboardQRCode = () => {
         circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
       if (!circularLogoDataUrl) {
-        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProShield);
       }
 
       // 10x15cm tent card (folded)
@@ -578,7 +578,7 @@ const DashboardQRCode = () => {
         circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
       if (!circularLogoDataUrl) {
-        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProShield);
       }
 
       const pdf = new jsPDF({
@@ -666,7 +666,7 @@ const DashboardQRCode = () => {
         circularLogoDataUrl = await createCircularLogoDataUrl(company.logo_url);
       }
       if (!circularLogoDataUrl) {
-        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProLogo);
+        circularLogoDataUrl = await createCircularLogoDataUrl(avaliaProShield);
       }
 
       const pdf = new jsPDF({
@@ -914,7 +914,7 @@ const DashboardQRCode = () => {
                           />
                         ) : (
                           <img 
-                            src={avaliaProLogo} 
+                            src={avaliaProShield} 
                             alt="Avalia Pro"
                             className="w-full h-full object-cover"
                           />
@@ -963,9 +963,9 @@ const DashboardQRCode = () => {
                     
                     {/* Footer branding with logo */}
                     <div className="flex items-center justify-center gap-2">
-                      <div className="w-6 h-6 rounded-full overflow-hidden border border-amber-500/30">
+                      <div className="w-6 h-6 rounded-full overflow-hidden border border-amber-500/30 bg-[#0f172a]">
                         <img 
-                          src={avaliaProLogo} 
+                          src={avaliaProShield} 
                           alt="Avalia Pro"
                           className="w-full h-full object-cover"
                         />

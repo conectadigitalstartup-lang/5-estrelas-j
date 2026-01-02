@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -104,11 +104,13 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="h-16 flex items-center justify-between px-4 border-b border-border">
           {sidebarOpen && (
             <div className="flex items-center gap-2">
-              <img 
-                src={avaliaProLogo} 
-                alt="Avalia Pro Admin" 
-                className="h-8 w-auto object-contain"
-              />
+              <div className="h-8 w-8 rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center flex-shrink-0">
+                <img 
+                  src={avaliaProShield} 
+                  alt="Avalia Pro Admin" 
+                  className="h-full w-full object-cover"
+                />
+              </div>
               <span className="font-display font-bold text-foreground">Admin</span>
             </div>
           )}
@@ -172,11 +174,13 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-card border-b border-border flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <img 
-            src={avaliaProLogo} 
-            alt="Avalia Pro Admin" 
-            className="h-8 w-auto object-contain"
-          />
+          <div className="h-8 w-8 rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center flex-shrink-0">
+            <img 
+              src={avaliaProShield} 
+              alt="Avalia Pro Admin" 
+              className="h-full w-full object-cover"
+            />
+          </div>
           <span className="font-display font-bold text-foreground">Admin</span>
         </div>
         <Button

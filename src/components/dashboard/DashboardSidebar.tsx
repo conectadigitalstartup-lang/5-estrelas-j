@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { SUPER_ADMIN_EMAIL } from "@/config/admin";
-import avaliaProLogo from "@/assets/avalia-pro-logo.png";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 interface DashboardSidebarProps {
   collapsed: boolean;
@@ -57,15 +57,18 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
     >
       {/* Logo */}
       <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-        <Link to="/dashboard" className="flex items-center gap-3">
-          <img 
-            src={avaliaProLogo} 
-            alt="Avalia Pro" 
-            className={cn(
-              "h-10 w-auto object-contain",
-              collapsed && "h-8"
-            )}
-          />
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <div className={cn(
+            "rounded-full overflow-hidden bg-[#0f172a] flex items-center justify-center flex-shrink-0",
+            collapsed ? "h-8 w-8" : "h-10 w-10"
+          )}>
+            <img 
+              src={avaliaProShield} 
+              alt="Avalia Pro" 
+              className="h-full w-full object-cover"
+            />
+          </div>
+          {!collapsed && <span className="font-display font-bold text-sidebar-foreground">Avalia Pro</span>}
         </Link>
         <Button
           variant="ghost"
