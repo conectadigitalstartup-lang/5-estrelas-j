@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Check, Zap, Crown, Lock, Shield, Construction } from "lucide-react";
+import { Check, Lock, Shield, Clock, Star, ArrowRight } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -13,47 +11,29 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const plans = [
-  {
-    name: "Profissional",
-    icon: Zap,
-    description: "Tudo que você precisa para dominar sua reputação online",
-    monthlyPrice: 99,
-    yearlyPrice: 79,
-    features: [
-      "1 restaurante",
-      "QR Codes ilimitados",
-      "Dashboard completo",
-      "Notificações por email",
-      "Suporte prioritário",
-      "Relatórios semanais",
-      "Gerador de posts para redes sociais",
-      "Filtro de avaliações negativas",
-    ],
-    notIncluded: [],
-    popular: true,
-    available: true,
-    cta: "Começar Teste Grátis de 7 Dias",
-  },
-  {
-    name: "Empresarial",
-    icon: Crown,
-    description: "Para redes e franquias que dominam o mercado",
-    monthlyPrice: 297,
-    yearlyPrice: 237,
-    features: [
-      "Múltiplos restaurantes",
-      "Tudo do plano Profissional",
-      "API completa",
-      "Gerente de conta dedicado",
-      "Treinamento da equipe",
-      "Integrações personalizadas",
-    ],
-    notIncluded: [],
-    popular: false,
-    available: false,
-    cta: "Em Breve",
-  },
+const profissionalFeatures = [
+  { emoji: "✅", text: "1 Restaurante por assinatura" },
+  { emoji: "🛡️", text: "Filtro de Avaliações Negativas (Blindagem de Reputação)" },
+  { emoji: "⭐", text: "Incentivo para Avaliações Positivas no Google" },
+  { emoji: "📊", text: "Dashboard de Métricas em Tempo Real" },
+  { emoji: "🤖", text: "Secretária Virtual com IA para responder reviews" },
+  { emoji: "📸", text: "Gerador de Posts para Instagram com IA" },
+  { emoji: "📱", text: "QR Code Dinâmico para mesas" },
+  { emoji: "📧", text: "Notificações de novos feedbacks por e-mail" },
+  { emoji: "💬", text: "Suporte Prioritário via WhatsApp" },
+];
+
+const basicoFeatures = [
+  { text: "QR Code Dinâmico" },
+  { text: "Dashboard de Métricas" },
+  { text: "Notificações por E-mail" },
+];
+
+const agenciaFeatures = [
+  { text: "Múltiplos Restaurantes" },
+  { text: "Relatórios Consolidados" },
+  { text: "Gerenciamento de Equipe" },
+  { text: "API de Integração" },
 ];
 
 const securityFaqs = [
@@ -76,15 +56,13 @@ const securityFaqs = [
 ];
 
 const Precos = () => {
-  const [isYearly, setIsYearly] = useState(false);
-
   return (
     <>
       <Helmet>
         <title>Preços - Avalia Pro | Planos para Restaurantes</title>
         <meta
           name="description"
-          content="Conheça os planos do Avalia Pro. A partir de R$99/mês. Teste grátis por 7 dias. Cancele quando quiser."
+          content="Conheça os planos do Avalia Pro. A partir de R$97/mês. Teste grátis por 7 dias. Cancele quando quiser."
         />
         <link rel="canonical" href="https://avaliapro.com.br/precos" />
       </Helmet>
@@ -96,158 +74,174 @@ const Precos = () => {
           <div className="container mx-auto px-4">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-                Preços
+              <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
+                Investimento
               </span>
               <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
-                Escolha o Plano Ideal para Você
+                Escolha o Plano Ideal Para Você
               </h1>
               <p className="text-muted-foreground text-lg">
-                Todos os planos incluem 7 dias grátis. Cancele quando quiser.
+                Menos do que uma única refeição no seu restaurante. Teste grátis por 7 dias.
               </p>
             </div>
 
-            {/* Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-12">
-              <span
-                className={`text-sm font-medium transition-colors ${
-                  !isYearly ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                Mensal
-              </span>
-              <Switch checked={isYearly} onCheckedChange={setIsYearly} />
-              <span
-                className={`text-sm font-medium transition-colors ${
-                  isYearly ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                Anual
-              </span>
-              {isYearly && (
-                <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full">
-                  2 meses grátis
-                </span>
-              )}
-            </div>
-
-            {/* Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {plans.map((plan, index) => (
-                <div
-                  key={index}
-                  className={`relative bg-card border rounded-2xl p-8 transition-all duration-300 hover:shadow-elevated ${
-                    plan.popular && plan.available
-                      ? "border-primary shadow-lg scale-105"
-                      : "border-border"
-                  } ${!plan.available ? "opacity-75" : ""}`}
-                >
-                  {/* Popular badge */}
-                  {plan.popular && plan.available && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-primary text-primary-foreground text-sm font-semibold px-4 py-1 rounded-full">
-                        Recomendado
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Coming Soon Overlay */}
-                  {!plan.available && (
-                    <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] z-10 rounded-2xl flex flex-col items-center justify-center">
-                      <Construction className="h-12 w-12 text-amber-500 mb-2" />
-                      <span className="bg-amber-500 text-white text-sm font-semibold px-4 py-1 rounded-full">
-                        Em Breve
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Plan header */}
-                  <div className="text-center mb-6">
-                    <div
-                      className={`w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center ${
-                        plan.popular ? "bg-primary" : "bg-primary/10"
-                      }`}
-                    >
-                      <plan.icon
-                        className={`w-7 h-7 ${
-                          plan.popular ? "text-primary-foreground" : "text-primary"
-                        }`}
-                      />
-                    </div>
-                    <h3 className="font-display text-2xl font-bold text-foreground">
-                      {plan.name}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      {plan.description}
-                    </p>
-                  </div>
-
-                  {/* Price */}
-                  <div className="text-center mb-8">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-muted-foreground text-lg">R$</span>
-                      <span className="font-display text-5xl font-bold text-foreground">
-                        {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-                      </span>
-                      <span className="text-muted-foreground">/mês</span>
-                    </div>
-                    {isYearly && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Cobrado anualmente (R$
-                        {plan.yearlyPrice * 12})
-                      </p>
-                    )}
-                  </div>
-
-                  {/* CTA */}
-                  <div className="mb-8">
-                    <Button
-                      className={`w-full ${
-                        plan.popular && plan.available
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                          : ""
-                      }`}
-                      variant={plan.popular && plan.available ? "default" : "outline"}
-                      size="lg"
-                      asChild={plan.available}
-                      disabled={!plan.available}
-                    >
-                      {plan.available ? (
-                        <Link to="/auth">{plan.cta}</Link>
-                      ) : (
-                        <span>{plan.cta}</span>
-                      )}
-                    </Button>
-                    {plan.available && (
-                      <p className="text-xs text-center text-muted-foreground mt-2">
-                        Sem cartão de crédito. Teste 7 dias grátis.
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Features */}
-                  <div className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                        <span className="text-foreground text-sm">{feature}</span>
-                      </div>
-                    ))}
-                    {plan.notIncluded.map((feature, i) => (
-                      <div key={i} className="flex items-center gap-3 opacity-40">
-                        <Check className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                        <span className="text-muted-foreground text-sm line-through">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+            {/* Plans - 3 columns */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {/* Plano Básico - Em Breve */}
+              <div className="bg-card/50 border border-border/50 rounded-2xl p-8 relative opacity-60">
+                {/* Badge Em Breve */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-muted text-muted-foreground text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 border border-border">
+                    <Clock className="w-3 h-3" />
+                    EM BREVE
+                  </span>
                 </div>
-              ))}
+
+                <div className="mb-6 mt-4 text-center">
+                  <h3 className="text-xl font-bold text-muted-foreground mb-1">
+                    Plano Básico
+                  </h3>
+                  <p className="text-muted-foreground/70 text-sm">Para quem está começando</p>
+                </div>
+
+                <div className="text-center mb-8">
+                  <span className="text-3xl font-bold text-muted-foreground/50">Em Breve</span>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {basicoFeatures.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground/70">
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full text-lg py-6 opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  Disponível em Breve
+                </Button>
+              </div>
+
+              {/* Plano Profissional - Destaque */}
+              <div className="bg-card border-2 border-secondary rounded-2xl p-8 relative shadow-elevated transform md:scale-105 z-10">
+                {/* Badge Mais Popular */}
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-secondary text-secondary-foreground text-sm font-semibold px-5 py-2 rounded-full flex items-center gap-1.5 shadow-lg">
+                    <Star className="w-4 h-4 fill-current" />
+                    Mais Popular
+                  </span>
+                </div>
+
+                <div className="mb-6 mt-4 text-center">
+                  <h3 className="text-xl font-bold text-foreground mb-1">
+                    Plano Profissional
+                  </h3>
+                  <p className="text-muted-foreground text-sm">Tudo que você precisa</p>
+                </div>
+
+                <div className="text-center mb-2">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-muted-foreground text-lg">R$</span>
+                    <span className="text-5xl font-bold text-foreground">97</span>
+                    <span className="text-muted-foreground">/mês</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm mt-1 italic">
+                    *Cancele quando quiser
+                  </p>
+                </div>
+
+                <ul className="space-y-3 mb-8 mt-6">
+                  {profissionalFeatures.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-lg shrink-0">{feature.emoji}</span>
+                      <span className="text-foreground text-sm leading-relaxed">
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  size="lg"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-lg py-6 shadow-lg"
+                  asChild
+                >
+                  <Link to="/cadastro">
+                    Começar Teste Grátis de 7 Dias
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
+
+                <p className="text-center text-muted-foreground text-sm mt-4">
+                  Você só paga depois de 7 dias
+                </p>
+              </div>
+
+              {/* Plano Agência - Em Breve */}
+              <div className="bg-card/50 border border-border/50 rounded-2xl p-8 relative opacity-60">
+                {/* Badge Em Breve */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-muted text-muted-foreground text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 border border-border">
+                    <Clock className="w-3 h-3" />
+                    EM BREVE
+                  </span>
+                </div>
+
+                <div className="mb-6 mt-4 text-center">
+                  <h3 className="text-xl font-bold text-muted-foreground mb-1">
+                    Plano Agência
+                  </h3>
+                  <p className="text-muted-foreground/70 text-sm">Para múltiplos negócios</p>
+                </div>
+
+                <div className="text-center mb-8">
+                  <span className="text-2xl font-bold text-muted-foreground/50">Fale Conosco</span>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {agenciaFeatures.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground/70">
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full text-lg py-6 opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  Disponível em Breve
+                </Button>
+              </div>
             </div>
 
             {/* Security badges */}
             <div className="mt-16 text-center">
+              <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Shield className="w-4 h-4" />
+                  <span>Pagamento seguro via Stripe</span>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Cancele a qualquer momento
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Sem taxa de cancelamento
+                </div>
+              </div>
+              
               <div className="inline-flex items-center gap-2 bg-muted/50 px-6 py-3 rounded-full mb-4">
                 <Lock className="w-5 h-5 text-muted-foreground" />
                 <span className="text-sm font-medium text-foreground">Pagamento 100% seguro</span>
@@ -277,7 +271,7 @@ const Precos = () => {
                   >
                     <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-4">
                       <div className="flex items-center gap-3">
-                        <Shield className="w-5 h-5 text-primary flex-shrink-0" />
+                        <Shield className="w-5 h-5 text-secondary flex-shrink-0" />
                         {faq.question}
                       </div>
                     </AccordionTrigger>
@@ -294,8 +288,14 @@ const Precos = () => {
               <p className="text-muted-foreground mb-4">
                 Ainda com dúvidas? Fale conosco pelo WhatsApp
               </p>
-              <Button variant="outline" size="lg">
-                Falar com um Especialista
+              <Button variant="outline" size="lg" asChild>
+                <a 
+                  href="https://wa.me/5511999999999?text=Olá! Gostaria de saber mais sobre o Avalia Pro."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar com um Especialista
+                </a>
               </Button>
             </div>
           </div>
