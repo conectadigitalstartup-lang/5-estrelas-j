@@ -1,4 +1,5 @@
 import { QrCode, Filter, TrendingUp } from "lucide-react";
+import triageFlowVideo from "@/assets/triage-flow.mp4";
 
 const steps = [
   {
@@ -34,6 +35,24 @@ const HowItWorksSection = () => {
           </h2>
           <p className="text-muted-foreground text-lg">
             Um sistema simples que trabalha 24 horas por você
+          </p>
+        </div>
+
+        {/* Animated flow video */}
+        <div className="max-w-3xl mx-auto mb-16">
+          <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-border">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-auto"
+            >
+              <source src={triageFlowVideo} type="video/mp4" />
+            </video>
+          </div>
+          <p className="text-center text-muted-foreground text-sm mt-4">
+            Veja como o sistema filtra automaticamente as avaliações
           </p>
         </div>
 
