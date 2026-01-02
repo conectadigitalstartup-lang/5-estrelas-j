@@ -7,6 +7,8 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import paparazziBefore from "@/assets/paparazzi-before.jpg";
+import paparazziAfter from "@/assets/paparazzi-after.jpg";
 
 const benefits = [
   {
@@ -127,38 +129,50 @@ const BenefitsSection = () => {
                 </Button>
               </div>
 
-              {/* Visual - Before/After placeholder */}
+              {/* Visual - Before/After with real images */}
               <div className="relative">
                 <div className="bg-navy-light/50 border border-primary-foreground/10 rounded-2xl p-6">
                   <div className="grid grid-cols-2 gap-4">
                     {/* Before */}
                     <div className="space-y-2">
-                      <span className="text-xs font-semibold text-primary-foreground/50 uppercase">Antes</span>
-                      <div className="aspect-square bg-navy-dark/50 rounded-lg flex items-center justify-center border border-primary-foreground/10">
-                        <div className="text-center p-4">
-                          <div className="text-4xl mb-2">📱</div>
-                          <p className="text-xs text-primary-foreground/40">Foto de celular com fundo bagunçado</p>
-                        </div>
+                      <span className="text-xs font-semibold text-primary-foreground/50 uppercase tracking-wider">Antes</span>
+                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary-foreground/10 relative group">
+                        <img 
+                          src={paparazziBefore} 
+                          alt="Foto amadora de hambúrguer com fundo de cozinha bagunçado" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        <span className="absolute bottom-2 left-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">
+                          📱 Celular
+                        </span>
                       </div>
                     </div>
                     {/* After */}
                     <div className="space-y-2">
-                      <span className="text-xs font-semibold text-secondary uppercase">Depois</span>
-                      <div className="aspect-square bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-lg flex items-center justify-center border border-secondary/30">
-                        <div className="text-center p-4">
-                          <div className="text-4xl mb-2">✨</div>
-                          <p className="text-xs text-primary-foreground/60">Foto profissional pronta para postar</p>
-                        </div>
+                      <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Depois</span>
+                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-secondary/50 relative group shadow-lg shadow-secondary/20">
+                        <img 
+                          src={paparazziAfter} 
+                          alt="Foto profissional de hambúrguer com fundo elegante" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                        <span className="absolute bottom-2 left-2 text-xs text-white bg-secondary/90 px-2 py-1 rounded font-medium">
+                          ✨ IA
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-center text-primary-foreground/50 text-sm mt-4">
-                    Transformação em menos de 5 segundos
-                  </p>
+                  <div className="flex items-center justify-center gap-2 mt-4 text-primary-foreground/60 text-sm">
+                    <span className="inline-block w-8 h-0.5 bg-secondary/50" />
+                    <span>Transformação em 5 segundos</span>
+                    <span className="inline-block w-8 h-0.5 bg-secondary/50" />
+                  </div>
                 </div>
 
                 {/* Floating badge */}
-                <div className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                <div className="absolute -top-4 -right-4 bg-secondary text-secondary-foreground text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse">
                   IA Avançada
                 </div>
               </div>
