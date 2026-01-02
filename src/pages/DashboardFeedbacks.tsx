@@ -678,6 +678,19 @@ const DashboardFeedbacks = () => {
                     </div>
 
                     <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      {/* Botão Gerar Post visível para feedbacks positivos */}
+                      {feedback.rating >= 4 && feedback.comment && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPostGeneratorFeedback(feedback)}
+                          className="gap-1.5 border-coral/30 text-coral hover:bg-coral/10 hover:text-coral"
+                        >
+                          <Share2 className="w-4 h-4" />
+                          <span className="hidden sm:inline">Gerar Post</span>
+                        </Button>
+                      )}
+
                       {!feedback.is_read && (
                         <Button
                           variant="ghost"
