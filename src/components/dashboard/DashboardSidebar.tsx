@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Shield,
   HelpCircle,
+  Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: QrCode, label: "Meu QR Code", path: "/dashboard/qr-code" },
   { icon: MessageSquare, label: "Feedbacks", path: "/dashboard/feedbacks" },
+  { icon: Camera, label: "Melhorar Fotos", path: "/dashboard/melhorar-fotos" },
   { icon: HelpCircle, label: "Suporte", path: "/dashboard/suporte" },
   { icon: Settings, label: "Configurações", path: "/dashboard/settings" },
   { icon: Rocket, label: "Upgrade", path: "/dashboard/upgrade" },

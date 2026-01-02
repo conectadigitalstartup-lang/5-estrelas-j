@@ -23,6 +23,7 @@ const DashboardFeedbacks = lazy(() => import("./pages/DashboardFeedbacks"));
 const DashboardSettings = lazy(() => import("./pages/DashboardSettings"));
 const DashboardUpgrade = lazy(() => import("./pages/DashboardUpgrade"));
 const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
+const DashboardFoodPhotos = lazy(() => import("./pages/DashboardFoodPhotos"));
 const Avaliar = lazy(() => import("./pages/Avaliar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -70,6 +71,7 @@ const App = () => (
                 <Route path="/dashboard/settings" element={<ProtectedRoute><DashboardSettings /></ProtectedRoute>} />
                 <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
                 <Route path="/dashboard/suporte" element={<ProtectedRoute><DashboardSupport /></ProtectedRoute>} />
+                <Route path="/dashboard/melhorar-fotos" element={<ProtectedRoute><DashboardFoodPhotos /></ProtectedRoute>} />
                 <Route path="/avaliar/:slug" element={<Avaliar />} />
                 
                 {/* Admin Routes */}

@@ -50,3 +50,6 @@ verify_jwt = true
 
 [functions.generate-reply-suggestions]
 verify_jwt = true
+
+[functions.enhance-food-photo]
+verify_jwt = true
