@@ -1,11 +1,47 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToSection = useCallback((sectionId: string) => {
+    setIsMenuOpen(false);
+    
+    // If not on home page, navigate first then scroll
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Wait for navigation to complete then scroll
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+      }, 100);
+    } else {
+      // Already on home page, just scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const headerOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -37,18 +73,18 @@ const Header = () => {
             >
               Preços
             </Link>
-            <a
-              href="#como-funciona"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+            <button
+              onClick={() => scrollToSection("como-funciona")}
+              className="text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none cursor-pointer"
             >
               Como Funciona
-            </a>
-            <a
-              href="#beneficios"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+            </button>
+            <button
+              onClick={() => scrollToSection("beneficios")}
+              className="text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none cursor-pointer"
             >
               Benefícios
-            </a>
+            </button>
           </nav>
 
           {/* Desktop CTA */}
@@ -93,20 +129,18 @@ const Header = () => {
               >
                 Preços
               </Link>
-              <a
-                href="#como-funciona"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={() => scrollToSection("como-funciona")}
+                className="text-muted-foreground hover:text-foreground transition-colors py-2 text-left bg-transparent border-none cursor-pointer"
               >
                 Como Funciona
-              </a>
-              <a
-                href="#beneficios"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
+              </button>
+              <button
+                onClick={() => scrollToSection("beneficios")}
+                className="text-muted-foreground hover:text-foreground transition-colors py-2 text-left bg-transparent border-none cursor-pointer"
               >
                 Benefícios
-              </a>
+              </button>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 <Button variant="outline" asChild>
                   <Link to="/auth">Entrar</Link>
