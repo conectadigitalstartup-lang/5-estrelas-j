@@ -1,23 +1,30 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Check, X, Shield, ArrowRight, Star } from "lucide-react";
+import { Check, Shield, ArrowRight, Star, Clock } from "lucide-react";
 
-const basicFeatures = [
-  { text: "Gestão de Reputação no Google", included: true },
-  { text: "QR Code e Material de Mesa", included: true },
-  { text: "Gerador de Posts para Instagram", included: true, highlight: true },
-  { text: "Secretária Virtual de Respostas (IA)", included: true, highlight: true },
-  { text: "Dashboard em Tempo Real", included: true },
-  { text: "Alertas de Feedbacks Negativos", included: true },
-  { text: "Paparazzi de Comida (Fotos com IA)", included: false },
-  { text: "Suporte Prioritário no WhatsApp", included: false },
+const profissionalFeatures = [
+  { emoji: "✅", text: "1 Restaurante por assinatura" },
+  { emoji: "🛡️", text: "Filtro de Avaliações Negativas (Blindagem de Reputação)" },
+  { emoji: "⭐", text: "Incentivo para Avaliações Positivas no Google" },
+  { emoji: "📊", text: "Dashboard de Métricas em Tempo Real (Gráficos de crescimento)" },
+  { emoji: "🤖", text: "Secretária Virtual com IA para responder reviews" },
+  { emoji: "📸", text: "Gerador de Posts para Instagram com IA" },
+  { emoji: "📱", text: "QR Code Dinâmico para mesas e material de divulgação" },
+  { emoji: "📧", text: "Notificações de novos feedbacks por e-mail" },
+  { emoji: "💬", text: "Suporte Prioritário via WhatsApp" },
 ];
 
-const proFeatures = [
-  { text: "Tudo do Plano Básico", included: true, isSummary: true },
-  { text: "📸 Paparazzi de Comida (Fotos com IA)", included: true, highlight: true },
-  { text: "40 melhorias de fotos por mês", included: true },
-  { text: "Suporte Prioritário no WhatsApp", included: true },
+const basicoFeatures = [
+  { text: "QR Code Dinâmico" },
+  { text: "Dashboard de Métricas" },
+  { text: "Notificações por E-mail" },
+];
+
+const agenciaFeatures = [
+  { text: "Múltiplos Restaurantes" },
+  { text: "Relatórios Consolidados" },
+  { text: "Gerenciamento de Equipe" },
+  { text: "API de Integração" },
 ];
 
 const PricingSection = () => {
@@ -36,36 +43,34 @@ const PricingSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Plano Básico */}
-          <div className="bg-card border border-border rounded-2xl p-8 relative">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-foreground mb-1">
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {/* Plano Básico - Em Breve */}
+          <div className="bg-card/50 border border-border/50 rounded-2xl p-8 relative opacity-60">
+            {/* Badge Em Breve */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-muted text-muted-foreground text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 border border-border">
+                <Clock className="w-3 h-3" />
+                EM BREVE
+              </span>
+            </div>
+
+            <div className="mb-6 mt-4">
+              <h3 className="text-xl font-bold text-muted-foreground mb-1">
                 Plano Básico
               </h3>
-              <p className="text-muted-foreground text-sm">Ideal para começar</p>
+              <p className="text-muted-foreground/70 text-sm">Para quem está começando</p>
             </div>
 
             <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-4xl font-bold text-foreground">R$ 97</span>
-              <span className="text-muted-foreground">/mês</span>
+              <span className="text-3xl font-bold text-muted-foreground/50">Em Breve</span>
             </div>
 
             <ul className="space-y-4 mb-8">
-              {basicFeatures.map((feature, index) => (
+              {basicoFeatures.map((feature, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  {feature.included ? (
-                    <Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                  ) : (
-                    <X className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5" />
-                  )}
-                  <span className={`${feature.included ? "text-foreground" : "text-muted-foreground/50"} ${feature.highlight ? "font-medium" : ""}`}>
+                  <Check className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5" />
+                  <span className="text-muted-foreground/70">
                     {feature.text}
-                    {feature.highlight && feature.included && (
-                      <span className="ml-2 text-xs bg-secondary/20 text-secondary px-2 py-0.5 rounded-full">
-                        Incluso!
-                      </span>
-                    )}
                   </span>
                 </li>
               ))}
@@ -74,44 +79,46 @@ const PricingSection = () => {
             <Button
               size="lg"
               variant="outline"
-              className="w-full text-lg py-6"
-              asChild
+              className="w-full text-lg py-6 opacity-50 cursor-not-allowed"
+              disabled
             >
-              <Link to="/cadastro">
-                Testar Grátis por 7 Dias
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
+              Disponível em Breve
             </Button>
           </div>
 
-          {/* Plano Profissional */}
-          <div className="bg-card border-2 border-secondary rounded-2xl p-8 relative shadow-elevated">
-            {/* Badge */}
+          {/* Plano Profissional - Destaque */}
+          <div className="bg-card border-2 border-secondary rounded-2xl p-8 relative shadow-elevated transform md:scale-105 z-10">
+            {/* Badge Mais Popular */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <span className="bg-secondary text-secondary-foreground text-sm font-semibold px-4 py-2 rounded-full flex items-center gap-1">
-                <Star className="w-4 h-4" />
-                Recomendado
+              <span className="bg-secondary text-secondary-foreground text-sm font-semibold px-5 py-2 rounded-full flex items-center gap-1.5 shadow-lg">
+                <Star className="w-4 h-4 fill-current" />
+                Mais Popular
               </span>
             </div>
 
-            <div className="mb-6 mt-2">
+            <div className="mb-6 mt-4">
               <h3 className="text-xl font-bold text-foreground mb-1">
                 Plano Profissional
               </h3>
-              <p className="text-muted-foreground text-sm">Melhor custo-benefício</p>
+              <p className="text-muted-foreground text-sm">Tudo que você precisa</p>
             </div>
 
-            <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-4xl font-bold text-foreground">R$ 147</span>
-              <span className="text-muted-foreground">/mês</span>
+            <div className="mb-2">
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-foreground">R$ 97</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <p className="text-muted-foreground text-sm mt-1 italic">
+                *Cancele quando quiser
+              </p>
             </div>
 
-            <ul className="space-y-4 mb-8">
-              {proFeatures.map((feature, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <Check className={`w-5 h-5 shrink-0 mt-0.5 ${feature.isSummary ? "text-secondary" : "text-emerald-500"}`} />
-                  <span className={`text-foreground ${feature.highlight ? "font-semibold" : ""} ${feature.isSummary ? "text-secondary" : ""}`}>
-                    {feature.text}
+            <ul className="space-y-3 mb-8 mt-6">
+              {profissionalFeatures.map((feature, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="text-lg shrink-0">{feature.emoji}</span>
+                  <span className="text-foreground text-sm leading-relaxed">
+                    <strong>{feature.text.split(" ")[0]}</strong> {feature.text.split(" ").slice(1).join(" ")}
                   </span>
                 </li>
               ))}
@@ -119,11 +126,11 @@ const PricingSection = () => {
 
             <Button
               size="lg"
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-lg py-6"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-lg py-6 shadow-lg"
               asChild
             >
               <Link to="/cadastro">
-                Testar Grátis por 7 Dias
+                Começar Teste Grátis de 7 Dias
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
@@ -132,16 +139,61 @@ const PricingSection = () => {
               Você só paga depois de 7 dias
             </p>
           </div>
+
+          {/* Plano Agência - Em Breve */}
+          <div className="bg-card/50 border border-border/50 rounded-2xl p-8 relative opacity-60">
+            {/* Badge Em Breve */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-muted text-muted-foreground text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5 border border-border">
+                <Clock className="w-3 h-3" />
+                EM BREVE
+              </span>
+            </div>
+
+            <div className="mb-6 mt-4">
+              <h3 className="text-xl font-bold text-muted-foreground mb-1">
+                Plano Agência
+              </h3>
+              <p className="text-muted-foreground/70 text-sm">Para múltiplos negócios</p>
+            </div>
+
+            <div className="flex items-baseline gap-1 mb-8">
+              <span className="text-2xl font-bold text-muted-foreground/50">Fale Conosco</span>
+            </div>
+
+            <ul className="space-y-4 mb-8">
+              {agenciaFeatures.map((feature, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-muted-foreground/40 shrink-0 mt-0.5" />
+                  <span className="text-muted-foreground/70">
+                    {feature.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full text-lg py-6 opacity-50 cursor-not-allowed"
+              disabled
+            >
+              Disponível em Breve
+            </Button>
+          </div>
         </div>
 
         {/* Security badges */}
-        <div className="flex items-center justify-center gap-6 mt-10">
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-10">
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <Shield className="w-4 h-4" />
-            <span>Pagamento seguro</span>
+            <span>Pagamento seguro via Stripe</span>
           </div>
           <div className="text-muted-foreground text-sm">
             Cancele a qualquer momento
+          </div>
+          <div className="text-muted-foreground text-sm">
+            Sem taxa de cancelamento
           </div>
         </div>
       </div>
