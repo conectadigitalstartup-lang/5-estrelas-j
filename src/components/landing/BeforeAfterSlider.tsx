@@ -163,21 +163,21 @@ const BeforeAfterSlider = ({ examples }: BeforeAfterSliderProps) => {
           </div>
         </div>
 
-        {/* Labels */}
+        {/* Labels - After is on LEFT (clipped layer), Before is on RIGHT (base layer) */}
         <div
           className="absolute top-3 left-3 z-20 transition-opacity duration-200 pointer-events-none"
           style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
         >
-          <span className="text-xs text-white bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
-            📱 ANTES
+          <span className="text-xs text-white bg-coral/90 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
+            ✨ DEPOIS
           </span>
         </div>
         <div
           className="absolute top-3 right-3 z-20 transition-opacity duration-200 pointer-events-none"
           style={{ opacity: sliderPosition < 80 ? 1 : 0 }}
         >
-          <span className="text-xs text-white bg-coral/90 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
-            ✨ DEPOIS
+          <span className="text-xs text-white bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
+            📱 ANTES
           </span>
         </div>
 
