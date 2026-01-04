@@ -118,7 +118,13 @@ const DashboardFeedbacks = () => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
-  const [companyData, setCompanyData] = useState<{ name: string; logo_url: string | null } | null>(null);
+  const [companyData, setCompanyData] = useState<{ 
+    name: string; 
+    logo_url: string | null;
+    restaurant_type?: string | null;
+    current_google_rating?: number | null;
+    current_google_ratings_total?: number | null;
+  } | null>(null);
   const [postGeneratorFeedback, setPostGeneratorFeedback] = useState<Feedback | null>(null);
   const [replySuggestionsFeedback, setReplySuggestionsFeedback] = useState<Feedback | null>(null);
 
@@ -153,7 +159,7 @@ const DashboardFeedbacks = () => {
 
       const { data: company } = await supabase
         .from("companies")
-        .select("id, name, logo_url")
+        .select("id, name, logo_url, restaurant_type, current_google_rating, current_google_ratings_total")
         .eq("owner_id", user.id)
         .maybeSingle();
 
@@ -163,7 +169,13 @@ const DashboardFeedbacks = () => {
       }
 
       setCompanyId(company.id);
-      setCompanyData({ name: company.name, logo_url: company.logo_url });
+      setCompanyData({ 
+        name: company.name, 
+        logo_url: company.logo_url,
+        restaurant_type: company.restaurant_type,
+        current_google_rating: company.current_google_rating,
+        current_google_ratings_total: company.current_google_ratings_total,
+      });
 
       const { data } = await supabase
         .from("feedbacks")
@@ -878,13 +890,19 @@ const DashboardFeedbacks = () => {
         )}
 
         {/* Reply Suggestions Modal */}
-        {replySuggestionsFeedback && (
+        {replySuggestionsFeedback && companyData && (
           <ReplySuggestionsModal
             open={!!replySuggestionsFeedback}
             onOpenChange={(open) => !open && setReplySuggestionsFeedback(null)}
             feedback={{
               comment: replySuggestionsFeedback.comment,
               rating: replySuggestionsFeedback.rating,
+            }}
+            company={{
+              name: companyData.name,
+              restaurant_type: companyData.restaurant_type,
+              current_google_rating: companyData.current_google_rating,
+              current_google_ratings_total: companyData.current_google_ratings_total,
             }}
           />
         )}
