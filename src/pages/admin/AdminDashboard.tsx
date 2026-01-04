@@ -159,7 +159,7 @@ const AdminDashboard = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Feedbacks
               </CardTitle>
-              <MessageSquare className="h-5 w-5 text-coral" />
+              <MessageSquare className="h-5 w-5 text-gold" />
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -210,8 +210,8 @@ const AdminDashboard = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-coral/10">
-                  <Percent className="h-5 w-5 text-coral" />
+                <div className="p-2 rounded-lg bg-gold/10">
+                  <Percent className="h-5 w-5 text-gold" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{conversionRate}%</p>
@@ -273,7 +273,7 @@ const AdminDashboard = () => {
                         borderRadius: '8px'
                       }}
                     />
-                    <Bar dataKey="count" fill="hsl(var(--coral))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="count" fill="hsl(var(--gold))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
