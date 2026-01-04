@@ -275,8 +275,8 @@ const GoogleReputationPanel = ({
 
         <div className="pt-4 border-t border-border/50">
           <p className="text-sm text-muted-foreground text-center">
-            💡 <strong>Dica:</strong> Quanto mais feedbacks você coletar, mais clientes satisfeitos você direciona para o Google, 
-            melhorando sua nota e aumentando sua visibilidade!
+            💡 <strong>Dica:</strong> Colete mais feedbacks para entender melhor seus clientes e 
+            oferecer a opção de compartilhar experiências positivas publicamente.
           </p>
         </div>
       </CardContent>

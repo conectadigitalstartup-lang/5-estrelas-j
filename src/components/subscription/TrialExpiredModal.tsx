@@ -16,10 +16,10 @@ interface TrialExpiredModalProps {
 }
 
 const features = [
-  "Filtro de Avaliações Negativas",
-  "Incentivo para Avaliações 5 Estrelas",
+  "Canal de Feedback Interno Centralizado",
+  "Convite para Avaliação Pública no Google",
   "Dashboard de Métricas em Tempo Real",
-  "Secretária Virtual com IA",
+  "Assistente de IA para Respostas",
   "Gerador de Posts para Instagram",
   "QR Code Dinâmico",
   "Suporte Prioritário via WhatsApp",

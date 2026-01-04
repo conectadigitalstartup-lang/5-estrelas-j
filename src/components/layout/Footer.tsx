@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Shield, Lock, HeartHandshake } from "lucide-react";
 import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Footer = () => {
@@ -19,8 +19,11 @@ const Footer = () => {
               </div>
               <span className="font-display font-bold text-primary-foreground text-xl">Avalia Pro</span>
             </Link>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed">
-              Sistema de gestão de avaliações online para restaurantes, bares e cafeterias.
+            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-4">
+              Plataforma de gestão de feedback e reputação online para restaurantes, bares e cafeterias.
+            </p>
+            <p className="text-primary-foreground/50 text-xs">
+              Um produto da ConectaRestô
             </p>
           </div>
 
@@ -51,7 +54,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Suporte */}
+          {/* Suporte & Legal */}
           <div>
             <h4 className="font-semibold text-secondary mb-4">Suporte</h4>
             <ul className="space-y-3">
@@ -61,14 +64,14 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-secondary transition-colors text-sm">
+                <Link to="/termos" className="text-primary-foreground/70 hover:text-secondary transition-colors text-sm">
                   Termos de Uso
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-secondary transition-colors text-sm">
+                <Link to="/privacidade" className="text-primary-foreground/70 hover:text-secondary transition-colors text-sm">
                   Política de Privacidade
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -79,11 +82,11 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-primary-foreground/70 text-sm">
                 <Mail className="w-4 h-4" />
-                contato@avaliapro.com.br
+                contato@avaliapro.online
               </li>
               <li className="flex items-center gap-2 text-primary-foreground/70 text-sm">
                 <Phone className="w-4 h-4" />
-                (11) 99999-9999
+                suporte@avaliapro.online
               </li>
               <li className="flex items-center gap-2 text-primary-foreground/70 text-sm">
                 <MapPin className="w-4 h-4" />
@@ -93,7 +96,25 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-primary-foreground/10">
+        {/* Trust Badges */}
+        <div className="mt-10 pt-8 border-t border-primary-foreground/10">
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+            <div className="flex items-center gap-2 text-primary-foreground/60 text-sm">
+              <Shield className="w-4 h-4" />
+              <span>Pagamento Seguro via Stripe</span>
+            </div>
+            <div className="flex items-center gap-2 text-primary-foreground/60 text-sm">
+              <Lock className="w-4 h-4" />
+              <span>Dados Protegidos</span>
+            </div>
+            <div className="flex items-center gap-2 text-primary-foreground/60 text-sm">
+              <HeartHandshake className="w-4 h-4" />
+              <span>Suporte Humanizado</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-primary-foreground/10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-primary-foreground/50 text-sm">
               © 2025 Avalia Pro. Todos os direitos reservados.

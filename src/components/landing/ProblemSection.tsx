@@ -3,18 +3,18 @@ import { AlertTriangle, TrendingDown, Users } from "lucide-react";
 const stats = [
   {
     icon: AlertTriangle,
-    value: "94%",
-    description: "dos clientes evitam restaurantes com avaliações negativas",
+    value: "73%",
+    description: "dos consumidores consultam avaliações online antes de escolher",
   },
   {
     icon: TrendingDown,
-    value: "-9%",
-    description: "de faturamento para cada 1 estrela perdida no Google",
+    value: "Impacto",
+    description: "Avaliações negativas podem afastar potenciais clientes",
   },
   {
     icon: Users,
-    value: "9-15",
-    description: "pessoas ouvem sobre cada experiência ruim de um cliente",
+    value: "Boca a Boca",
+    description: "Clientes compartilham experiências com amigos e familiares",
   },
 ];
 

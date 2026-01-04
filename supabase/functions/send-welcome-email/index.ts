@@ -54,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
             </p>
             
             <p style="color: #6b7280; margin: 0 0 25px; font-size: 15px;">
-              Ficamos muito felizes em ter você conosco! O Avalia Pro vai ajudar seu restaurante a conquistar mais avaliações positivas no Google e melhorar sua reputação online.
+              Ficamos muito felizes em ter você conosco! O Avalia Pro vai ajudar seu restaurante a centralizar feedbacks e fortalecer sua presença online.
             </p>
 
             <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 25px;">

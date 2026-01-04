@@ -285,14 +285,14 @@ const Dashboard = () => {
               <MetricCard
                 icon={CheckCircle}
                 value={metrics.positiveReviews}
-                label="Direcionados ao Google"
+                label="Avaliações Positivas"
                 sublabel="Notas 4 e 5 estrelas"
                 iconColor="text-success"
               />
               <MetricCard
                 icon={MessageSquare}
                 value={metrics.negativeFeedbacks}
-                label="Feedbacks Privados"
+                label="Feedbacks Internos"
                 sublabel="Notas 1 a 3 estrelas"
                 iconColor="text-coral"
               />

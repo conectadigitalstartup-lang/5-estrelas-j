@@ -18,7 +18,7 @@ const schemaData = {
   "name": "Avalia Pro",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
-  "description": "Sistema de gestão de avaliações online para restaurantes. Centralize feedbacks, responda clientes e acompanhe sua reputação no Google.",
+  "description": "Plataforma de gestão de feedback e reputação online para restaurantes. Centralize avaliações, organize feedbacks e fortaleça sua presença online.",
   "offers": {
     "@type": "Offer",
     "price": "97",
@@ -30,31 +30,33 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes</title>
+        <title>Avalia Pro — Gestão de Feedback para Restaurantes</title>
         <meta
           name="description"
-          content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google. Teste grátis por 7 dias."
+          content="Software B2B para centralizar feedback de clientes, organizar avaliações e fortalecer a reputação online do seu estabelecimento. Teste grátis por 7 dias."
         />
         <meta
           name="keywords"
-          content="avaliações google, reputação online, restaurante, reviews, gestão de reputação, qr code, feedback, avalia pro, gestão de avaliações"
+          content="gestão de feedback, reputação online, restaurante, avaliações, gestão de reputação, qr code, feedback, avalia pro, software b2b"
         />
-        <link rel="canonical" href="https://avaliapro.com.br" />
+        <link rel="canonical" href="https://avaliapro.online" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes" />
-        <meta property="og:description" content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google." />
-        <meta property="og:url" content="https://avaliapro.com.br" />
+        <meta property="og:title" content="Avalia Pro — Gestão de Feedback para Restaurantes" />
+        <meta property="og:description" content="Software B2B para centralizar feedback de clientes, organizar avaliações e fortalecer a reputação online." />
+        <meta property="og:url" content="https://avaliapro.online" />
         <meta property="og:site_name" content="Avalia Pro" />
         <meta property="og:locale" content="pt_BR" />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="https://avaliapro.online/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes" />
-        <meta name="twitter:description" content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google." />
-        <meta name="twitter:image" content="/og-image.png" />
+        <meta name="twitter:title" content="Avalia Pro — Gestão de Feedback para Restaurantes" />
+        <meta name="twitter:description" content="Software B2B para centralizar feedback de clientes e fortalecer sua reputação online." />
+        <meta name="twitter:image" content="https://avaliapro.online/og-image.png" />
         
         {/* Schema.org */}
         <script type="application/ld+json">

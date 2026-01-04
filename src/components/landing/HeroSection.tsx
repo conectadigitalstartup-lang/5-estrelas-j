@@ -31,14 +31,27 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Headline */}
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in">
-            Organize sua Reputação Online.{" "}
-            <span className="text-gradient-gold">Colete Mais Avaliações.</span>
+            Gestão de Feedback e Reputação{" "}
+            <span className="text-gradient-gold">para Restaurantes</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-primary-foreground/70 max-w-3xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Centralize feedbacks, responda clientes com IA e transforme elogios em conteúdo para redes sociais.
+          <p className="text-lg md:text-xl text-primary-foreground/70 max-w-3xl mx-auto mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            Centralize a experiência dos seus clientes, organize avaliações e fortaleça a presença online do seu estabelecimento.
           </p>
+
+          {/* Institutional Positioning Block */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10 animate-fade-in" style={{ animationDelay: "0.15s" }}>
+            <span className="inline-flex items-center gap-1.5 bg-primary-foreground/10 backdrop-blur px-3 py-1.5 rounded-full text-primary-foreground/80 text-sm">
+              🏢 Software B2B para restaurantes
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-primary-foreground/10 backdrop-blur px-3 py-1.5 rounded-full text-primary-foreground/80 text-sm">
+              ✅ Ferramenta profissional de gestão
+            </span>
+            <span className="inline-flex items-center gap-1.5 bg-primary-foreground/10 backdrop-blur px-3 py-1.5 rounded-full text-primary-foreground/80 text-sm border border-primary-foreground/20">
+              ❌ Não pagamos por avaliações
+            </span>
+          </div>
 
           {/* CTAs */}
           <div className="flex flex-col items-center gap-4 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
