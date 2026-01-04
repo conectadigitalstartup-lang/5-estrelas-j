@@ -631,7 +631,7 @@ const DashboardSettings = () => {
                             Restaurante não vinculado ao Google
                           </p>
                           <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                            Vincule seu restaurante para acompanhar sua evolução no Google e direcionar clientes satisfeitos para deixarem avaliações.
+                            Vincule seu restaurante para acompanhar sua evolução e oferecer a opção de avaliação pública aos clientes.
                           </p>
                         </div>
                       </div>

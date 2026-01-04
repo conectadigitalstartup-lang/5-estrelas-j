@@ -38,10 +38,10 @@ const plans = [
     popular: true,
     features: [
       { text: "1 Restaurante por assinatura", included: true },
-      { text: "Filtro de Avaliações Negativas", included: true },
-      { text: "Incentivo para Avaliações 5 Estrelas", included: true },
+      { text: "Canal de Feedback Interno Centralizado", included: true },
+      { text: "Convite para Avaliação Pública no Google", included: true },
       { text: "Dashboard de Métricas em Tempo Real", included: true },
-      { text: "Secretária Virtual com IA", included: true },
+      { text: "Assistente de IA para Respostas", included: true },
       { text: "Gerador de Posts para Instagram", included: true },
       { text: "QR Code Dinâmico", included: true },
       { text: "Notificações por E-mail", included: true },

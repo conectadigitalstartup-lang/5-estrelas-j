@@ -4,12 +4,12 @@ import { Check, Shield, ArrowRight, Star, Clock } from "lucide-react";
 
 const profissionalFeatures = [
   { emoji: "✅", text: "1 Restaurante por assinatura" },
-  { emoji: "🛡️", text: "Filtro de Avaliações Negativas (Blindagem de Reputação)" },
-  { emoji: "⭐", text: "Incentivo para Avaliações Positivas no Google" },
-  { emoji: "📊", text: "Dashboard de Métricas em Tempo Real (Gráficos de crescimento)" },
-  { emoji: "🤖", text: "Secretária Virtual com IA para responder reviews" },
+  { emoji: "📋", text: "Canal de Feedback Interno Centralizado" },
+  { emoji: "🌐", text: "Convite para Avaliação Pública no Google" },
+  { emoji: "📊", text: "Dashboard de Métricas em Tempo Real" },
+  { emoji: "🤖", text: "Assistente de IA para Respostas" },
   { emoji: "📸", text: "Gerador de Posts para Instagram com IA" },
-  { emoji: "📱", text: "QR Code Dinâmico para mesas e material de divulgação" },
+  { emoji: "📱", text: "QR Code Dinâmico para mesas" },
   { emoji: "📧", text: "Notificações de novos feedbacks por e-mail" },
   { emoji: "💬", text: "Suporte Prioritário via WhatsApp" },
 ];

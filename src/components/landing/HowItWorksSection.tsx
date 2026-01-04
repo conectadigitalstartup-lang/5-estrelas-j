@@ -11,8 +11,8 @@ const steps = [
   {
     number: "2",
     icon: Filter,
-    title: "O Filtro Inteligente Entra em Ação",
-    description: "Se o cliente está insatisfeito (nota 1-3), o feedback vem direto para você resolver internamente — longe do Google. Se está satisfeito (nota 4-5), ele é convidado a avaliar você publicamente no Google.",
+    title: "Colete Feedback de Forma Organizada",
+    description: "Os clientes compartilham sua experiência. Feedbacks internos vão para sua gestão, e clientes satisfeitos podem optar por compartilhar publicamente no Google.",
   },
   {
     number: "3",
