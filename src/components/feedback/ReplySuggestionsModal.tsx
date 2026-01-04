@@ -20,6 +20,12 @@ interface ReplySuggestionsModalProps {
     comment: string | null;
     rating: number;
   };
+  company?: {
+    name: string;
+    restaurant_type?: string | null;
+    current_google_rating?: number | null;
+    current_google_ratings_total?: number | null;
+  };
 }
 
 interface Suggestions {
@@ -46,7 +52,7 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestionsModalProps) => {
+const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplySuggestionsModalProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
@@ -97,13 +103,19 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     setOriginalSuggestions(null);
     setEditingKey(null);
 
-    console.log("Calling generate-reply-suggestions with:", { text: feedback.comment, rating: feedback.rating });
+    console.log("Calling generate-reply-suggestions with:", { text: feedback.comment, rating: feedback.rating, company });
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke("generate-reply-suggestions", {
         body: {
           text: feedback.comment,
           rating: feedback.rating,
+          company: company ? {
+            name: company.name,
+            restaurant_type: company.restaurant_type,
+            current_google_rating: company.current_google_rating,
+            current_google_ratings_total: company.current_google_ratings_total,
+          } : undefined,
         },
       });
 
