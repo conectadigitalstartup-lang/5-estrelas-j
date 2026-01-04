@@ -18,16 +18,11 @@ const schemaData = {
   "name": "Avalia Pro",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
-  "description": "Proteja seu restaurante de avaliações negativas e aumente sua nota no Google. Sistema inteligente de gestão de reputação online para restaurantes.",
+  "description": "Sistema de gestão de avaliações online para restaurantes. Centralize feedbacks, responda clientes e acompanhe sua reputação no Google.",
   "offers": {
     "@type": "Offer",
-    "price": "99",
+    "price": "97",
     "priceCurrency": "BRL"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "150"
   }
 };
 
@@ -35,21 +30,21 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Avalia Pro - Proteja Seu Restaurante de Avaliações Negativas</title>
+        <title>Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes</title>
         <meta
           name="description"
-          content="O Avalia Pro intercepta feedbacks negativos antes que virem críticas públicas e direciona clientes satisfeitos para avaliarem você no Google. Teste grátis por 7 dias."
+          content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google. Teste grátis por 7 dias."
         />
         <meta
           name="keywords"
-          content="avaliações google, reputação online, restaurante, reviews, gestão de reputação, qr code, feedback, avalia pro, proteger reputação"
+          content="avaliações google, reputação online, restaurante, reviews, gestão de reputação, qr code, feedback, avalia pro, gestão de avaliações"
         />
         <link rel="canonical" href="https://avaliapro.com.br" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Avalia Pro - Proteja Seu Restaurante de Avaliações Negativas" />
-        <meta property="og:description" content="O Avalia Pro intercepta feedbacks negativos antes que virem críticas públicas e direciona clientes satisfeitos para avaliarem você no Google." />
+        <meta property="og:title" content="Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes" />
+        <meta property="og:description" content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google." />
         <meta property="og:url" content="https://avaliapro.com.br" />
         <meta property="og:site_name" content="Avalia Pro" />
         <meta property="og:locale" content="pt_BR" />
@@ -57,8 +52,8 @@ const Index = () => {
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Avalia Pro - Proteja Seu Restaurante de Avaliações Negativas" />
-        <meta name="twitter:description" content="O Avalia Pro intercepta feedbacks negativos antes que virem críticas públicas e direciona clientes satisfeitos para avaliarem você no Google." />
+        <meta name="twitter:title" content="Avalia Pro - Sistema de Gestão de Avaliações para Restaurantes" />
+        <meta name="twitter:description" content="Centralize feedbacks dos clientes, responda avaliações com IA e acompanhe sua reputação no Google." />
         <meta name="twitter:image" content="/og-image.png" />
         
         {/* Schema.org */}

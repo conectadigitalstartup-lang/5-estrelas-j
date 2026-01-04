@@ -17,8 +17,8 @@ const steps = [
   {
     number: "3",
     icon: TrendingUp,
-    title: "Sua Nota Sobe, Seu Restaurante Enche",
-    description: "Com mais avaliações positivas e menos negativas públicas, sua nota no Google aumenta. Novos clientes te encontram e escolhem você.",
+    title: "Acompanhe sua Evolução",
+    description: "Visualize o volume de avaliações recebidas, identifique tendências e use os dados para melhorar sua operação continuamente.",
   },
 ];
 
@@ -31,7 +31,7 @@ const HowItWorksSection = () => {
             Como Funciona
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-            Como o Avalia Pro Protege e Aumenta Sua Reputação
+            Como o Avalia Pro Organiza Sua Reputação
           </h2>
           <p className="text-muted-foreground text-lg">
             Um sistema simples que trabalha 24 horas por você
