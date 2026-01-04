@@ -98,7 +98,7 @@ const Footer = () => {
             <div className="mt-6">
               <h5 className="font-medium text-primary-foreground/80 text-sm mb-3">Siga o Avalia Pro</h5>
               <a
-                href="https://instagram.com/avaliapro.app"
+                href="https://www.instagram.com/avaliapro.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram do AvaliaPro"

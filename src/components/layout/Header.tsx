@@ -90,7 +90,7 @@ const Header = () => {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <a
-              href="https://instagram.com/avaliapro.app"
+              href="https://www.instagram.com/avaliapro.app/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram do AvaliaPro"
@@ -151,7 +151,7 @@ const Header = () => {
                 Benefícios
               </button>
               <a
-                href="https://instagram.com/avaliapro.app"
+                href="https://www.instagram.com/avaliapro.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram do AvaliaPro"
