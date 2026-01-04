@@ -14,15 +14,15 @@ interface SubscriptionGuardProps {
  * Rules:
  * - Super Admin: ALWAYS has access
  * - Active subscription: ACCESS
- * - Trialing with valid trial: ACCESS  
- * - Canceled but in paid period: ACCESS (until period ends)
- * - Past Due / Unpaid / Expired: BLOCKED -> redirect to /assinatura-pendente
+ * - Trialing with valid trial (daysLeft > 0): ACCESS  
+ * - Trial expired (daysLeft <= 0): BLOCKED -> redirect to /assinatura-pendente
+ * - Past Due / Unpaid / Canceled: BLOCKED -> redirect to /assinatura-pendente
  */
 export const SubscriptionGuard = ({ 
   children, 
   requireActive = false 
 }: SubscriptionGuardProps) => {
-  const { status, isLoading, isSuperAdmin, subscribed, subscriptionEnd } = useSubscription();
+  const { status, isLoading, isSuperAdmin, subscribed, subscriptionEnd, daysLeft } = useSubscription();
 
   if (isLoading) {
     return (
@@ -42,8 +42,8 @@ export const SubscriptionGuard = ({
     return <>{children}</>;
   }
 
-  // Valid trial = ACCESS
-  if (status === "trial") {
+  // Valid trial = ACCESS only if daysLeft > 0
+  if (status === "trial" && daysLeft > 0) {
     return <>{children}</>;
   }
 
@@ -55,11 +55,7 @@ export const SubscriptionGuard = ({
     }
   }
 
-  // If we require active and status is inactive/past_due/canceled -> BLOCKED
-  if (requireActive || status === "inactive") {
-    return <Navigate to="/assinatura-pendente" replace />;
-  }
-
-  // Default: allow access (for pages that don't require active subscription)
-  return <>{children}</>;
+  // BLOCKED: Trial expired OR inactive/past_due/canceled
+  // Redirect to payment page - the ONLY option for expired users
+  return <Navigate to="/assinatura-pendente" replace />;
 };
