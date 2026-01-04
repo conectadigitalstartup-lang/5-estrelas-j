@@ -170,7 +170,7 @@ const Auth = () => {
     <>
       <Helmet>
         <title>{isSignUp ? "Criar Conta" : "Entrar"} - Avalia Pro</title>
-        <meta name="description" content="Acesse sua conta do Avalia Pro e gerencie a reputação do seu restaurante." />
+        <meta name="description" content="Acesse sua conta do Avalia Pro para gerenciar avaliações e feedbacks do seu restaurante." />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-muted/30 via-background to-muted/50 flex flex-col">
