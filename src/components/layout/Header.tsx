@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Instagram } from "lucide-react";
 import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Header = () => {
@@ -89,6 +89,15 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <a
+              href="https://instagram.com/avaliapro.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram do AvaliaPro"
+              className="text-muted-foreground hover:text-foreground transition-colors p-2"
+            >
+              <Instagram className="w-5 h-5" />
+            </a>
             <Button variant="ghost" asChild>
               <Link to="/auth">Entrar</Link>
             </Button>
@@ -141,6 +150,16 @@ const Header = () => {
               >
                 Benefícios
               </button>
+              <a
+                href="https://instagram.com/avaliapro.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram do AvaliaPro"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-3 px-3 rounded-lg ripple-btn touch-feedback"
+              >
+                <Instagram className="w-5 h-5" />
+                <span>@avaliapro.app</span>
+              </a>
               <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-border">
                 <Button variant="outline" className="ripple-btn" asChild>
                   <Link to="/auth">Entrar</Link>

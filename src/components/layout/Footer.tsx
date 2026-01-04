@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Shield, Lock, HeartHandshake } from "lucide-react";
+import { Mail, Phone, MapPin, Shield, Lock, HeartHandshake, Instagram } from "lucide-react";
 import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 const Footer = () => {
@@ -93,6 +93,21 @@ const Footer = () => {
                 São Paulo, SP - Brasil
               </li>
             </ul>
+            
+            {/* Redes Sociais */}
+            <div className="mt-6">
+              <h5 className="font-medium text-primary-foreground/80 text-sm mb-3">Siga o Avalia Pro</h5>
+              <a
+                href="https://instagram.com/avaliapro.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram do AvaliaPro"
+                className="inline-flex items-center gap-2 text-primary-foreground/60 hover:text-secondary transition-colors text-sm"
+              >
+                <Instagram className="w-4 h-4" />
+                @avaliapro.app
+              </a>
+            </div>
           </div>
         </div>
 
