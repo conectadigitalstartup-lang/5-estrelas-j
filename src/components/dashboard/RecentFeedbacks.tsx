@@ -64,11 +64,11 @@ const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
       <Card className="shadow-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-coral" />
+            <MessageSquare className="w-5 h-5 text-gold" />
             Feedbacks que precisam de atenção
           </CardTitle>
           {unreadCount > 0 && (
-            <Badge variant="secondary" className="bg-coral/10 text-coral">
+            <Badge variant="secondary" className="bg-gold/10 text-gold">
               {unreadCount} novo{unreadCount > 1 ? "s" : ""}
             </Badge>
           )}
@@ -93,7 +93,7 @@ const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
                   key={feedback.id}
                   className={cn(
                     "flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer",
-                    feedback.is_read ? "bg-muted/30" : "bg-muted/50 border-l-4 border-coral"
+                    feedback.is_read ? "bg-muted/30" : "bg-muted/50 border-l-4 border-gold"
                   )}
                   onClick={() => handleOpenFeedback(feedback)}
                 >
@@ -120,7 +120,7 @@ const RecentFeedbacks = ({ feedbacks, onMarkAsRead }: RecentFeedbacksProps) => {
               ))}
 
               {negativeFeedbacks.length > 5 && (
-                <Button variant="link" className="w-full text-coral">
+                <Button variant="link" className="w-full text-gold">
                   Ver todos os {negativeFeedbacks.length} feedbacks
                 </Button>
               )}

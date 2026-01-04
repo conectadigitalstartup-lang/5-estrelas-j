@@ -20,7 +20,7 @@ const MetricCard = ({
   label,
   sublabel,
   trend,
-  iconColor = "text-coral",
+  iconColor = "text-gold",
 }: MetricCardProps) => {
   return (
     <Card className="shadow-card hover:shadow-elevated transition-shadow duration-300">

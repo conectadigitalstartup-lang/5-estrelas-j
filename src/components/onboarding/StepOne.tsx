@@ -152,7 +152,7 @@ const StepOne = ({ data, onChange, onNext }: StepOneProps) => {
       <Button
         onClick={onNext}
         disabled={!isValid}
-        className="w-full bg-coral hover:bg-coral/90"
+        className="w-full bg-gold hover:bg-gold/90 text-primary"
         size="lg"
       >
         Próximo

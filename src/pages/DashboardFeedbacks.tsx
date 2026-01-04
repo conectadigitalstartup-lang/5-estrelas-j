@@ -612,7 +612,7 @@ const DashboardFeedbacks = () => {
                   Limpar Filtros
                 </Button>
               ) : (
-                <Button asChild className="bg-coral hover:bg-coral-dark">
+                <Button asChild className="bg-gold hover:bg-gold-dark text-primary">
                   <Link to="/dashboard/qr-code">
                     <QrCode className="w-4 h-4 mr-2" />
                     Ver Meu QR Code
@@ -628,7 +628,7 @@ const DashboardFeedbacks = () => {
                 key={feedback.id}
                 className={cn(
                   "transition-all hover:shadow-md cursor-pointer",
-                  !feedback.is_read && "border-l-4 border-l-coral bg-coral/5"
+                  !feedback.is_read && "border-l-4 border-l-gold bg-gold/5"
                 )}
                 onClick={() => handleOpenFeedback(feedback)}
               >
@@ -684,7 +684,7 @@ const DashboardFeedbacks = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => setPostGeneratorFeedback(feedback)}
-                          className="gap-1.5 border-coral/30 text-coral hover:bg-coral/10 hover:text-coral"
+                          className="gap-1.5 border-gold/30 text-gold hover:bg-gold/10 hover:text-gold"
                         >
                           <Share2 className="w-4 h-4" />
                           <span className="hidden sm:inline">Gerar Post</span>

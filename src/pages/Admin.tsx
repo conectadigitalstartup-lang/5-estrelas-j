@@ -287,14 +287,14 @@ const Admin = () => {
                   <CardTitle className="text-sm font-medium text-muted-foreground">
                     Taxa de Conversão
                   </CardTitle>
-                  <Percent className="h-5 w-5 text-coral" />
+                  <Percent className="h-5 w-5 text-gold" />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <Skeleton className="h-10 w-20" />
                   ) : (
                     <>
-                      <p className="text-3xl font-bold text-coral">
+                      <p className="text-3xl font-bold text-gold">
                         {conversionRate}%
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
@@ -491,7 +491,7 @@ const Admin = () => {
                   <CardTitle className="text-sm font-medium text-muted-foreground">
                     Total de Feedbacks
                   </CardTitle>
-                  <MessageSquare className="h-5 w-5 text-coral" />
+                  <MessageSquare className="h-5 w-5 text-gold" />
                 </CardHeader>
                 <CardContent>
                   {loading ? (

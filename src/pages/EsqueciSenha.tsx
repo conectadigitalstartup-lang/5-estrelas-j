@@ -142,7 +142,7 @@ const EsqueciSenha = () => {
                       Enviar novamente
                     </Button>
                     <div className="text-center">
-                      <Link to="/auth" className="text-coral font-medium hover:underline text-sm">
+                      <Link to="/auth" className="text-gold font-medium hover:underline text-sm">
                         Voltar ao login
                       </Link>
                     </div>
@@ -168,7 +168,7 @@ const EsqueciSenha = () => {
 
                     <Button
                       type="submit"
-                      className="w-full h-12 bg-coral hover:bg-coral/90 text-white font-semibold"
+                      className="w-full h-12 bg-gold hover:bg-gold/90 text-primary font-semibold"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -182,7 +182,7 @@ const EsqueciSenha = () => {
                     </Button>
 
                     <div className="text-center">
-                      <Link to="/auth" className="text-coral font-medium hover:underline text-sm">
+                      <Link to="/auth" className="text-gold font-medium hover:underline text-sm">
                         Voltar ao login
                       </Link>
                     </div>

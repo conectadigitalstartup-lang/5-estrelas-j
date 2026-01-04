@@ -488,7 +488,7 @@ const DashboardFoodPhotos = () => {
                   size="lg"
                   onClick={handleApplyMagic}
                   disabled={!originalImage || processing || (usage && usage.limit !== -1 && usage.remaining <= 0)}
-                  className="w-full bg-gradient-to-r from-primary to-coral hover:from-primary/90 hover:to-coral/90 text-white"
+                  className="w-full bg-gradient-to-r from-primary to-gold hover:from-primary/90 hover:to-gold/90 text-primary-foreground"
                 >
                   {processing ? (
                     <>
@@ -542,7 +542,7 @@ const DashboardFoodPhotos = () => {
                     <Button
                       size="lg"
                       onClick={handleDownload}
-                      className="flex-1 bg-gradient-to-r from-primary to-coral hover:from-primary/90 hover:to-coral/90"
+                      className="flex-1 bg-gradient-to-r from-primary to-gold hover:from-primary/90 hover:to-gold/90"
                     >
                       <Download className="w-5 h-5 mr-2" />
                       Baixar Foto em Alta Resolução

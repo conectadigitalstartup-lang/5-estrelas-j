@@ -218,7 +218,7 @@ const AtualizarSenha = () => {
 
                     <Button
                       type="submit"
-                      className="w-full h-12 bg-coral hover:bg-coral/90 text-white font-semibold"
+                      className="w-full h-12 bg-gold hover:bg-gold/90 text-primary font-semibold"
                       disabled={isLoading}
                     >
                       {isLoading ? (

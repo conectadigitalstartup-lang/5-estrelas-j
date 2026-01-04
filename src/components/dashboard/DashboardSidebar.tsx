@@ -112,7 +112,7 @@ const DashboardSidebar = ({ collapsed, onToggle }: DashboardSidebarProps) => {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-r-lg transition-all duration-200 relative",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-foreground border-l-[3px] border-coral"
+                  ? "bg-sidebar-accent text-sidebar-foreground border-l-[3px] border-gold"
                   : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               )}
             >

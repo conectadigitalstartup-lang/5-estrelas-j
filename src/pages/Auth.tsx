@@ -260,7 +260,7 @@ const Auth = () => {
                       )}
                     </div>
 
-                    <Button type="submit" className="w-full h-12 bg-coral hover:bg-coral/90 text-white font-semibold" disabled={isLoading}>
+                    <Button type="submit" className="w-full h-12 bg-gold hover:bg-gold/90 text-primary font-semibold" disabled={isLoading}>
                       {isLoading ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -403,13 +403,13 @@ const Auth = () => {
                         Concordo com os{" "}
                         <a href="#" className="text-coral hover:underline">Termos de Serviço</a>
                         {" "}e{" "}
-                        <a href="#" className="text-coral hover:underline">Política de Privacidade</a>
+                        <a href="#" className="text-gold hover:underline">Política de Privacidade</a>
                       </label>
                     </div>
 
                     <Button 
                       type="submit" 
-                      className="w-full h-12 bg-coral hover:bg-coral/90 text-white font-semibold" 
+                      className="w-full h-12 bg-gold hover:bg-gold/90 text-primary font-semibold" 
                       disabled={isLoading || !acceptedTerms}
                     >
                       {isLoading ? (

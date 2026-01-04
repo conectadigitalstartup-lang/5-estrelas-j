@@ -20,7 +20,7 @@ const SuccessScreen = ({ onComplete }: SuccessScreenProps) => {
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#E94560", "#1A1A2E", "#10B981"],
+      colors: ["#D4AF37", "#1A1A2E", "#10B981"],
     });
 
     // Redirect after 2 seconds

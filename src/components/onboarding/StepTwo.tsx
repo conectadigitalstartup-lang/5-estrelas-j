@@ -104,7 +104,7 @@ const StepTwo = ({ logoUrl, onChange, onNext, onBack }: StepTwoProps) => {
             <img
               src={logoUrl}
               alt="Logo preview"
-              className="w-32 h-32 rounded-full object-cover border-4 border-coral/20"
+              className="w-32 h-32 rounded-full object-cover border-4 border-gold/20"
             />
             <button
               onClick={removeLogo}

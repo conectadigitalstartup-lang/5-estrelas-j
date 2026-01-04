@@ -1022,7 +1022,7 @@ const DashboardQRCode = () => {
                   <Button
                     variant="link"
                     asChild
-                    className="mt-2 p-0 h-auto text-coral"
+                    className="mt-2 p-0 h-auto text-gold"
                   >
                     <a href={evaluationUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-3 h-3 mr-1" />
@@ -1054,7 +1054,7 @@ const DashboardQRCode = () => {
                 </PaywallButton>
                 <PaywallButton
                   onClick={downloadMaterialPDF}
-                  className="w-full justify-start bg-coral hover:bg-coral-dark"
+                  className="w-full justify-start bg-gold hover:bg-gold-dark text-primary"
                   disabled={!company || !!downloading}
                   featureName="baixar material premium"
                 >
@@ -1085,7 +1085,7 @@ const DashboardQRCode = () => {
                     disabled={!company || !!downloading}
                     featureName="baixar material de impressão"
                   >
-                    <format.icon className="w-5 h-5 mr-3 flex-shrink-0 text-coral" />
+                    <format.icon className="w-5 h-5 mr-3 flex-shrink-0 text-gold" />
                     <div className="flex flex-col items-start text-left">
                       <span className="font-medium">
                         {downloading === format.id ? "Gerando..." : format.name}
