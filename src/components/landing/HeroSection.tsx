@@ -31,13 +31,13 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Headline */}
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in">
-            Aumente sua Nota no Google.{" "}
-            <span className="text-gradient-gold">Encha seu Restaurante.</span>
+            Organize sua Reputação Online.{" "}
+            <span className="text-gradient-gold">Colete Mais Avaliações.</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-primary-foreground/70 max-w-3xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Proteja sua reputação de críticas negativas, responda clientes em segundos com IA e transforme elogios em posts de Instagram automaticamente.
+            Centralize feedbacks, responda clientes com IA e transforme elogios em conteúdo para redes sociais.
           </p>
 
           {/* CTAs */}

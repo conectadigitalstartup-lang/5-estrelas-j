@@ -25,12 +25,12 @@ const CTASection = () => {
         <div className="max-w-3xl mx-auto text-center">
           {/* Headline */}
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-            Sua Reputação Não Pode Esperar
+            Comece a Organizar Sua Reputação Hoje
           </h2>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-primary-foreground/70 max-w-2xl mx-auto mb-10">
-            Enquanto você lê isso, clientes estão pesquisando restaurantes no Google. O que eles vão encontrar sobre o seu?
+            Clientes pesquisam restaurantes no Google todos os dias. Tenha as ferramentas certas para gerenciar o que eles encontram sobre você.
           </p>
 
           {/* CTA Button */}
@@ -40,7 +40,7 @@ const CTASection = () => {
             asChild
           >
             <Link to="/cadastro">
-              Proteger Meu Restaurante Agora
+              Começar Gestão de Avaliações
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>

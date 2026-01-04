@@ -20,7 +20,7 @@ const Footer = () => {
               <span className="font-display font-bold text-primary-foreground text-xl">Avalia Pro</span>
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
-              O filtro inteligente que transforma clientes satisfeitos em reviews no Google e protege sua reputação.
+              Sistema de gestão de avaliações online para restaurantes, bares e cafeterias.
             </p>
           </div>
 

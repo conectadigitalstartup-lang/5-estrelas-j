@@ -54,9 +54,9 @@ const sliderExamples = [
 const benefits = [
   {
     icon: Shield,
-    title: "Filtro de Críticas Inteligente",
+    title: "Triagem Inteligente de Feedbacks",
     description:
-      "Interceptamos avaliações negativas antes que cheguem ao Google. Resolva problemas internamente e receba apenas os elogios publicamente.",
+      "Clientes insatisfeitos enviam feedback diretamente para você resolver. Clientes satisfeitos são convidados a avaliar no Google.",
     highlight: "O Core",
   },
   {
@@ -86,7 +86,7 @@ const BenefitsSection = () => {
               Funcionalidades com IA
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-              Tudo o Que Você Precisa Para Dominar Sua Reputação
+              Ferramentas Inteligentes Para Gestão de Avaliações
             </h2>
             <p className="text-muted-foreground">
               Ferramentas inteligentes que trabalham por você 24 horas por dia

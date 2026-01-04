@@ -6,7 +6,7 @@ const testimonials = [
     role: "Pizzaria em São Paulo",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     content:
-      "Em 2 meses, minha nota subiu de 4.1 para 4.6. E o melhor: consegui resolver 3 reclamações internamente que teriam virado bomba no Google.",
+      "O sistema me ajuda a coletar mais feedbacks e resolver problemas antes que virem críticas públicas. Finalmente tenho controle sobre minha reputação.",
     rating: 5,
   },
   {
@@ -14,7 +14,7 @@ const testimonials = [
     role: "Restaurante no Rio de Janeiro",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
     content:
-      "O gerador de posts é incrível. Toda semana posto um elogio real de cliente. Meu Instagram nunca teve tanto engajamento.",
+      "O gerador de posts é prático demais. Transformo elogios reais em conteúdo pro Instagram sem perder tempo criando do zero.",
     rating: 5,
   },
   {
@@ -22,7 +22,7 @@ const testimonials = [
     role: "Hamburgueria em Belo Horizonte",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     content:
-      "Simples de usar e funciona. Coloquei o QR Code nas mesas e esqueci. Os feedbacks chegam e minha nota só sobe.",
+      "Simples de usar. Coloquei o QR Code nas mesas e agora consigo acompanhar os feedbacks em tempo real e responder rapidamente.",
     rating: 5,
   },
 ];
