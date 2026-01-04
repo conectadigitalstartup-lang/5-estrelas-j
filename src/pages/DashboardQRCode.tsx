@@ -137,44 +137,71 @@ const DashboardQRCode = () => {
     }
   };
 
-  // Helper to create circular clipped logo for PDF
+  // Helper to create circular clipped logo for PDF - using fetch for better CORS handling
   const createCircularLogoDataUrl = async (logoUrl: string): Promise<string | null> => {
     try {
-      const img = new window.Image();
-      img.crossOrigin = "anonymous";
+      // For local assets (imported), use directly
+      if (logoUrl.startsWith('data:') || logoUrl.startsWith('/')) {
+        return loadImageDirectly(logoUrl);
+      }
+
+      // For remote URLs, fetch as blob first to avoid CORS issues
+      const response = await fetch(logoUrl, { mode: 'cors' });
+      if (!response.ok) {
+        console.error("Failed to fetch logo:", response.status);
+        return null;
+      }
       
-      return new Promise((resolve) => {
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const size = 200; // High res
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          
-          if (ctx) {
-            // Create circular clipping path
-            ctx.beginPath();
-            ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-            ctx.closePath();
-            ctx.clip();
-            
-            // Draw image centered and scaled to fit
-            const scale = Math.max(size / img.width, size / img.height);
-            const x = (size - img.width * scale) / 2;
-            const y = (size - img.height * scale) / 2;
-            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-            
-            resolve(canvas.toDataURL("image/png"));
-          } else {
-            resolve(null);
-          }
-        };
-        img.onerror = () => resolve(null);
-        img.src = logoUrl;
-      });
-    } catch {
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const result = await loadImageDirectly(blobUrl);
+      URL.revokeObjectURL(blobUrl);
+      return result;
+    } catch (error) {
+      console.error("Error loading logo:", error);
       return null;
     }
+  };
+
+  // Helper to load image and create circular clip
+  const loadImageDirectly = (src: string): Promise<string | null> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const size = 200; // High res
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        
+        if (ctx) {
+          // Create circular clipping path
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          
+          // Draw image centered and scaled to fit
+          const scale = Math.max(size / img.width, size / img.height);
+          const x = (size - img.width * scale) / 2;
+          const y = (size - img.height * scale) / 2;
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+          
+          resolve(canvas.toDataURL("image/png"));
+        } else {
+          resolve(null);
+        }
+      };
+      
+      img.onerror = () => {
+        console.error("Image load error for:", src.substring(0, 50));
+        resolve(null);
+      };
+      
+      img.src = src;
+    });
   };
 
   const downloadMaterialPDF = async () => {

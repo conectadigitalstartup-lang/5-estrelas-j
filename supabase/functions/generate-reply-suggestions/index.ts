@@ -22,51 +22,38 @@ serve(async (req) => {
       throw new Error("Missing required parameters: text and rating");
     }
 
-    // Build company context if available
-    let companyContext = "";
-    if (company) {
-      const parts = [];
-      if (company.name) {
-        parts.push(`Nome do estabelecimento: "${company.name}"`);
-      }
-      if (company.restaurant_type) {
-        parts.push(`Tipo de negócio: ${company.restaurant_type}`);
-      }
-      if (company.current_google_rating) {
-        parts.push(`Nota atual no Google: ${company.current_google_rating}/5`);
-      }
-      if (company.current_google_ratings_total) {
-        parts.push(`Total de avaliações no Google: ${company.current_google_ratings_total}`);
-      }
-      if (parts.length > 0) {
-        companyContext = `\n\n**DADOS DO ESTABELECIMENTO:**\n${parts.join("\n")}`;
-      }
-    }
+    // Get the exact company name to use in responses
+    const companyName = company?.name || "nosso estabelecimento";
 
-    const systemPrompt = `**PERSONA:** Você é um especialista em atendimento ao cliente para pequenos negócios de alimentação (restaurantes, docerias, bares, cafeterias, padarias). Sua linguagem é amigável, acolhedora e profissional, sempre em português do Brasil.${companyContext}
+    const systemPrompt = `**PERSONA:** Você é um especialista em atendimento ao cliente para pequenos negócios de alimentação. Sua linguagem é amigável, acolhedora e profissional, sempre em português do Brasil.
+
+**DADOS DO ESTABELECIMENTO:**
+- Nome oficial: "${companyName}" (USE ESTE NOME EXATO nas respostas)${company?.restaurant_type ? `\n- Tipo de negócio: ${company.restaurant_type}` : ''}${company?.current_google_rating ? `\n- Nota atual no Google: ${company.current_google_rating}/5` : ''}${company?.current_google_ratings_total ? `\n- Total de avaliações no Google: ${company.current_google_ratings_total}` : ''}
 
 **CONTEXTO DO FEEDBACK:** 
 - Nota da avaliação: **${rating}** de 5 estrelas
 - Comentário do cliente: "${text}"
 
-**TAREFA:** Gere 3 opções de resposta personalizadas para o dono do negócio responder a este cliente. As respostas devem:
-- Ser curtas, diretas e apropriadas para o tom do feedback
-- Mencionar o nome do estabelecimento quando apropriado para personalizar
-- Considerar o tipo de negócio para sugerir produtos/experiências relevantes
+**TAREFA:** Gere 3 opções de resposta personalizadas para o dono do negócio responder a este cliente. 
 
-**REGRAS PARA AS RESPOSTAS:**
-- **Nota 4 ou 5 (positiva):** Agradeça com entusiasmo, celebre o elogio específico mencionado e convide para voltar. Se o cliente elogiou algo específico (um prato, o atendimento), mencione isso na resposta.
-- **Nota 3 (neutra):** Agradeça pelo feedback honesto, mostre que a opinião é valorizada para melhorar continuamente.
-- **Nota 1 ou 2 (negativa):** Peça desculpas sinceramente pela experiência negativa, mostre empatia genuína, ofereça resolver a situação e convide para uma nova chance. NUNCA seja defensivo.
+**REGRAS OBRIGATÓRIAS:**
+1. SEMPRE use o nome "${companyName}" quando mencionar o estabelecimento (não use "nosso restaurante" ou genéricos)
+2. As respostas devem ser curtas, diretas e apropriadas para o tom do feedback
+3. Considere o tipo de negócio para sugerir produtos/experiências relevantes
+
+**REGRAS POR NOTA:**
+- **Nota 4 ou 5 (positiva):** Agradeça com entusiasmo, celebre o elogio específico e convide para voltar ao ${companyName}.
+- **Nota 3 (neutra):** Agradeça pelo feedback honesto, mostre que o ${companyName} valoriza opiniões para melhorar.
+- **Nota 1 ou 2 (negativa):** Peça desculpas em nome do ${companyName}, mostre empatia genuína e convide para uma nova chance. NUNCA seja defensivo.
 
 **Gere exatamente 3 opções com tons distintos:**
 1. **Amigável e Curta:** Resposta rápida, informal, calorosa (2-3 linhas).
 2. **Profissional e Agradecida:** Resposta mais formal, agradecendo pelo tempo e opinião (3-4 linhas).
-3. **Vendedora e Convidativa:** Resposta que, além de agradecer/pedir desculpas, incentiva uma próxima visita ou sugere experimentar outro produto/serviço (3-4 linhas).
+3. **Vendedora e Convidativa:** Resposta que incentiva uma próxima visita ao ${companyName} ou sugere experimentar outro produto/serviço (3-4 linhas).
 
 **FORMATO DA SAÍDA:** Retorne APENAS um objeto JSON válido com as chaves: "amigavel", "profissional", "vendedora". Sem texto antes ou depois do JSON.`;
 
-    console.log("Generating reply suggestions for rating:", rating, "company:", company?.name);
+    console.log("Generating reply suggestions for rating:", rating, "company:", companyName);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -78,7 +65,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Gere as 3 sugestões de resposta personalizadas para o feedback acima. Retorne apenas o JSON.` }
+          { role: "user", content: `Gere as 3 sugestões de resposta personalizadas para o feedback acima. Use o nome "${companyName}" nas respostas. Retorne apenas o JSON.` }
         ],
       }),
     });
