@@ -28,8 +28,11 @@ const Avaliar = () => {
   const [step, setStep] = useState<Step>("rating");
   const [comment, setComment] = useState("");
   const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [promoterComment, setPromoterComment] = useState("");
+  const [promoterName, setPromoterName] = useState("");
+  const [promoterPhone, setPromoterPhone] = useState("");
 
   useEffect(() => {
     const fetchCompanyAndCheckAccess = async () => {
@@ -124,6 +127,7 @@ const Avaliar = () => {
         rating,
         comment: comment.trim() || null,
         client_name: clientName.trim() || null,
+        client_phone: clientPhone.trim() || null,
       });
 
       if (error) {
@@ -147,7 +151,8 @@ const Avaliar = () => {
         company_id: company.id,
         rating,
         comment: promoterComment.trim() || null,
-        client_name: clientName.trim() || null,
+        client_name: promoterName.trim() || null,
+        client_phone: promoterPhone.trim() || null,
       }).then(() => {
         // Fire and forget
       });
@@ -319,9 +324,31 @@ const Avaliar = () => {
                 value={promoterComment}
                 onChange={(e) => setPromoterComment(e.target.value)}
                 placeholder="Escreva seu elogio aqui (opcional - será copiado automaticamente)"
-                className="min-h-[100px] resize-none"
+                className="min-h-[80px] resize-none"
                 maxLength={500}
               />
+
+              {/* Optional contact fields for promoters */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    value={promoterName}
+                    onChange={(e) => setPromoterName(e.target.value)}
+                    placeholder="Seu primeiro nome"
+                    maxLength={50}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">(opcional)</p>
+                </div>
+                <div>
+                  <Input
+                    value={promoterPhone}
+                    onChange={(e) => setPromoterPhone(e.target.value)}
+                    placeholder="Seu WhatsApp"
+                    maxLength={20}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">(opcional)</p>
+                </div>
+              </div>
 
               {company.google_review_link && (
                 <a
@@ -377,15 +404,21 @@ const Avaliar = () => {
                 maxLength={1000}
               />
 
-              <Input
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                placeholder="Como podemos te chamar?"
-                maxLength={100}
-              />
-              <p className="text-xs text-muted-foreground -mt-4">
-                Seu nome (opcional)
-              </p>
+              {/* Contact fields */}
+              <div className="space-y-3">
+                <Input
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="Seu primeiro nome (opcional)"
+                  maxLength={50}
+                />
+                <Input
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder="Seu WhatsApp (opcional)"
+                  maxLength={20}
+                />
+              </div>
 
               <Button
                 onClick={handleSubmitFeedback}

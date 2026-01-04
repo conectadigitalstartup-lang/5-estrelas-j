@@ -170,6 +170,7 @@ export type Database = {
       feedbacks: {
         Row: {
           client_name: string | null
+          client_phone: string | null
           comment: string | null
           company_id: string
           created_at: string
@@ -181,6 +182,7 @@ export type Database = {
         }
         Insert: {
           client_name?: string | null
+          client_phone?: string | null
           comment?: string | null
           company_id: string
           created_at?: string
@@ -192,6 +194,7 @@ export type Database = {
         }
         Update: {
           client_name?: string | null
+          client_phone?: string | null
           comment?: string | null
           company_id?: string
           created_at?: string

@@ -79,6 +79,7 @@ interface Feedback {
   customer_email: string | null;
   is_read: boolean;
   client_name?: string | null;
+  client_phone?: string | null;
 }
 
 interface Stats {
@@ -870,6 +871,7 @@ const DashboardFeedbacks = () => {
               comment: postGeneratorFeedback.comment,
               rating: postGeneratorFeedback.rating,
               client_name: postGeneratorFeedback.client_name || postGeneratorFeedback.customer_name,
+              created_at: postGeneratorFeedback.created_at,
             }}
             company={companyData}
           />

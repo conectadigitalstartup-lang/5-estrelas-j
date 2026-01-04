@@ -27,6 +27,7 @@ const DashboardSettings = lazy(() => import("./pages/DashboardSettings"));
 const DashboardUpgrade = lazy(() => import("./pages/DashboardUpgrade"));
 const DashboardSupport = lazy(() => import("./pages/DashboardSupport"));
 const DashboardFoodPhotos = lazy(() => import("./pages/DashboardFoodPhotos"));
+const DashboardClientes = lazy(() => import("./pages/DashboardClientes"));
 const Avaliar = lazy(() => import("./pages/Avaliar"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AssinaturaPendente = lazy(() => import("./pages/AssinaturaPendente"));
@@ -105,6 +106,13 @@ const App = () => (
                   <ProtectedRoute>
                     <SubscriptionGuard requireActive>
                       <DashboardFoodPhotos />
+                    </SubscriptionGuard>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/clientes" element={
+                  <ProtectedRoute>
+                    <SubscriptionGuard requireActive>
+                      <DashboardClientes />
                     </SubscriptionGuard>
                   </ProtectedRoute>
                 } />

@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { toPng } from "html-to-image";
-import { Star, Download, Copy, Check } from "lucide-react";
+import { Star, Download, Copy, Check, Shield } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
 
 interface PostGeneratorModalProps {
   open: boolean;
@@ -20,6 +23,7 @@ interface PostGeneratorModalProps {
     comment: string | null;
     rating: number;
     client_name?: string | null;
+    created_at?: string;
   };
   company: {
     name: string;
@@ -27,7 +31,7 @@ interface PostGeneratorModalProps {
   };
 }
 
-type TemplateType = "dark" | "light" | "vibrant";
+type TemplateType = "dark" | "light" | "vibrant" | "clean";
 
 const PostGeneratorModal = ({
   open,
@@ -44,11 +48,14 @@ const PostGeneratorModal = ({
   const [downloading, setDownloading] = useState(false);
 
   const feedbackText = feedback.comment || "Excelente experiência!";
+  const feedbackDate = feedback.created_at 
+    ? format(new Date(feedback.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+    : format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
   // Truncate long text for the post
   const displayText =
-    feedbackText.length > 200
-      ? feedbackText.substring(0, 197) + "..."
+    feedbackText.length > 180
+      ? feedbackText.substring(0, 177) + "..."
       : feedbackText;
 
   // Format client name for display
@@ -94,7 +101,7 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
 
 📍 ${company.name}
 
-#AvaliacaoReal #ClienteFeliz #Restaurante #Gastronomia`;
+#AvaliacaoReal #ClienteFeliz #Restaurante #Gastronomia #AvaliacaoVerificada`;
 
     try {
       await navigator.clipboard.writeText(caption);
@@ -116,6 +123,9 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
       nameColor: string;
       starColor: string;
       containerClass: string;
+      dateColor: string;
+      badgeBackground: string;
+      badgeTextColor: string;
     }
   > = {
     dark: {
@@ -124,6 +134,9 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
       nameColor: "#D4AF37",
       starColor: "#D4AF37",
       containerClass: "",
+      dateColor: "rgba(255,255,255,0.5)",
+      badgeBackground: "rgba(255,255,255,0.1)",
+      badgeTextColor: "rgba(255,255,255,0.7)",
     },
     light: {
       background: "#FAFAFA",
@@ -131,6 +144,9 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
       nameColor: "#666666",
       starColor: "#D4AF37",
       containerClass: "border-2 border-[#D4AF37]",
+      dateColor: "rgba(0,0,0,0.4)",
+      badgeBackground: "rgba(0,0,0,0.05)",
+      badgeTextColor: "rgba(0,0,0,0.5)",
     },
     vibrant: {
       background: "linear-gradient(135deg, #FF6B35 0%, #F72585 100%)",
@@ -138,6 +154,19 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
       nameColor: "rgba(255,255,255,0.8)",
       starColor: "#FFFFFF",
       containerClass: "",
+      dateColor: "rgba(255,255,255,0.6)",
+      badgeBackground: "rgba(255,255,255,0.2)",
+      badgeTextColor: "rgba(255,255,255,0.9)",
+    },
+    clean: {
+      background: "#f5f5f5",
+      textColor: "#111827",
+      nameColor: "#4f46e5",
+      starColor: "#D4AF37",
+      containerClass: "",
+      dateColor: "rgba(0,0,0,0.4)",
+      badgeBackground: "rgba(79,70,229,0.1)",
+      badgeTextColor: "#4f46e5",
     },
   };
 
@@ -159,6 +188,14 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
               className={`w-[400px] h-[400px] relative overflow-hidden ${currentStyle.containerClass}`}
               style={{ background: currentStyle.background }}
             >
+              {/* Date/Time at top right */}
+              <div 
+                className="absolute top-4 right-4 text-xs"
+                style={{ color: currentStyle.dateColor }}
+              >
+                {feedbackDate}
+              </div>
+
               {/* Stars at top */}
               <div className="absolute top-6 left-0 right-0 flex justify-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -171,7 +208,7 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
               </div>
 
               {/* Feedback text */}
-              <div className="absolute inset-0 flex items-center justify-center px-8">
+              <div className="absolute inset-0 flex items-center justify-center px-8 pt-8">
                 <div className="text-center">
                   <p
                     className="text-lg leading-relaxed font-serif"
@@ -180,12 +217,30 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
                     "{displayText}"
                   </p>
                   <p
-                    className="mt-4 text-sm"
+                    className="mt-4 text-sm font-medium"
                     style={{ color: currentStyle.nameColor }}
                   >
                     — {formatClientName(clientName)}
                   </p>
                 </div>
+              </div>
+
+              {/* Avalia Pro verification badge at bottom left */}
+              <div 
+                className="absolute bottom-4 left-4 flex items-center gap-2 px-2 py-1 rounded-md"
+                style={{ background: currentStyle.badgeBackground }}
+              >
+                <img 
+                  src={avaliaProShield} 
+                  alt="Avalia Pro" 
+                  className="w-5 h-5 rounded-full object-cover"
+                />
+                <span 
+                  className="text-[9px] font-medium"
+                  style={{ color: currentStyle.badgeTextColor }}
+                >
+                  Avaliação Verificada
+                </span>
               </div>
 
               {/* Logo at bottom right */}
@@ -220,7 +275,7 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
               <RadioGroup
                 value={template}
                 onValueChange={(v) => setTemplate(v as TemplateType)}
-                className="grid grid-cols-3 gap-3"
+                className="grid grid-cols-2 gap-3"
               >
                 <div>
                   <RadioGroupItem value="dark" id="dark" className="peer sr-only" />
@@ -258,6 +313,19 @@ Obrigado, ${formatClientName(clientName)}, pelo carinho! Feedbacks como esse nos
                       style={{ background: "linear-gradient(135deg, #FF6B35 0%, #F72585 100%)" }}
                     />
                     <span className="text-xs">Vibrante</span>
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="clean" id="clean" className="peer sr-only" />
+                  <Label
+                    htmlFor="clean"
+                    className="flex flex-col items-center gap-2 p-3 border rounded-lg cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded bg-[#f5f5f5] flex items-center justify-center">
+                      <Star className="w-5 h-5 text-[#4f46e5]" fill="#D4AF37" />
+                    </div>
+                    <span className="text-xs">Clean & Bright</span>
                   </Label>
                 </div>
               </RadioGroup>
