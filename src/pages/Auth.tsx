@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Mail, Lock, Eye, EyeOff, User, Building2 } from "lucide-react";
 import avaliaProShield from "@/assets/avalia-pro-shield.jpg";
+import DiagnosticChecklist from "@/components/auth/DiagnosticChecklist";
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Email inválido" }),
@@ -436,6 +437,9 @@ const Auth = () => {
                     </p>
                   </form>
                 )}
+
+                {/* Diagnóstico de suporte */}
+                <DiagnosticChecklist />
               </CardContent>
             </Card>
           </div>
