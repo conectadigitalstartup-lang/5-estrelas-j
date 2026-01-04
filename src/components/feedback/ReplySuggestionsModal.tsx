@@ -64,6 +64,22 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     }
   }, [suggestions]);
 
+  // Trigger generation when modal opens
+  useEffect(() => {
+    if (open && !loading && !suggestions && !error) {
+      console.log("Modal opened, triggering generation...");
+      generateSuggestions();
+    }
+    // Reset when modal closes
+    if (!open) {
+      setSuggestions(null);
+      setEditedSuggestions(null);
+      setOriginalSuggestions(null);
+      setError(null);
+      setEditingKey(null);
+    }
+  }, [open]);
+
   const generateSuggestions = async () => {
     if (!feedback.comment) {
       toast({
@@ -81,6 +97,8 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     setOriginalSuggestions(null);
     setEditingKey(null);
 
+    console.log("Calling generate-reply-suggestions with:", { text: feedback.comment, rating: feedback.rating });
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke("generate-reply-suggestions", {
         body: {
@@ -89,16 +107,20 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
         },
       });
 
+      console.log("Response from edge function:", { data, fnError });
+
       if (fnError) {
         throw new Error(fnError.message);
       }
 
-      if (data.error) {
+      if (data?.error) {
         throw new Error(data.error);
       }
 
-      if (data.suggestions) {
+      if (data?.suggestions) {
         setSuggestions(data.suggestions);
+      } else {
+        throw new Error("Resposta inválida da IA");
       }
     } catch (err) {
       console.error("Error generating suggestions:", err);
@@ -147,21 +169,6 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
     return editedSuggestions && originalSuggestions && editedSuggestions[key] !== originalSuggestions[key];
   };
 
-  // Trigger generation when modal opens
-  const handleOpenChange = (isOpen: boolean) => {
-    if (isOpen && !suggestions && !loading) {
-      generateSuggestions();
-    }
-    if (!isOpen) {
-      setSuggestions(null);
-      setEditedSuggestions(null);
-      setOriginalSuggestions(null);
-      setError(null);
-      setEditingKey(null);
-    }
-    onOpenChange(isOpen);
-  };
-
   const suggestionCards = [
     {
       key: "amigavel" as const,
@@ -187,7 +194,7 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback }: ReplySuggestion
   ];
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
