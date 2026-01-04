@@ -1,5 +1,5 @@
 import { QrCode, Filter, TrendingUp } from "lucide-react";
-import qrScanScene from "@/assets/qr-scan-scene.jpg";
+import qrScanScene from "@/assets/qr-scan-scene.png";
 
 const steps = [
   {
