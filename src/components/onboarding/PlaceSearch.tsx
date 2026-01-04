@@ -187,7 +187,7 @@ const PlaceSearch = ({ onSelect, selectedPlace, restaurantName }: PlaceSearchPro
   return (
     <div ref={containerRef} className="space-y-4">
       {/* Busca por nome */}
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <label className="block text-sm font-medium text-foreground">
           Buscar seu Estabelecimento no Google
         </label>
@@ -208,7 +208,7 @@ const PlaceSearch = ({ onSelect, selectedPlace, restaurantName }: PlaceSearchPro
 
         {/* Dropdown de resultados */}
         {isOpen && results.length > 0 && (
-          <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden" style={{ maxWidth: 'calc(100% - 2rem)' }}>
+          <div className="z-50 w-full bg-card border border-border rounded-lg shadow-lg overflow-hidden">
             <ul className="max-h-80 overflow-y-auto divide-y divide-border">
               {results.map((place) => (
                 <li key={place.place_id}>
