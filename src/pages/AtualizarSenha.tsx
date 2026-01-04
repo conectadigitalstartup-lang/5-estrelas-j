@@ -153,7 +153,7 @@ const AtualizarSenha = () => {
               <CardContent className="pt-4">
                 {success ? (
                   <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-6 h-6 animate-spin text-coral" />
+                    <Loader2 className="w-6 h-6 animate-spin text-gold" />
                   </div>
                 ) : (
                   <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">

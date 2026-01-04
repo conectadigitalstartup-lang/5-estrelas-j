@@ -125,8 +125,8 @@ const StepTwo = ({ logoUrl, onChange, onNext, onBack }: StepTwoProps) => {
           className={cn(
             "flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200",
             isDragging
-              ? "border-coral bg-coral/5"
-              : "border-border bg-muted/30 hover:border-coral/50 hover:bg-muted/50"
+              ? "border-gold bg-gold/5"
+              : "border-border bg-muted/30 hover:border-gold/50 hover:bg-muted/50"
           )}
         >
           <input
@@ -138,7 +138,7 @@ const StepTwo = ({ logoUrl, onChange, onNext, onBack }: StepTwoProps) => {
           />
           
           {isUploading ? (
-            <Loader2 className="w-12 h-12 text-coral animate-spin" />
+            <Loader2 className="w-12 h-12 text-gold animate-spin" />
           ) : (
             <Upload className="w-12 h-12 text-muted-foreground" />
           )}
@@ -165,7 +165,7 @@ const StepTwo = ({ logoUrl, onChange, onNext, onBack }: StepTwoProps) => {
         </Button>
         <Button
           onClick={onNext}
-          className="flex-1 bg-coral hover:bg-coral/90"
+          className="flex-1 bg-gold hover:bg-gold/90 text-primary"
           size="lg"
         >
           {logoUrl ? "Próximo" : "Pular"}

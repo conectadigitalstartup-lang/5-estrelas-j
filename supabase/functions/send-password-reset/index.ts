@@ -44,8 +44,8 @@ const handler = async (req: Request): Promise<Response> => {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <div style="width: 56px; height: 56px; background-color: #E94560; border-radius: 12px; display: inline-block; line-height: 56px;">
-                      <span style="font-size: 32px; color: #ffffff;">★</span>
+                    <div style="width: 56px; height: 56px; background-color: #D4AF37; border-radius: 12px; display: inline-block; line-height: 56px;">
+                      <span style="font-size: 32px; color: #1A1A2E;">★</span>
                     </div>
                   </td>
                 </tr>
@@ -74,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <tr>
                   <td align="center" style="padding: 8px 0 24px 0;">
                     <a href="${resetLink}" 
-                       style="display: inline-block; padding: 14px 32px; background-color: #E94560; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(233, 69, 96, 0.3);">
+                       style="display: inline-block; padding: 14px 32px; background-color: #D4AF37; color: #1A1A2E; font-size: 15px; font-weight: 600; text-decoration: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);">
                       Redefinir Minha Senha
                     </a>
                   </td>

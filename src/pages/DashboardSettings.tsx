@@ -702,7 +702,7 @@ const DashboardSettings = () => {
             <Card className="max-w-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-coral" />
+                  <User className="w-5 h-5 text-gold" />
                   Seu Perfil
                 </CardTitle>
                 <CardDescription>
@@ -753,7 +753,7 @@ const DashboardSettings = () => {
                   />
                 </div>
 
-                <Button onClick={handleSaveProfile} disabled={savingProfile} className="bg-coral hover:bg-coral-dark">
+                <Button onClick={handleSaveProfile} disabled={savingProfile} className="bg-gold hover:bg-gold-dark text-primary">
                   {savingProfile ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
@@ -770,7 +770,7 @@ const DashboardSettings = () => {
             <Card className="max-w-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-coral" />
+                  <Bell className="w-5 h-5 text-gold" />
                   Preferências de Notificação
                 </CardTitle>
                 <CardDescription>
@@ -840,7 +840,7 @@ const DashboardSettings = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-coral" />
+                    <Shield className="w-5 h-5 text-gold" />
                     Segurança
                   </CardTitle>
                   <CardDescription>

@@ -162,7 +162,7 @@ const Auth = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-coral" />
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
@@ -234,7 +234,7 @@ const Auth = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="login-password">Senha</Label>
-                        <Link to="/esqueci-senha" className="text-xs text-coral hover:underline">
+                        <Link to="/esqueci-senha" className="text-xs text-gold hover:underline">
                           Esqueci minha senha
                         </Link>
                       </div>
@@ -288,7 +288,7 @@ const Auth = () => {
                           setIsSignUp(true);
                           navigate("/cadastro");
                         }}
-                        className="text-coral font-medium hover:underline"
+                        className="text-gold font-medium hover:underline"
                       >
                         Criar conta grátis
                       </button>
@@ -401,7 +401,7 @@ const Auth = () => {
                         className="text-sm text-muted-foreground leading-tight cursor-pointer"
                       >
                         Concordo com os{" "}
-                        <a href="#" className="text-coral hover:underline">Termos de Serviço</a>
+                        <a href="#" className="text-gold hover:underline">Termos de Serviço</a>
                         {" "}e{" "}
                         <a href="#" className="text-gold hover:underline">Política de Privacidade</a>
                       </label>
@@ -430,7 +430,7 @@ const Auth = () => {
                           setIsSignUp(false);
                           navigate("/login");
                         }}
-                        className="text-coral font-medium hover:underline"
+                        className="text-gold font-medium hover:underline"
                       >
                         Fazer login
                       </button>
