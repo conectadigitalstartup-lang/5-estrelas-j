@@ -91,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #a0aec0; text-align: center;">
                 Se o botão não funcionar, copie e cole o link abaixo no seu navegador:
               </p>
-              <p style="margin: 8px 0 0 0; font-size: 11px; line-height: 1.4; color: #E94560; text-align: center; word-break: break-all;">
+              <p style="margin: 8px 0 0 0; font-size: 11px; line-height: 1.4; color: #D4AF37; text-align: center; word-break: break-all;">
                 ${resetLink}
               </p>
             </td>

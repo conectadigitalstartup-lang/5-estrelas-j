@@ -114,7 +114,7 @@ const StepThree = ({
         <Button
           onClick={onComplete}
           disabled={!isValid || isSubmitting}
-          className="flex-1 bg-coral hover:bg-coral/90"
+          className="flex-1 bg-gold hover:bg-gold/90 text-primary"
           size="lg"
         >
           {isSubmitting ? (

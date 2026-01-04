@@ -479,7 +479,7 @@ const DashboardSettings = () => {
             <Card className="max-w-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-coral" />
+                  <Building2 className="w-5 h-5 text-gold" />
                   Informações da Empresa
                 </CardTitle>
                 <CardDescription>
@@ -635,7 +635,7 @@ const DashboardSettings = () => {
                           </p>
                         </div>
                       </div>
-                      <Button onClick={() => setShowGoogleSearch(true)} className="bg-coral hover:bg-coral-dark">
+                      <Button onClick={() => setShowGoogleSearch(true)} className="bg-gold hover:bg-gold-dark text-primary">
                         <MapPin className="w-4 h-4 mr-2" />
                         Vincular ao Google
                       </Button>
@@ -664,7 +664,7 @@ const DashboardSettings = () => {
                         <Button
                           onClick={handleLinkGoogle}
                           disabled={!selectedPlace || savingGoogle}
-                          className="bg-coral hover:bg-coral-dark"
+                          className="bg-gold hover:bg-gold-dark text-primary"
                         >
                           {savingGoogle ? (
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -685,7 +685,7 @@ const DashboardSettings = () => {
                   </div>
                 </div>
 
-                <Button onClick={handleSaveCompany} disabled={saving} className="bg-coral hover:bg-coral-dark">
+                <Button onClick={handleSaveCompany} disabled={saving} className="bg-gold hover:bg-gold-dark text-primary">
                   {saving ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
@@ -938,7 +938,7 @@ const DashboardSettings = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-coral" />
+                    <CreditCard className="w-5 h-5 text-gold" />
                     Cobrança
                   </CardTitle>
                   <CardDescription>
@@ -946,7 +946,7 @@ const DashboardSettings = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 rounded-lg bg-coral/10 border border-coral/20">
+                  <div className="p-4 rounded-lg bg-gold/10 border border-gold/20">
                     <p className="font-medium text-foreground">Período de Trial</p>
                     <p className="text-sm text-muted-foreground">
                       Você está no período de teste gratuito de 7 dias.

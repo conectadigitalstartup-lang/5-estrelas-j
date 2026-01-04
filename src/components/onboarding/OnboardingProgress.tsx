@@ -22,7 +22,7 @@ const OnboardingProgress = ({ currentStep, totalSteps }: OnboardingProgressProps
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300",
                   isCompleted && "bg-green-500 text-white",
-                  isActive && "bg-coral text-white",
+                  isActive && "bg-gold text-primary",
                   isPending && "bg-transparent border-2 border-border text-muted-foreground"
                 )}
               >

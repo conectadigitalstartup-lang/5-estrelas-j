@@ -168,7 +168,7 @@ const BeforeAfterSlider = ({ examples }: BeforeAfterSliderProps) => {
           className="absolute top-3 left-3 z-20 transition-opacity duration-200 pointer-events-none"
           style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
         >
-          <span className="text-xs text-white bg-coral/90 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
+          <span className="text-xs text-primary bg-gold/90 backdrop-blur-sm px-2.5 py-1 rounded font-medium">
             ✨ DEPOIS
           </span>
         </div>

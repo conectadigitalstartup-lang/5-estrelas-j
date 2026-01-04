@@ -294,7 +294,7 @@ const Dashboard = () => {
                 value={metrics.negativeFeedbacks}
                 label="Feedbacks Internos"
                 sublabel="Notas 1 a 3 estrelas"
-                iconColor="text-coral"
+                iconColor="text-gold"
               />
             </>
           )}
@@ -333,7 +333,7 @@ const Dashboard = () => {
         </div>
 
         {/* CTA Section */}
-        <Card className="border-dashed border-2 border-coral/30 bg-coral/5">
+        <Card className="border-dashed border-2 border-gold/30 bg-gold/5">
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Pronto para receber mais avaliações?</CardTitle>
             <CardDescription>
@@ -343,7 +343,7 @@ const Dashboard = () => {
           <CardContent className="flex justify-center">
             <Button 
               asChild
-              className="bg-coral hover:bg-coral-dark text-white"
+              className="bg-gold hover:bg-gold-dark text-primary"
             >
               <Link to="/dashboard/qr-code">
                 <QrCode className="w-4 h-4 mr-2" />
