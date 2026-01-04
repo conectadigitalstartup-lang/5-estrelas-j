@@ -52,10 +52,10 @@ export default {
           light: "hsl(var(--navy-light))",
           dark: "hsl(var(--navy-dark))",
         },
-        coral: {
-          DEFAULT: "hsl(var(--coral))",
-          light: "hsl(var(--coral-light))",
-          dark: "hsl(var(--coral-dark))",
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          light: "hsl(var(--gold-light))",
+          dark: "hsl(var(--gold-dark))",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
@@ -103,7 +103,7 @@ export default {
       },
       boxShadow: {
         elevated: "0 10px 40px -10px hsl(230 50% 15% / 0.15)",
-        coral: "0 4px 20px -4px hsl(350 85% 60% / 0.35)",
+        gold: "0 4px 20px -4px hsl(43 74% 49% / 0.35)",
         card: "0 1px 3px hsl(230 50% 15% / 0.08), 0 1px 2px hsl(230 50% 15% / 0.04)",
       },
     },
