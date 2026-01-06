@@ -13,6 +13,7 @@ import {
   X,
   ChevronRight,
   Home,
+  MessageSquareText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ const navItems = [
   { path: "/admin/restaurants", label: "Restaurantes", icon: Building2 },
   { path: "/admin/subscriptions", label: "Assinaturas", icon: CreditCard },
   { path: "/admin/support", label: "Suporte", icon: Headphones },
+  { path: "/admin/visitor-feedback", label: "Feedbacks Site", icon: MessageSquareText },
 ];
 
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
