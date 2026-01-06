@@ -10,6 +10,7 @@ import BenefitsSection from "@/components/landing/BenefitsSection";
 const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
 const PricingSection = lazy(() => import("@/components/landing/PricingSection"));
 const FAQSection = lazy(() => import("@/components/landing/FAQSection"));
+const FeedbackSection = lazy(() => import("@/components/landing/FeedbackSection"));
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
 
 const schemaData = {
@@ -75,6 +76,7 @@ const Index = () => {
             <TestimonialsSection />
             <PricingSection />
             <FAQSection />
+            <FeedbackSection />
             <CTASection />
           </Suspense>
         </main>

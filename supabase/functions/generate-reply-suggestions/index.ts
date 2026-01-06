@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +14,8 @@ serve(async (req) => {
   try {
     const { text, rating, company } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
@@ -20,6 +23,93 @@ serve(async (req) => {
 
     if (!text || rating === undefined) {
       throw new Error("Missing required parameters: text and rating");
+    }
+
+    // Get user from auth header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("No authorization header");
+    }
+
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+    
+    // Get user ID from token
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !userData.user) {
+      throw new Error("Invalid user token");
+    }
+
+    const userId = userData.user.id;
+
+    // Check subscription and AI usage limits
+    const { data: subData, error: subError } = await supabase
+      .from("subscriptions")
+      .select("status, plan, is_super_admin, ai_usage_count, ai_usage_reset_at, trial_ends_at")
+      .eq("user_id", userId)
+      .single();
+
+    if (subError) {
+      console.error("Error fetching subscription:", subError);
+      throw new Error("Erro ao verificar assinatura");
+    }
+
+    // Super admin has unlimited access
+    if (!subData?.is_super_admin) {
+      const isTrial = subData?.status === "trialing";
+      const plan = subData?.plan || "basico";
+      
+      // Calculate limit based on plan
+      let limit = 2; // Default for trial
+      if (!isTrial) {
+        if (plan === "pro") {
+          limit = 100;
+        } else if (plan === "basico") {
+          limit = 20;
+        }
+      }
+
+      // Check if we need to reset the counter (monthly reset)
+      const resetAt = subData?.ai_usage_reset_at ? new Date(subData.ai_usage_reset_at) : new Date();
+      const now = new Date();
+      const shouldReset = now.getMonth() !== resetAt.getMonth() || now.getFullYear() !== resetAt.getFullYear();
+
+      let currentCount = subData?.ai_usage_count || 0;
+      
+      if (shouldReset) {
+        // Reset counter
+        await supabase
+          .from("subscriptions")
+          .update({ ai_usage_count: 0, ai_usage_reset_at: now.toISOString() })
+          .eq("user_id", userId);
+        currentCount = 0;
+      }
+
+      // Check if limit exceeded
+      if (currentCount >= limit) {
+        const upgradeMessage = isTrial 
+          ? "Você atingiu o limite de 2 usos gratuitos da Secretária Virtual. Assine um plano para continuar usando!"
+          : `Você atingiu o limite de ${limit} usos mensais. ${plan === "basico" ? "Faça upgrade para o plano Pro para ter 100 usos/mês!" : "Aguarde a renovação no próximo mês."}`;
+        
+        return new Response(JSON.stringify({ 
+          error: upgradeMessage,
+          limitReached: true,
+          currentCount,
+          limit
+        }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Increment usage counter
+      await supabase
+        .from("subscriptions")
+        .update({ ai_usage_count: currentCount + 1 })
+        .eq("user_id", userId);
+
+      console.log(`AI usage: ${currentCount + 1}/${limit} for user ${userId} (${isTrial ? "trial" : plan})`);
     }
 
     // Get the exact company name to use in responses

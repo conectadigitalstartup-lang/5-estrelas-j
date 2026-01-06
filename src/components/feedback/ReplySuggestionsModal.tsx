@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Sparkles, Copy, Smile, Briefcase, TrendingUp, Loader2, Star, Check, Pencil, RotateCcw } from "lucide-react";
+import { Sparkles, Copy, Smile, Briefcase, TrendingUp, Loader2, Star, Check, Pencil, RotateCcw, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -54,11 +55,13 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplySuggestionsModalProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
   const [originalSuggestions, setOriginalSuggestions] = useState<Suggestions | null>(null);
   const [editedSuggestions, setEditedSuggestions] = useState<Suggestions | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [limitReached, setLimitReached] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [editingKey, setEditingKey] = useState<string | null>(null);
 
@@ -82,6 +85,7 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplyS
       setEditedSuggestions(null);
       setOriginalSuggestions(null);
       setError(null);
+      setLimitReached(false);
       setEditingKey(null);
     }
   }, [open]);
@@ -98,6 +102,7 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplyS
 
     setLoading(true);
     setError(null);
+    setLimitReached(false);
     setSuggestions(null);
     setEditedSuggestions(null);
     setOriginalSuggestions(null);
@@ -126,6 +131,9 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplyS
       }
 
       if (data?.error) {
+        if (data?.limitReached) {
+          setLimitReached(true);
+        }
         throw new Error(data.error);
       }
 
@@ -239,8 +247,28 @@ const ReplySuggestionsModal = ({ open, onOpenChange, feedback, company }: ReplyS
         {/* Error State */}
         {error && !loading && (
           <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <p className="text-destructive text-center">{error}</p>
-            <Button onClick={generateSuggestions}>Tentar novamente</Button>
+            {limitReached ? (
+              <>
+                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-amber-600" />
+                </div>
+                <p className="text-foreground text-center font-medium">{error}</p>
+                <Button 
+                  onClick={() => {
+                    onOpenChange(false);
+                    navigate("/dashboard/upgrade");
+                  }}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  Ver Planos
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-destructive text-center">{error}</p>
+                <Button onClick={generateSuggestions}>Tentar novamente</Button>
+              </>
+            )}
           </div>
         )}
 

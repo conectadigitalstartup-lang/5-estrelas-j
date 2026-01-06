@@ -273,6 +273,8 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          ai_usage_count: number | null
+          ai_usage_reset_at: string | null
           cancel_at_period_end: boolean | null
           created_at: string
           current_period_end: string | null
@@ -290,6 +292,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_usage_count?: number | null
+          ai_usage_reset_at?: string | null
           cancel_at_period_end?: boolean | null
           created_at?: string
           current_period_end?: string | null
@@ -307,6 +311,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_usage_count?: number | null
+          ai_usage_reset_at?: string | null
           cancel_at_period_end?: boolean | null
           created_at?: string
           current_period_end?: string | null
@@ -387,6 +393,33 @@ export type Database = {
           },
         ]
       }
+      visitor_feedback: {
+        Row: {
+          created_at: string
+          email: string | null
+          feedback_type: string
+          id: string
+          message: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          feedback_type: string
+          id?: string
+          message: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          feedback_type?: string
+          id?: string
+          message?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -406,6 +439,10 @@ export type Database = {
           exists_flag: boolean
           masked_email: string
         }[]
+      }
+      get_ai_limit: {
+        Args: { is_trial: boolean; plan_name: string }
+        Returns: number
       }
       get_photo_limit: { Args: { plan_name: string }; Returns: number }
       has_active_subscription: {
