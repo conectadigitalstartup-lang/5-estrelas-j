@@ -26,14 +26,21 @@ const FeedbackSection = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from("visitor_feedback").insert({
+      const feedbackData = {
         name: name.trim() || null,
         email: email.trim() || null,
-        feedback_type: activeTab,
+        feedback_type: activeTab === "suggestion" ? "sugestao" : "feedback",
         message: message.trim(),
-      });
+      };
+
+      const { error } = await supabase.from("visitor_feedback").insert(feedbackData);
 
       if (error) throw error;
+
+      // Send email notification (fire and forget - don't block on this)
+      supabase.functions.invoke("notify-visitor-feedback", {
+        body: feedbackData,
+      }).catch((err) => console.error("Error sending notification:", err));
 
       setSubmitted(true);
       setName("");
